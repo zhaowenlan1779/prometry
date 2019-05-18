@@ -1,0 +1,55 @@
+// Copyright 2019 Zhupengfei and others
+// All rights reserved.
+
+#pragma once
+
+#include <string>
+#include <unordered_set>
+#include "common/common_types.h"
+
+namespace Core {
+
+class Conclusion;
+
+/**
+ * The element interface.
+ *
+ * Each element has a name (type not included) and full name (type included).
+ * Eg. "AB" and "Line AB".
+ *
+ * A hash function is used to compare the equality of two elements.
+ */
+class Element {
+public:
+    /**
+     * Returns the name (display name) of the element.
+     * This can be simpler than the full name, sometimes omitting the type. Eg. "AB" instead of
+     * "Line AB" can be used.
+     */
+    virtual std::string GetName() const {
+        return "Unknown";
+    }
+
+    /**
+     * Returns the full name of the element.
+     * Full names should contain the type and name of the element, Eg. "Line AB"
+     */
+    virtual std::string GetFullname() const {
+        return "Unknown Unknown";
+    }
+
+    virtual u64 GetHash() const = 0;
+
+    bool HasConclusion(const Conclusion& conclusion) const;
+
+    /// Comparison operators
+    bool operator==(const Element& e) const;
+    bool operator!=(const Element& e) const;
+
+private:
+    std::unordered_set<Conclusion*> related_conclusions; ///< Conclusions related to this element.
+
+    friend class System;
+};
+
+} // namespace Core
