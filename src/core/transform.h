@@ -19,9 +19,6 @@ class Transform {
 public:
     virtual ~Transform() = default;
     virtual void Execute(System& system) = 0;
-    virtual std::string GetName() const {
-        return "Unknown";
-    }
 };
 
 /**
