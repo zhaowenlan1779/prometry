@@ -65,6 +65,7 @@ public:
 
 private:
     std::vector<Conclusion*> related_conclusions; ///< Conclusions related to this element.
+    std::string construction_statement;           ///< Construction statement for this element.
 
     friend class System;
 };

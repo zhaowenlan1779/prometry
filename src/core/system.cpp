@@ -7,7 +7,7 @@
 
 namespace Core {
 
-void System::AddElement(Element* element) {
+void System::AddElement(Element* element, std::string construction_statement) {
     auto type = element->GetType();
     if (elements.count(type)) {
         for (auto iter : elements[type]) {
@@ -16,7 +16,9 @@ void System::AddElement(Element* element) {
             }
         }
     }
+    element->construction_statement = std::move(construction_statement);
     elements[type].emplace_back(element);
+    new_element = true;
 }
 
 void System::AddConclusion(Conclusion* conclusion, std::string transform_name,
@@ -54,8 +56,17 @@ std::string System::Execute(std::function<Conclusion*(System&)> reached_goal_pre
             iter->Execute(*this);
         }
         if (!new_conclusion) {
-            // TODO: construct elements
-            break;
+            new_element = false;
+            for (auto& iter : constructions) {
+                iter->Execute(*this);
+                if (new_element) { // Try to construct only one at a time
+                    break;
+                }
+            }
+
+            if (!new_element) { // Failed to construct
+                break;
+            }
         } else if ((target = reached_goal_predicate(*this)) != nullptr) {
             break;
         }
@@ -64,14 +75,16 @@ std::string System::Execute(std::function<Conclusion*(System&)> reached_goal_pre
     if (target) {
         // Generate proof content
         std::unordered_map<Conclusion*, bool> visited;
-        return GenerateProof(target, visited);
+        std::unordered_map<Element*, bool> constructed;
+        return GenerateProof(target, visited, constructed);
     } else {
         return "";
     }
 }
 
 std::string System::GenerateProof(Conclusion* target,
-                                  std::unordered_map<Conclusion*, bool>& visited) {
+                                  std::unordered_map<Conclusion*, bool>& visited,
+                                  std::unordered_map<Element*, bool> constructed) {
 
     visited[target] = true;
 
@@ -79,11 +92,19 @@ std::string System::GenerateProof(Conclusion* target,
     std::string proof;
     for (auto iter : target->source_conclusions) {
         if (!visited[iter]) {
-            proof += GenerateProof(iter, visited);
+            proof += GenerateProof(iter, visited, constructed);
         }
     }
 
     // this statement
+    for (auto iter : target->GetRelatedElements()) {
+        if (!constructed[iter]) {
+            constructed[iter] = true;
+            if (!iter->construction_statement.empty())
+                proof += iter->construction_statement + "\n";
+        }
+    }
+
     if (target->source_conclusions.empty()) {
         return proof;
     }

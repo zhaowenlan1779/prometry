@@ -22,6 +22,14 @@ public:
 };
 
 /**
+ * Virtual interface for constructions.
+ *
+ * Constructions are generalized templates used to construct additional elements besides those
+ * already present.
+ */
+using Construction = Transform; // TODO: make this strong typed
+
+/**
  * Helpers of the wrapper. Do not worry - most compilers would be able to optimize this out
  * at about O2 level, which we surely will use.
  */

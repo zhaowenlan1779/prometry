@@ -13,6 +13,7 @@ namespace Core {
 
 class Conclusion;
 class Transform;
+using Construction = Transform;
 
 /**
  * Definition of the core system, managing elements, conclusions as well
@@ -34,7 +35,7 @@ public:
      * WARNING! one shouldn't use the pointer anymore after calling this, as the pointer is
      * now being managed by the system.
      */
-    void AddElement(Element* element);
+    void AddElement(Element* element, std::string construction_statement = "");
 
     /**
      * Add a conclusion to the system, if the conclusion is not already present.
@@ -53,6 +54,15 @@ public:
         transforms.emplace_back(std::make_unique<T>());
     }
 
+    /**
+     * Register a construction class to the system.
+     * The system will initialize and hold a construction object.
+     */
+    template <typename T>
+    void RegisterConstruction() {
+        constructions.emplace_back(std::make_unique<T>());
+    }
+
     /// Get a conclusion or nullptr.
     Conclusion* GetConclusion(const Conclusion& conclusion) const;
 
@@ -67,12 +77,15 @@ public:
     std::string Execute(std::function<Conclusion*(System&)> reached_goal_predicate);
 
 private:
-    std::string GenerateProof(Conclusion* current, std::unordered_map<Conclusion*, bool>& visited);
+    std::string GenerateProof(Conclusion* current, std::unordered_map<Conclusion*, bool>& visited,
+                              std::unordered_map<Element*, bool> constructed);
 
     std::unordered_map<ElementType, std::vector<std::shared_ptr<Element>>> elements;
     std::vector<std::shared_ptr<Conclusion>> conclusions;
     std::vector<std::unique_ptr<Transform>> transforms;
+    std::vector<std::unique_ptr<Construction>> constructions;
 
+    bool new_element = false;    ///< Temporary state set whenever new elements are constructed.
     bool new_conclusion = false; ///< Temporary state set whenever new conclusions are added.
 };
 
