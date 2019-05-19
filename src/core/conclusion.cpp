@@ -5,6 +5,8 @@
 
 namespace Core {
 
+Conclusion::~Conclusion() = default;
+
 bool Conclusion::operator==(const Conclusion& other) const {
     return GetHash() == other.GetHash();
 }

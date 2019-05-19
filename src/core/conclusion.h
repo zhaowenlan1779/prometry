@@ -18,6 +18,8 @@ class Transform;
  */
 class Conclusion {
 public:
+    virtual ~Conclusion();
+
     /**
      * Output the string for this conclusion. E.g. "AB // CD".
      */
@@ -29,7 +31,7 @@ public:
      * Get the elements related to this conclusion.
      * When adding this conclusion to the system, the elements related will be updated as well.
      */
-    virtual std::vector<const Element*> GetRelatedElements() const = 0;
+    virtual std::vector<Element*> GetRelatedElements() = 0;
 
     virtual u64 GetHash() const = 0;
 

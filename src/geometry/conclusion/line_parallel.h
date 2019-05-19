@@ -11,14 +11,15 @@ class Line;
 
 class LineParallel : public Conclusion {
 public:
-    explicit LineParallel(const Line& l1, const Line& l2);
+    explicit LineParallel(Line& l1, Line& l2);
+    ~LineParallel() override;
     std::string ToString() const override;
-    std::vector<const Element*> GetRelatedElements() const override;
+    std::vector<Element*> GetRelatedElements() override;
     u64 GetHash() const override;
 
 private:
-    const Line& l1;
-    const Line& l2;
+    Line& l1;
+    Line& l2;
 };
 
 }

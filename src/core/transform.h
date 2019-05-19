@@ -17,6 +17,7 @@ namespace Core {
  */
 class Transform {
 public:
+    virtual ~Transform() = default;
     virtual void Execute(System& system) = 0;
     virtual std::string GetName() {
         return "Unknown";
@@ -37,7 +38,7 @@ struct WrapPass<C, T, Ts...> {
     template <typename... Us>
     static void Call(System& system, Us... u) {
         for (auto item : system.GetElement<T>()) {
-            WrapPass<C, Ts...>::Call(system, u..., item);
+            WrapPass<C, Ts...>::Call(system, u..., (*static_cast<T*>(item.get())));
         }
     }
 };

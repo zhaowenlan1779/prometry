@@ -4,12 +4,18 @@
 #pragma once
 
 #include <string>
-#include <unordered_set>
+#include <vector>
 #include "common/common_types.h"
 
 namespace Core {
 
 class Conclusion;
+
+/**
+ * Type of the "type" field of an element.
+ * Subclasses of Element must provide a static member C::Type.
+ */
+using ElementType = u8;
 
 /**
  * The element interface.
@@ -21,6 +27,10 @@ class Conclusion;
  */
 class Element {
 public:
+    static ElementType Type;
+
+    virtual ~Element();
+
     /**
      * Returns the name (display name) of the element.
      * This can be simpler than the full name, sometimes omitting the type. Eg. "AB" instead of
@@ -39,6 +49,7 @@ public:
     }
 
     virtual u64 GetHash() const = 0;
+    virtual ElementType GetType() const = 0;
 
     bool HasConclusion(const Conclusion& conclusion) const;
 
@@ -47,7 +58,7 @@ public:
     bool operator!=(const Element& e) const;
 
 private:
-    std::unordered_set<Conclusion*> related_conclusions; ///< Conclusions related to this element.
+    std::vector<Conclusion*> related_conclusions; ///< Conclusions related to this element.
 
     friend class System;
 };

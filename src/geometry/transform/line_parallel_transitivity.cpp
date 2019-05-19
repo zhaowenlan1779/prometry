@@ -6,11 +6,12 @@
 
 namespace Core {
 
-void LineParallelTransitivity::Execute(System& system, const Line& l1, const Line& l2,
-                                       const Line& l3) {
+LineParallelTransitivity::~LineParallelTransitivity() = default;
+
+void LineParallelTransitivity::Execute(System& system, Line& l1, Line& l2, Line& l3) {
 
     if (l1.HasConclusion(LineParallel(l1, l2)) && l2.HasConclusion(LineParallel(l2, l3))) {
-        // TODO: impl
+        system.AddConclusion(new LineParallel(l1, l3));
     }
 }
 

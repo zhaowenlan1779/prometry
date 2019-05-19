@@ -5,7 +5,11 @@
 
 namespace Core {
 
+/*static*/ ElementType Point::Type = 1;
+
 Point::Point(const std::string& name_) : name(name_) {}
+
+Point::~Point() = default;
 
 std::string Point::GetName() const {
     return name;
@@ -13,6 +17,10 @@ std::string Point::GetName() const {
 
 std::string Point::GetFullname() const {
     return "Point " + name;
+}
+
+ElementType Point::GetType() const {
+    return Point::Type;
 }
 
 u64 Point::GetHash() const {

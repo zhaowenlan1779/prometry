@@ -12,7 +12,9 @@ class System;
 
 class LineParallelTransitivity : public Wrapper<LineParallelTransitivity, Line, Line, Line> {
 public:
-    static void Execute(System& system, const Line& l1, const Line& l2, const Line& l3);
+    ~LineParallelTransitivity() override;
+
+    static void Execute(System& system, Line& l1, Line& l2, Line& l3);
 };
 
 }

@@ -6,13 +6,15 @@
 
 namespace Core {
 
-LineParallel::LineParallel(const Line& l1_, const Line& l2_) : l1(l1_), l2(l2_) {}
+LineParallel::LineParallel(Line& l1_, Line& l2_) : l1(l1_), l2(l2_) {}
+
+LineParallel::~LineParallel() = default;
 
 std::string LineParallel::ToString() const {
     return l1.GetName() + " // " + l2.GetName();
 }
 
-std::vector<const Element*> LineParallel::GetRelatedElements() const {
+std::vector<Element*> LineParallel::GetRelatedElements() {
     return {&l1, &l2};
 }
 

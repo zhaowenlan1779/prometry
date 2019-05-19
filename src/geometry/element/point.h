@@ -9,9 +9,13 @@ namespace Core {
 
 class Point : public Element {
 public:
+    static ElementType Type;
+
     explicit Point(const std::string& name);
+    ~Point() override;
     std::string GetName() const override;
     std::string GetFullname() const override;
+    ElementType GetType() const override;
     u64 GetHash() const override;
 
 private:
