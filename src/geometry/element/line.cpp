@@ -1,12 +1,13 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "geometry/element/element_types.h"
 #include "geometry/element/line.h"
 #include "geometry/element/point.h"
 
 namespace Core {
 
-/*static*/ ElementType Line::Type = 2;
+/*static*/ ElementType Line::Type = Elements::Line;
 
 Line::Line(const Point& p1_, const Point& p2_) : p1(p1_), p2(p2_) {}
 

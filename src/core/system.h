@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -10,9 +11,12 @@
 
 namespace Core {
 
+class Conclusion;
+class Transform;
+
 /**
- * Virtual interface for a Geometry System.
- * A System manages Elements as well as Conclusions.
+ * Definition of the core system, managing elements, conclusions as well
+ * as the main logic.
  */
 class System {
 public:
@@ -25,14 +29,50 @@ public:
         }
     }
 
+    /**
+     * Add an element to the system, if the element is not already present.
+     * WARNING! one shouldn't use the pointer anymore after calling this, as the pointer is
+     * now being managed by the system.
+     */
     void AddElement(Element* element);
+
+    /**
+     * Add a conclusion to the system, if the conclusion is not already present.
+     * WARNING! one shouldn't use the pointer anymore after calling this, as the pointer is
+     * now being managed by the system.
+     */
     void AddConclusion(Conclusion* conclusion);
 
-    bool HasConclusion(const Conclusion& conclusion) const;
+    /**
+     * Register a transform class to the system.
+     * The system will initialize and hold a transform object.
+     */
+    template <typename T>
+    void RegisterTransform() {
+        transforms.emplace_back(std::make_unique<T>());
+    }
+
+    /// Get a conclusion or nullptr.
+    Conclusion* GetConclusion(const Conclusion& conclusion) const;
+
+    /**
+     * Executes the main logic.
+     *
+     * @param reached_goal_predicate function object to judge whether the goal is reached.
+     * pointer to target conclusion is returned when the answer is positive, nullptr otherwise
+     *
+     * @return A string of proof on success, an empty string otherwise
+     */
+    std::string Execute(std::function<Conclusion*(System&)> reached_goal_predicate);
 
 private:
+    std::string GenerateProof(Conclusion* current, std::unordered_map<Conclusion*, bool>& visited);
+
     std::unordered_map<ElementType, std::vector<std::shared_ptr<Element>>> elements;
     std::vector<std::shared_ptr<Conclusion>> conclusions;
+    std::vector<std::unique_ptr<Transform>> transforms;
+
+    bool new_conclusion = false; ///< Temporary state set whenever new conclusions are added.
 };
 
 } // namespace Core

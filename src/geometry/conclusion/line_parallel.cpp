@@ -1,12 +1,17 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "common/assert.h"
 #include "geometry/conclusion/line_parallel.h"
+#include "geometry/element/element_types.h"
 #include "geometry/element/line.h"
 
 namespace Core {
 
-LineParallel::LineParallel(Line& l1_, Line& l2_) : l1(l1_), l2(l2_) {}
+LineParallel::LineParallel(Element& l1_, Element& l2_) : l1(l1_), l2(l2_) {
+    ASSERT(l1.GetType() == Elements::Line);
+    ASSERT(l2.GetType() == Elements::Line);
+}
 
 LineParallel::~LineParallel() = default;
 

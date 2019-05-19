@@ -27,4 +27,6 @@ else()
     endif()
 endif()
 
+enable_testing()
+add_subdirectory(externals)
 add_subdirectory(src)

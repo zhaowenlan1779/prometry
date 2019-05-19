@@ -5,6 +5,8 @@ add_library(geometry STATIC
     element/line.h
     element/point.cpp
     element/point.h
+    element/standalone_line.cpp
+    element/standalone_line.h
     transform/line_parallel_transitivity.cpp
     transform/line_parallel_transitivity.h
 )

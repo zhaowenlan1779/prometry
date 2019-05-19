@@ -51,6 +51,7 @@ public:
     virtual u64 GetHash() const = 0;
     virtual ElementType GetType() const = 0;
 
+    /// Whether a conclusion is known and is related to this element.
     bool HasConclusion(const Conclusion& conclusion) const;
 
     /// Comparison operators

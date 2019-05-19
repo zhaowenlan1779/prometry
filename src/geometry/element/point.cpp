@@ -1,11 +1,12 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "geometry/element/element_types.h"
 #include "geometry/element/point.h"
 
 namespace Core {
 
-/*static*/ ElementType Point::Type = 1;
+/*static*/ ElementType Point::Type = Elements::Point;
 
 Point::Point(const std::string& name_) : name(name_) {}
 
