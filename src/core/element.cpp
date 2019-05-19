@@ -10,12 +10,12 @@ namespace Core {
 
 Element::~Element() = default;
 
-bool Element::HasConclusion(const Conclusion& conclusion) const {
+Conclusion* Element::GetConclusion(const Conclusion& conclusion) const {
     for (auto iter : related_conclusions) {
         if ((*iter) == conclusion)
-            return true;
+            return iter;
     }
-    return false;
+    return nullptr;
 }
 
 bool Element::operator==(const Element& other) const {

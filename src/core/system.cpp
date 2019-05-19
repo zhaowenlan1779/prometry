@@ -19,10 +19,13 @@ void System::AddElement(Element* element) {
     elements[type].emplace_back(element);
 }
 
-void System::AddConclusion(Conclusion* conclusion) {
+void System::AddConclusion(Conclusion* conclusion, std::string transform_name,
+                           std::vector<Conclusion*> source_conclusions) {
     if (GetConclusion(*conclusion) != nullptr) {
         return;
     }
+    conclusion->transform_name = std::move(transform_name);
+    conclusion->source_conclusions = std::move(source_conclusions);
     conclusions.emplace_back(conclusion);
     for (auto element : conclusion->GetRelatedElements()) {
         element->related_conclusions.emplace_back(conclusion);
@@ -46,6 +49,7 @@ std::string System::Execute(std::function<Conclusion*(System&)> reached_goal_pre
     Conclusion* target{};
 
     while (true) {
+        new_conclusion = false;
         for (auto& iter : transforms) {
             iter->Execute(*this);
         }
@@ -80,11 +84,15 @@ std::string System::GenerateProof(Conclusion* target,
     }
 
     // this statement
-    proof += "Because ";
-    for (auto iter : target->source_conclusions) {
-        proof += iter->ToString() + ",";
+    if (target->source_conclusions.empty()) {
+        return proof;
     }
-    proof += "So " + target->ToString() + "\n";
+
+    proof += "Since ";
+    for (auto iter : target->source_conclusions) {
+        proof += iter->ToString() + ", ";
+    }
+    proof += "\nSo " + target->ToString() + ". (" + target->transform_name + ")\n";
     return proof;
 }
 

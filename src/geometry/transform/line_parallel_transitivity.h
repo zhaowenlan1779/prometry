@@ -13,6 +13,7 @@ class System;
 class LineParallelTransitivity : public Wrapper<LineParallelTransitivity, Line, Line, Line> {
 public:
     ~LineParallelTransitivity() override;
+    std::string GetName() const override;
 
     static void Execute(System& system, Line& l1, Line& l2, Line& l3);
 };

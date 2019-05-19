@@ -8,10 +8,16 @@ namespace Core {
 
 LineParallelTransitivity::~LineParallelTransitivity() = default;
 
+std::string LineParallelTransitivity::GetName() const {
+    return "transitivity of line parallel";
+}
+
 void LineParallelTransitivity::Execute(System& system, Line& l1, Line& l2, Line& l3) {
 
-    if (l1.HasConclusion(LineParallel(l1, l2)) && l2.HasConclusion(LineParallel(l2, l3))) {
-        system.AddConclusion(new LineParallel(l1, l3));
+    auto c1 = l1.GetConclusion(LineParallel(l1, l2));
+    auto c2 = l2.GetConclusion(LineParallel(l2, l3));
+    if (c1 && c2) {
+        system.AddConclusion(new LineParallel(l1, l3), "transitivity of line parallel", {c1, c2});
     }
 }
 

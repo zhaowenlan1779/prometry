@@ -48,11 +48,16 @@ public:
         return "Unknown Unknown";
     }
 
-    virtual u64 GetHash() const = 0;
-    virtual ElementType GetType() const = 0;
+    virtual u64 GetHash() const {
+        return 0;
+    }
 
-    /// Whether a conclusion is known and is related to this element.
-    bool HasConclusion(const Conclusion& conclusion) const;
+    virtual ElementType GetType() const {
+        return 0;
+    }
+
+    /// Get a conclusion or nullptr
+    Conclusion* GetConclusion(const Conclusion& conclusion) const;
 
     /// Comparison operators
     bool operator==(const Element& e) const;

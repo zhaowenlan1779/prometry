@@ -41,7 +41,8 @@ public:
      * WARNING! one shouldn't use the pointer anymore after calling this, as the pointer is
      * now being managed by the system.
      */
-    void AddConclusion(Conclusion* conclusion);
+    void AddConclusion(Conclusion* conclusion, std::string transform_name = "",
+                       std::vector<Conclusion*> source_conclusions = {});
 
     /**
      * Register a transform class to the system.

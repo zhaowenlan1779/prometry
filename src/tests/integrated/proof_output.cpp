@@ -5,13 +5,15 @@
 #include "core/system.h"
 #include "geometry/conclusion/line_parallel.h"
 #include "geometry/element/line.h"
-#include "geometry/transform/line_parallel_transitivity.h"
+#include "geometry/transform/all_transforms.h"
+
+#include <iostream>
 
 namespace Core {
 
-TEST_CASE("LineParallelTransitivity", "[transform]") {
+TEST_CASE("ProofOutput[LineParallelTransitivity]", "[integrated]") {
     System system;
-    system.RegisterTransform<LineParallelTransitivity>();
+    RegisterAllTransforms(system);
     StandaloneLine* l1 = new StandaloneLine("l1");
     StandaloneLine* l2 = new StandaloneLine("l2");
     StandaloneLine* l3 = new StandaloneLine("l3");
@@ -24,11 +26,11 @@ TEST_CASE("LineParallelTransitivity", "[transform]") {
     system.AddConclusion(new LineParallel(*l2, *l3));
     system.AddConclusion(new LineParallel(*l3, *l4));
 
-    system.Execute([](System&) { return nullptr; });
+    auto proof = system.Execute(
+        [&l1, &l4](System& system) { return system.GetConclusion(LineParallel(*l1, *l4)); });
 
-    REQUIRE(system.GetConclusion(LineParallel(*l1, *l3)) != nullptr);
-    REQUIRE(system.GetConclusion(LineParallel(*l1, *l4)) != nullptr);
-    REQUIRE(system.GetConclusion(LineParallel(*l2, *l4)) != nullptr);
+    std::cout << proof << std::endl;
+    REQUIRE(!proof.empty());
 }
 
 } // namespace Core

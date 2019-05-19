@@ -41,7 +41,7 @@ public:
 
 protected:
     std::vector<Conclusion*> source_conclusions; ///< The conclusions this conclusion is based on.
-    Transform* transform;                        ///< The transform that created this conclusion.
+    std::string transform_name;                  ///< The transform that created this conclusion.
 
     friend class System;
 };

@@ -1,4 +1,5 @@
 add_executable(tests
+    integrated/proof_output.cpp
     transform/line_parallel_transitivity.cpp
     tests.cpp
 )
