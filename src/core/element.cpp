@@ -11,11 +11,15 @@ namespace Core {
 Element::~Element() = default;
 
 Conclusion* Element::GetConclusion(const Conclusion& conclusion) const {
-    for (auto iter : related_conclusions) {
+    for (auto iter : related_conclusions.at(conclusion.GetType())) {
         if ((*iter) == conclusion)
             return iter;
     }
     return nullptr;
+}
+
+std::vector<Conclusion*> Element::GetConclusions(ConclusionType type) const {
+    return related_conclusions.at(type);
 }
 
 bool Element::operator==(const Element& other) const {

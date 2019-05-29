@@ -41,4 +41,4 @@ private:
     std::string name;
 };
 
-}
+} // namespace Core

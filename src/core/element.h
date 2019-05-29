@@ -4,12 +4,14 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "common/common_types.h"
 
 namespace Core {
 
 class Conclusion;
+using ConclusionType = u8;
 
 /**
  * Type of the "type" field of an element.
@@ -59,13 +61,17 @@ public:
     /// Get a conclusion or nullptr
     Conclusion* GetConclusion(const Conclusion& conclusion) const;
 
+    /// Get conclusions of a type
+    std::vector<Conclusion*> GetConclusions(ConclusionType type) const;
+
     /// Comparison operators
-    bool operator==(const Element& e) const;
-    bool operator!=(const Element& e) const;
+    bool operator==(const Element& other) const;
+    bool operator!=(const Element& other) const;
 
 private:
-    std::vector<Conclusion*> related_conclusions; ///< Conclusions related to this element.
-    std::string construction_statement;           ///< Construction statement for this element.
+    /// Conclusions related to this element.
+    std::unordered_map<ConclusionType, std::vector<Conclusion*>> related_conclusions;
+    std::string construction_statement; ///< Construction statement for this element.
 
     friend class System;
 };

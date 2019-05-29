@@ -1,4 +1,5 @@
 add_library(geometry STATIC
+    conclusion/conclusion_types.h
     conclusion/line_parallel.cpp
     conclusion/line_parallel.h
     construction/all_constructions.h

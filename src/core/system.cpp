@@ -7,6 +7,14 @@
 
 namespace Core {
 
+std::vector<std::shared_ptr<Element>> System::GetElements(ElementType type) {
+    if (elements.count(type)) {
+        return elements.at(type);
+    } else {
+        return {};
+    }
+}
+
 void System::AddElement(Element* element, std::string construction_statement) {
     auto type = element->GetType();
     if (elements.count(type)) {
@@ -30,7 +38,7 @@ void System::AddConclusion(Conclusion* conclusion, std::string transform_name,
     conclusion->source_conclusions = std::move(source_conclusions);
     conclusions.emplace_back(conclusion);
     for (auto element : conclusion->GetRelatedElements()) {
-        element->related_conclusions.emplace_back(conclusion);
+        element->related_conclusions[conclusion->GetType()].emplace_back(conclusion);
     }
     new_conclusion = true;
 }
@@ -84,7 +92,7 @@ std::string System::Execute(std::function<Conclusion*(System&)> reached_goal_pre
 
 std::string System::GenerateProof(Conclusion* target,
                                   std::unordered_map<Conclusion*, bool>& visited,
-                                  std::unordered_map<Element*, bool> constructed) {
+                                  std::unordered_map<Element*, bool>& constructed) {
 
     visited[target] = true;
 

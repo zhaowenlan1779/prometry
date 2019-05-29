@@ -13,6 +13,11 @@ class Element;
 class Transform;
 
 /**
+ * Type of the "type" field of a conclusion.
+ */
+using ConclusionType = u8;
+
+/**
  * Virtual interface for conclusions.
  * A hash function is used to compare the equality of two conclusions.
  */
@@ -31,8 +36,9 @@ public:
      * Get the elements related to this conclusion.
      * When adding this conclusion to the system, the elements related will be updated as well.
      */
-    virtual std::vector<Element*> GetRelatedElements() = 0;
+    virtual std::vector<Element*> GetRelatedElements() const = 0;
 
+    virtual ConclusionType GetType() const = 0;
     virtual u64 GetHash() const = 0;
 
     /// Comparison operators

@@ -2,6 +2,7 @@
 // All rights reserved.
 
 #include "common/assert.h"
+#include "geometry/conclusion/conclusion_types.h"
 #include "geometry/conclusion/line_parallel.h"
 #include "geometry/element/element_types.h"
 #include "geometry/element/line.h"
@@ -19,8 +20,12 @@ std::string LineParallel::ToString() const {
     return l1.GetName() + " // " + l2.GetName();
 }
 
-std::vector<Element*> LineParallel::GetRelatedElements() {
+std::vector<Element*> LineParallel::GetRelatedElements() const {
     return {&l1, &l2};
+}
+
+ConclusionType LineParallel::GetType() const {
+    return Conclusions::LineParallel;
 }
 
 u64 LineParallel::GetHash() const {

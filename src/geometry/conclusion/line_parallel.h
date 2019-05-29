@@ -14,7 +14,8 @@ public:
     explicit LineParallel(Element& l1, Element& l2);
     ~LineParallel() override;
     std::string ToString() const override;
-    std::vector<Element*> GetRelatedElements() override;
+    std::vector<Element*> GetRelatedElements() const override;
+    ConclusionType GetType() const override;
     u64 GetHash() const override;
 
 private:
@@ -22,4 +23,4 @@ private:
     Element& l2;
 };
 
-}
+} // namespace Core

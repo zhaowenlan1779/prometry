@@ -14,6 +14,7 @@ namespace Core {
 class Conclusion;
 class Transform;
 using Construction = Transform;
+using ElementType = u8;
 
 /**
  * Definition of the core system, managing elements, conclusions as well
@@ -21,14 +22,10 @@ using Construction = Transform;
  */
 class System {
 public:
-    template <typename T>
-    std::vector<std::shared_ptr<Element>> GetElement() {
-        if (elements.count(T::Type)) {
-            return elements.at(T::Type);
-        } else {
-            return {};
-        }
-    }
+    /**
+     * Get elements of a certain type in the System.
+     */
+    std::vector<std::shared_ptr<Element>> GetElements(ElementType type);
 
     /**
      * Add an element to the system, if the element is not already present.
@@ -78,7 +75,7 @@ public:
 
 private:
     std::string GenerateProof(Conclusion* current, std::unordered_map<Conclusion*, bool>& visited,
-                              std::unordered_map<Element*, bool> constructed);
+                              std::unordered_map<Element*, bool>& constructed);
 
     std::unordered_map<ElementType, std::vector<std::shared_ptr<Element>>> elements;
     std::vector<std::shared_ptr<Conclusion>> conclusions;

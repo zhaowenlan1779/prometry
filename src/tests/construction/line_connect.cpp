@@ -4,7 +4,7 @@
 #include <catch2/catch.hpp>
 #include "core/system.h"
 #include "geometry/construction/line_connect.h"
-#include "geometry/element/line.h"
+#include "geometry/element/element_types.h"
 #include "geometry/element/point.h"
 
 namespace Core {
@@ -21,7 +21,7 @@ TEST_CASE("LineConnect", "[construction]") {
 
     system.Execute([](System&) { return nullptr; });
 
-    REQUIRE(system.GetElement<Line>().size() == 3);
+    REQUIRE(system.GetElements(Elements::Line).size() == 3);
 }
 
 } // namespace Core

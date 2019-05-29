@@ -42,7 +42,7 @@ template <typename C, typename T, typename... Ts>
 struct WrapPass<C, T, Ts...> {
     template <typename... Us>
     static void Call(System& system, Us&... u) {
-        for (auto item : system.GetElement<T>()) {
+        for (auto item : system.GetElements(T::Type)) {
             WrapPass<C, Ts...>::Call(system, u..., (*static_cast<T*>(item.get())));
         }
     }
