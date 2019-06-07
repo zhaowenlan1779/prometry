@@ -8,5 +8,5 @@ add_library(core STATIC
     transform.h
 )
 
-target_link_libraries(core PUBLIC common)
+target_link_libraries(core PRIVATE common)
 target_compile_options(core PRIVATE ${PROMETRY_CXX_FLAGS})

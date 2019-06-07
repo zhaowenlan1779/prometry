@@ -15,5 +15,5 @@ add_library(geometry STATIC
     transform/line_parallel_transitivity.h
 )
 
-target_link_libraries(geometry PUBLIC common PRIVATE core)
+target_link_libraries(geometry PRIVATE common core)
 target_compile_options(geometry PRIVATE ${PROMETRY_CXX_FLAGS})
