@@ -3,5 +3,7 @@ add_library(algebra STATIC
     algebra.h
 )
 
-target_link_libraries(algebra PRIVATE common symengine)
+# Note: linking gmp in is required somehow.
+# TODO: figure out this
+target_link_libraries(algebra PRIVATE common symengine gmp)
 target_compile_options(algebra PRIVATE ${PROMETRY_CXX_FLAGS})

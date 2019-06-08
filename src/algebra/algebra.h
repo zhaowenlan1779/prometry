@@ -12,10 +12,13 @@
 namespace Algebra {
 
 using SymEngine::Expression;
-using SymEngine::Symbol;
+using Symbol = SymEngine::RCP<const SymEngine::Symbol>;
 
 class System {
 public:
+    explicit System();
+    ~System();
+
     /**
      * Adds an equation to the system (expr == 0), if not already known.
      */
@@ -32,10 +35,12 @@ public:
      * For example, if there are the following equations:
      * [ 3x+y = 2
      *   y+z  = 1 ]
-     * `TrySolve(x, {z})` would return (1+z)/3.
-     * `TrySolve(x, {y, z})` can return many expressions, like (1+z)/3, (2-y)/3, or even (y+2z)/3,
-     * as long as they satisfy the conditions.
-     * `TrySolve(x, {})` would return std::nullopt as x cannot be determined without arguments.
+     * `TrySolveAll(x, {z})` would return (1+z)/3.
+     * `TrySolveAll(x, {y, z})` can return many expressions, like (1+z)/3, (2-y)/3, or even
+     * (y+2z)/3, as long as they satisfy the conditions. NOTE, this function not necessarily return
+     * all representations.
+     * `TrySolveAll(x, {})` would return an empty vector as x cannot be determined without
+     * arguments.
      *
      * @param sym the Symbol to solve.
      * @param args the Symbols to use as arguments.
