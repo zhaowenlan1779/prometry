@@ -13,4 +13,4 @@ void RegisterAllConstructions(System& system) {
     system.RegisterConstruction<LineConnect>();
 }
 
-}
+} // namespace Core

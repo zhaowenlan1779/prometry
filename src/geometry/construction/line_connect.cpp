@@ -1,7 +1,6 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
-#include "geometry/conclusion/line_parallel.h"
 #include "geometry/construction/line_connect.h"
 #include "geometry/element/line.h"
 
@@ -9,9 +8,11 @@ namespace Core {
 
 LineConnect::~LineConnect() = default;
 
-void LineConnect::Execute(System& system, Point& p1, Point& p2) {
+void LineConnect::Execute(System& system, const std::shared_ptr<Point>& p1,
+                          const std::shared_ptr<Point>& p2) {
 
-    system.AddElement(new TwoPointsLine(p1, p2), "Connect " + p1.GetName() + p2.GetName());
+    // This creates the line when necessary
+    Line::Connect(system, p1, p2);
 }
 
 } // namespace Core

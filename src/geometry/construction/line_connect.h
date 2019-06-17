@@ -14,7 +14,8 @@ class LineConnect : public Wrapper<LineConnect, Point, Point> {
 public:
     ~LineConnect() override;
 
-    static void Execute(System& system, Point& p1, Point& p2);
+    static void Execute(System& system, const std::shared_ptr<Point>& p1,
+                        const std::shared_ptr<Point>& p2);
 };
 
-}
+} // namespace Core

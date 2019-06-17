@@ -2,9 +2,9 @@ add_library(geometry STATIC
     conclusion/conclusion_types.h
     conclusion/line_parallel.cpp
     conclusion/line_parallel.h
-    construction/all_constructions.h
     construction/line_connect.cpp
     construction/line_connect.h
+    construction/all_constructions.h
     element/element_types.h
     element/line.cpp
     element/line.h

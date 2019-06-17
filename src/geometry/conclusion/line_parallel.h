@@ -3,24 +3,26 @@
 
 #pragma once
 
+#include <memory>
 #include "core/conclusion.h"
 
 namespace Core {
 
 class Element;
+class Line;
 
 class LineParallel : public Conclusion {
 public:
-    explicit LineParallel(Element& l1, Element& l2);
+    explicit LineParallel(const std::shared_ptr<Line>& l1, const std::shared_ptr<Line>& l2);
     ~LineParallel() override;
     std::string ToString() const override;
-    std::vector<Element*> GetRelatedElements() const override;
+    std::vector<std::shared_ptr<Element>> GetRelatedElements() const override;
     ConclusionType GetType() const override;
     u64 GetHash() const override;
 
 private:
-    Element& l1;
-    Element& l2;
+    std::weak_ptr<Element> l1;
+    std::weak_ptr<Element> l2;
 };
 
 } // namespace Core

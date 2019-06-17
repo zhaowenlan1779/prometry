@@ -14,7 +14,8 @@ class LineParallelTransitivity : public Wrapper<LineParallelTransitivity, Line, 
 public:
     ~LineParallelTransitivity() override;
 
-    static void Execute(System& system, Line& l1, Line& l2, Line& l3);
+    static void Execute(System& system, std::shared_ptr<Line> l1, std::shared_ptr<Line> l2,
+                        std::shared_ptr<Line> l3);
 };
 
-}
+} // namespace Core

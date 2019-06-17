@@ -8,34 +8,26 @@
 namespace Core {
 
 class Point;
+class System;
 
 class Line : public Element {
 public:
     static ElementType Type;
 
+    explicit Line(const std::string& name);
+    ~Line() override;
+    std::string GetName() const override;
+    std::string GetFullname() const override;
     ElementType GetType() const override;
-};
-
-class TwoPointsLine : public Line {
-public:
-    explicit TwoPointsLine(const Point& p1, const Point& p2);
-    ~TwoPointsLine() override;
-    std::string GetName() const override;
-    std::string GetFullname() const override;
     u64 GetHash() const override;
 
-private:
-    const Point& p1;
-    const Point& p2;
-};
-
-class StandaloneLine : public Line {
-public:
-    explicit StandaloneLine(const std::string& name);
-    ~StandaloneLine() override;
-    std::string GetName() const override;
-    std::string GetFullname() const override;
-    u64 GetHash() const override;
+    /**
+     * Returns the line that connects the two points.
+     * If such a line already exists, returns that line. Otherwise create a new one with the two
+     * points added as children.
+     */
+    static std::shared_ptr<Line> Connect(System& system, const std::shared_ptr<Point>& p1,
+                                         const std::shared_ptr<Point>& p2);
 
 private:
     std::string name;

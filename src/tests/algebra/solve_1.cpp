@@ -6,10 +6,11 @@
 #include <symengine/visitor.h>
 #include "algebra/algebra.h"
 
-TEST_CASE("Solve1", "[algebra]") {
-    Algebra::System system;
+namespace Algebra {
 
-    using namespace SymEngine;
+TEST_CASE("Solve1", "[algebra]") {
+    System system;
+
     Expression x("x");
     Expression y("y");
     Expression z("z");
@@ -20,6 +21,10 @@ TEST_CASE("Solve1", "[algebra]") {
     system.AddEquation(y + z - 1);
 
 #define REQUIRE_CONTAINS(a, b) REQUIRE(std::find(a.begin(), a.end(), expand((b))) != a.end())
+
+    using SymEngine::free_symbols;
+    using SymEngine::rcp_static_cast;
+    using SymEngine::symbol;
 
     { // Testset 1: x (y)
         auto solns = system.TrySolveAll(symbol("x"), {symbol("y")});
@@ -40,7 +45,7 @@ TEST_CASE("Solve1", "[algebra]") {
 
         for (const auto& soln : solns) {
             for (const auto& symbol : free_symbols(soln)) {
-                Algebra::Symbol symbol_ptr = rcp_static_cast<const Symbol>(symbol);
+                Algebra::Symbol symbol_ptr = rcp_static_cast<const SymEngine::Symbol>(symbol);
                 REQUIRE((symbol_ptr->get_name() == "y" || symbol_ptr->get_name() == "z"));
             }
         }
@@ -54,3 +59,4 @@ TEST_CASE("Solve1", "[algebra]") {
 
 #undef REQUIRE_CONTAINS
 }
+} // namespace Algebra

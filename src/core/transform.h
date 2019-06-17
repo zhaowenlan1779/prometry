@@ -41,9 +41,9 @@ struct WrapPass;
 template <typename C, typename T, typename... Ts>
 struct WrapPass<C, T, Ts...> {
     template <typename... Us>
-    static void Call(System& system, Us&... u) {
+    static void Call(System& system, std::shared_ptr<Us>... u) {
         for (auto item : system.GetElements(T::Type)) {
-            WrapPass<C, Ts...>::Call(system, u..., (*static_cast<T*>(item.get())));
+            WrapPass<C, Ts...>::Call(system, u..., std::dynamic_pointer_cast<T>(item));
         }
     }
 };
@@ -51,8 +51,8 @@ struct WrapPass<C, T, Ts...> {
 template <typename C /* empty for T, Ts... */>
 struct WrapPass<C> {
     template <typename... Us>
-    static void Call(System& system, Us&... u) {
-        std::unordered_set<u64> S{{u.GetHash()...}};
+    static void Call(System& system, std::shared_ptr<Us>... u) {
+        std::unordered_set<u64> S{{u->GetHash()...}};
         if (S.size() == sizeof...(u)) {
             C::Execute(system, u...);
         }

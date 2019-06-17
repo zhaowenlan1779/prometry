@@ -9,19 +9,22 @@
 
 namespace Core {
 
-LineParallel::LineParallel(Element& l1_, Element& l2_) : l1(l1_), l2(l2_) {
-    ASSERT(l1.GetType() == Elements::Line);
-    ASSERT(l2.GetType() == Elements::Line);
-}
+LineParallel::LineParallel(const std::shared_ptr<Line>& l1_, const std::shared_ptr<Line>& l2_)
+    : l1(std::min(l1_, l2_)), l2(std::max(l1_, l2_)) {}
 
 LineParallel::~LineParallel() = default;
 
 std::string LineParallel::ToString() const {
-    return l1.GetName() + " // " + l2.GetName();
+    if (auto line1 = l1.lock()) {
+        if (auto line2 = l2.lock()) {
+            return line1->GetName() + " // " + line2->GetName();
+        }
+    }
+    UNREACHABLE_MSG("Unexpected expired weak_ptr!");
 }
 
-std::vector<Element*> LineParallel::GetRelatedElements() const {
-    return {&l1, &l2};
+std::vector<std::shared_ptr<Element>> LineParallel::GetRelatedElements() const {
+    return {l1.lock(), l2.lock()};
 }
 
 ConclusionType LineParallel::GetType() const {
@@ -29,7 +32,12 @@ ConclusionType LineParallel::GetType() const {
 }
 
 u64 LineParallel::GetHash() const {
-    return (l1.GetHash() + l2.GetHash()) * 97 + 2;
+    if (auto line1 = l1.lock()) {
+        if (auto line2 = l2.lock()) {
+            return (line1->GetHash() + line2->GetHash()) * 97 + 2;
+        }
+    }
+    UNREACHABLE_MSG("Unexpected expired weak_ptr!");
 }
 
 } // namespace Core

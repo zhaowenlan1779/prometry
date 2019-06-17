@@ -12,12 +12,9 @@ namespace Core {
 TEST_CASE("LineConnect", "[construction]") {
     System system;
     system.RegisterConstruction<LineConnect>();
-    Point* p1 = new Point("A");
-    Point* p2 = new Point("B");
-    Point* p3 = new Point("C");
-    system.AddElement(p1);
-    system.AddElement(p2);
-    system.AddElement(p3);
+    auto p1 = system.CreateElement<Point>("", "p1");
+    auto p2 = system.CreateElement<Point>("", "p2");
+    auto p3 = system.CreateElement<Point>("", "p3");
 
     system.Execute([](System&) { return nullptr; });
 

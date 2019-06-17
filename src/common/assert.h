@@ -35,7 +35,7 @@ __declspec(noinline, noreturn)
 #define ASSERT_MSG(_a_, ...)                                                                       \
     do                                                                                             \
         if (!(_a_)) {                                                                              \
-            assert_noinline_call([&] { std::cerr << "Assertion Failed!\n" __VA_ARGS__ "\n"); });   \
+            assert_noinline_call([&] { std::cerr << "Assertion Failed!\n" __VA_ARGS__ "\n"; });    \
         }                                                                                          \
     while (0)
 

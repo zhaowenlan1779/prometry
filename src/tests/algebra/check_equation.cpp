@@ -9,7 +9,6 @@ namespace Algebra {
 TEST_CASE("CheckEquation", "[algebra]") {
     System system;
 
-    using namespace SymEngine;
     Expression x("x");
     Expression y("y");
     Expression z("z");

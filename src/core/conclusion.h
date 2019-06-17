@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 #include "common/common_types.h"
@@ -36,7 +37,7 @@ public:
      * Get the elements related to this conclusion.
      * When adding this conclusion to the system, the elements related will be updated as well.
      */
-    virtual std::vector<Element*> GetRelatedElements() const = 0;
+    virtual std::vector<std::shared_ptr<Element>> GetRelatedElements() const = 0;
 
     virtual ConclusionType GetType() const = 0;
     virtual u64 GetHash() const = 0;
@@ -46,8 +47,9 @@ public:
     bool operator!=(const Conclusion& other) const;
 
 protected:
-    std::vector<Conclusion*> source_conclusions; ///< The conclusions this conclusion is based on.
-    std::string transform_name;                  ///< The transform that created this conclusion.
+    std::vector<std::weak_ptr<Conclusion>>
+        source_conclusions;     ///< The conclusions this conclusion is based on.
+    std::string transform_name; ///< The transform that created this conclusion.
 
     friend class System;
 };

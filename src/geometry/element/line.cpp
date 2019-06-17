@@ -1,6 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "core/system.h"
 #include "geometry/element/element_types.h"
 #include "geometry/element/line.h"
 #include "geometry/element/point.h"
@@ -13,36 +14,34 @@ ElementType Line::GetType() const {
     return Line::Type;
 }
 
-TwoPointsLine::TwoPointsLine(const Point& p1_, const Point& p2_) : p1(p1_), p2(p2_) {}
+Line::Line(const std::string& name_) : name(name_) {}
 
-TwoPointsLine::~TwoPointsLine() = default;
+Line::~Line() = default;
 
-std::string TwoPointsLine::GetName() const {
-    return p1.GetName() + p2.GetName();
-}
-
-std::string TwoPointsLine::GetFullname() const {
-    return "Line " + GetName();
-}
-
-u64 TwoPointsLine::GetHash() const {
-    return (p1.GetHash() + p2.GetHash()) * 97 + 1;
-}
-
-StandaloneLine::StandaloneLine(const std::string& name_) : name(name_) {}
-
-StandaloneLine::~StandaloneLine() = default;
-
-std::string StandaloneLine::GetName() const {
+std::string Line::GetName() const {
     return name;
 }
 
-std::string StandaloneLine::GetFullname() const {
+std::string Line::GetFullname() const {
     return "SLine " + name;
 }
 
-u64 StandaloneLine::GetHash() const {
+u64 Line::GetHash() const {
     return std::hash<std::string>()(GetFullname());
+}
+
+/*static*/ std::shared_ptr<Line> Line::Connect(System& system, const std::shared_ptr<Point>& p1,
+                                               const std::shared_ptr<Point>& p2) {
+    auto lines = Core::CommonParent<Line>(p1, p2);
+    if (lines.empty()) {
+        auto line = system.CreateElement<Line>("Connect " + p1->GetName() + p2->GetName(),
+                                               p1->GetName() + p2->GetName());
+        p1->AddParent(line);
+        p2->AddParent(line);
+        return line;
+    } else {
+        return std::dynamic_pointer_cast<Line>(*lines.begin());
+    }
 }
 
 } // namespace Core

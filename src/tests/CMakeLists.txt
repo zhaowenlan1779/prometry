@@ -3,6 +3,8 @@ add_executable(tests
     algebra/check_equation.cpp
     algebra/solve_1.cpp
     construction/line_connect.cpp
+    core/element_common_parent.cpp
+    core/element_intersection.cpp
     integrated/proof_output.cpp
     transform/line_parallel_transitivity.cpp
     tests.cpp
