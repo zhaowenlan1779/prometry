@@ -27,6 +27,13 @@ TEST_CASE("CheckSign", "[algebra]") {
     REQUIRE(CheckSign(-SymEngine::Expression(SymEngine::sqrt(x * x + y))) == -1);
     REQUIRE(CheckSign(SymEngine::Expression(SymEngine::sqrt(x * x + y)) -
                       SymEngine::Expression(SymEngine::sqrt(x * x - y))) == 0);
+    REQUIRE(CheckSign((x * y) / (y + z)) == 1);
+    REQUIRE(CheckSign(x + y / z) == 1);
+    REQUIRE(CheckSign(x - y / z) == 0);
+    REQUIRE(CheckSign((-x * y) / (z + x)) == -1);
+    REQUIRE(CheckSign(-x - y / z) == -1);
+    REQUIRE(CheckSign(SymEngine::sqrt(x * x + y) - y / z) == 0);
+    REQUIRE(CheckSign(SymEngine::sqrt(x * x + y) + y / z) == 1);
 }
 
 } // namespace Algebra

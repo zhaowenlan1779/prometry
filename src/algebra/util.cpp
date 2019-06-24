@@ -68,8 +68,17 @@ public:
 };
 
 s8 CheckSign(const SymEngine::RCP<const SymEngine::Basic>& expr) {
+    using namespace SymEngine;
+    auto expanded = expand(expr);
+
+    RCP<const Basic> num, den;
+    as_numer_denom(expanded, outArg(num), outArg(den));
+
     SignVisitor visitor;
-    return visitor.accept(*expr);
+    s8 numer_sign = visitor.accept(*num);
+    s8 denom_sign = visitor.accept(*den);
+
+    return numer_sign * denom_sign;
 }
 
 bool IsAcceptable(const SymEngine::Expression& expr) {
