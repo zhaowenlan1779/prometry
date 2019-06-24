@@ -2,6 +2,9 @@ add_executable(tests
     algebra/algebra_lib.cpp
     algebra/check_equation.cpp
     algebra/solve_1.cpp
+    algebra/solve_2.cpp
+    algebra/util_check_sign.cpp
+    algebra/util_simplify_equation.cpp
     construction/line_connect.cpp
     core/element_common_parent.cpp
     core/element_intersection.cpp

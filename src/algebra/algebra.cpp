@@ -1,8 +1,6 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
-#include "algebra/algebra.h"
-
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
@@ -10,6 +8,8 @@
 #include <symengine/sets.h>
 #include <symengine/solve.h>
 #include <symengine/visitor.h>
+#include "algebra/algebra.h"
+#include "algebra/util.h"
 #include "common/assert.h"
 
 // Necessary helpers to get std::unordered_map work
@@ -60,6 +60,7 @@ using ExpressionUsedSet = std::unordered_set<Expression>;
 struct System::Impl {
     std::vector<Expression> equations;
     std::unordered_map<std::pair<Expression, SymEngine::set_basic>, std::vector<Expression>> memory;
+    // std::unordered_map<Symbol, Expression> symbol_subst_map;
 
     /**
      * Tries to solve all possible representations of the expression expr, with the
@@ -70,36 +71,18 @@ struct System::Impl {
 };
 
 /**
- * Checks whether the sign of the expression can be confirmed, assuming that all symbols are
- * positive.
- * @return 0 if unknown, 1 if positive, -1 if negative.
- */
-inline s8 CheckSign(const Expression& expr) {
-    // TODO: Implement
-    return 0;
-}
-
-/**
- * Checks whether an expression is acceptable, i.e. whether it CAN be positive.
- * For example, -y-z and -x-2 are not acceptable, while x-2 and x+y-1 are.
- */
-inline bool IsAcceptable(const Expression& expr) {
-    // TODO: Implement
-    return true;
-}
-
-/**
  * Solves a single equation with regard to a single symbol, there are no limits
  * about what arguments to use to represent the symbol in question.
  *
  * Eg. 3x + 2y == 0 can solve to x == -2/3y (wrt x) and y == -3/2x (wrt y).
  */
 std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& symbol) {
-    auto soln = SymEngine::solve(equation, symbol);
+    auto soln = SymEngine::solve(SimplifyEquation(equation), symbol);
 
     if (!SymEngine::is_a<SymEngine::FiniteSet>(*soln)) {
         // Something might have gone wrong
         // TODO: log this (and introduce a logging system at all)
+        UNREACHABLE_MSG("Solution is not a finite set");
         return {};
     } else {
         const auto& container =
@@ -160,6 +143,22 @@ std::vector<Expression> System::Impl::TrySolveAll(const Expression& expr_, Expre
                     auto new_expr = SymEngine::expand(expr.subs({{iter, soln2}}));
                     const auto& solns3 = TrySolveAll(new_expr, used, args);
                     ans.insert(ans.end(), solns3.begin(), solns3.end());
+                }
+
+                // Try to solve it with the symbol and then simplify it.
+                new_args.emplace(iter);
+                solns2 = TrySolveAll(soln, used, new_args);
+
+                for (const auto& soln2 : solns2) {
+                    auto simplified = soln2 - symbol;
+                    if (SymEngine::has_symbol(simplified, *symbol)) {
+                        auto real_solns2 = SolveSingle(simplified, symbol);
+                        for (const auto& real_soln2 : real_solns2) {
+                            auto new_expr = SymEngine::expand(expr.subs({{iter, real_soln2}}));
+                            const auto& solns3 = TrySolveAll(new_expr, used, args);
+                            ans.insert(ans.end(), solns3.begin(), solns3.end());
+                        }
+                    }
                 }
             }
             used.erase(equation);

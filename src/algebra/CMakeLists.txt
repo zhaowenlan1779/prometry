@@ -1,6 +1,8 @@
 add_library(algebra STATIC
     algebra.cpp
     algebra.h
+    util.cpp
+    util.h
 )
 
 # Note: linking gmp in is required somehow.
