@@ -4,18 +4,16 @@
 #pragma once
 
 #include "core/transform.h"
-#include "geometry/element/line.h"
 
 namespace Core {
 
 class System;
 
-class LineParallelTransitivity : public Wrapper<LineParallelTransitivity, Line, Line, Line> {
+class LineParallelTransitivity : public Transform {
 public:
     ~LineParallelTransitivity() override;
 
-    static void Execute(System& system, std::shared_ptr<Line> l1, std::shared_ptr<Line> l2,
-                        std::shared_ptr<Line> l3);
+    void Execute(System& system);
 };
 
 } // namespace Core

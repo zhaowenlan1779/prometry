@@ -48,6 +48,14 @@ public:
      */
     std::vector<Expression> TrySolveAll(const Symbol& sym, const std::vector<Symbol>& args);
 
+    /**
+     * Checks whether new equations have been added since the last query.
+     * This clears the new_equations state.
+     * 
+     * @return whether new equations have been added.
+     */
+    bool HasNewEquations();
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl;

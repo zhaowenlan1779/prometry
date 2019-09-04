@@ -23,7 +23,7 @@ std::string Line::GetName() const {
 }
 
 std::string Line::GetFullname() const {
-    return "SLine " + name;
+    return "Line " + name;
 }
 
 u64 Line::GetHash() const {

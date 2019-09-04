@@ -8,8 +8,12 @@ add_library(geometry STATIC
     element/element_types.h
     element/line.cpp
     element/line.h
+    element/line_segment.cpp
+    element/line_segment.h
     element/point.cpp
     element/point.h
+    transform/algebra/line_segment_concat.cpp
+    transform/algebra/line_segment_concat.h
     transform/all_transforms.h
     transform/line_parallel_transitivity.cpp
     transform/line_parallel_transitivity.h

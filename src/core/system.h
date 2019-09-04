@@ -46,6 +46,11 @@ public:
     std::vector<std::shared_ptr<Element>> GetElements(ElementType type);
 
     /**
+     * Get conclusions of a certain type in the System.
+     */
+    std::vector<std::shared_ptr<Conclusion>> GetConclusions(ConclusionType type);
+
+    /**
      * Creates and adds an element to the system, if the conclusion is not already present.
      */
     template <typename T, typename... Args>

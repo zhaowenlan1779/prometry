@@ -18,7 +18,6 @@ TEST_CASE("Solve2", "[algebra]") {
     // x*x + y*y = 25
     system.AddEquation(x + y - 7);
     system.AddEquation(x * x + y * y - 25);
-    std::cout << "Equations added" << std::endl;
 
 #define REQUIRE_CONTAINS(a, b) REQUIRE(std::find(a.begin(), a.end(), expand((b))) != a.end())
 

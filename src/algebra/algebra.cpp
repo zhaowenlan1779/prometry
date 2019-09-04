@@ -14,10 +14,13 @@
 
 // Necessary helpers to get std::unordered_map work
 
+// The SymEngine::Basic hasher caches hashes
+static std::hash<SymEngine::Basic> g_basic_hasher;
+
 template <>
 struct std::hash<Algebra::Expression> {
     std::size_t operator()(const Algebra::Expression& expr) const {
-        return std::hash<SymEngine::Basic>()(*expr.get_basic());
+        return g_basic_hasher(*expr.get_basic());
     }
 };
 
@@ -25,9 +28,9 @@ template <>
 struct std::hash<std::pair<Algebra::Expression, SymEngine::set_basic>> {
     std::size_t operator()(const std::pair<Algebra::Expression, SymEngine::set_basic>& obj) const {
         size_t seed = 0;
-        SymEngine::hash_combine(seed, obj.first.get_basic()->hash());
+        SymEngine::hash_combine(seed, g_basic_hasher(obj.first));
         for (const auto& iter : obj.second) {
-            SymEngine::hash_combine(seed, iter->hash());
+            SymEngine::hash_combine(seed, g_basic_hasher(*iter));
         }
         return seed;
     }
@@ -61,6 +64,7 @@ struct System::Impl {
     std::vector<Expression> equations;
     std::unordered_map<std::pair<Expression, SymEngine::set_basic>, std::vector<Expression>> memory;
     // std::unordered_map<Symbol, Expression> symbol_subst_map;
+    bool new_equations = false;
 
     /**
      * Tries to solve all possible representations of the expression expr, with the
@@ -165,7 +169,7 @@ std::vector<Expression> System::Impl::TrySolveAll(const Expression& expr_, Expre
         }
     }
 
-    if (has_unknown_value) { // Cannot be solved
+    if (has_unknown_value) { // Isn't outright solved
         // Remove repeated entries
         std::sort(ans.begin(), ans.end(), [](const Expression& lhs, const Expression& rhs) {
             return std::hash<Expression>()(lhs) < std::hash<Expression>()(rhs);
@@ -189,14 +193,23 @@ System::~System() = default;
 void System::AddEquation(const Expression& expr) {
     if (CheckEquation(expr))
         return;
+
     impl->equations.emplace_back(expr);
     impl->memory.clear();
+    impl->new_equations = true;
 }
 
 bool System::CheckEquation(const Expression& expr) {
     ExpressionUsedSet used;
     auto soln = impl->TrySolveAll(expr, used, {});
-    return soln.size() == 1 && soln[0] == 0;
+
+    // TODO: Why isn't everything EXACT zero?
+    return soln.size() > 0 &&
+           std::all_of(soln.begin(), soln.end(), [](const SymEngine::Expression& expr) {
+               return SymEngine::is_a_Number(*expr.get_basic()) &&
+                      SymEngine::rcp_static_cast<const SymEngine::Number>(expr.get_basic())
+                          ->is_zero();
+           });
 }
 
 std::vector<Expression> System::TrySolveAll(const Symbol& sym, const std::vector<Symbol>& args) {
@@ -207,6 +220,13 @@ std::vector<Expression> System::TrySolveAll(const Symbol& sym, const std::vector
 
     ExpressionUsedSet used;
     return impl->TrySolveAll(SymEngine::Expression(sym), used, converted_args);
+}
+
+bool System::HasNewEquations() {
+    bool ret = impl->new_equations;
+    impl->new_equations = false;
+
+    return ret;
 }
 
 } // namespace Algebra

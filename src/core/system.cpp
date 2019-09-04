@@ -28,6 +28,14 @@ std::vector<std::shared_ptr<Element>> System::GetElements(ElementType type) {
     }
 }
 
+std::vector<std::shared_ptr<Conclusion>> System::GetConclusions(ConclusionType type) {
+    if (conclusions.count(type)) {
+        return conclusions.at(type);
+    } else {
+        return {};
+    }
+}
+
 std::shared_ptr<Conclusion> System::GetConclusion(const Conclusion& conclusion) const {
     auto type = conclusion.GetType();
     if (!conclusions.count(type))
@@ -53,7 +61,7 @@ std::string System::Execute(
         for (auto& iter : transforms) {
             iter->Execute(*this);
         }
-        if (!new_conclusion) {
+        if (!new_conclusion && !algebra->HasNewEquations()) {
             new_element = false;
             for (auto& iter : constructions) {
                 iter->Execute(*this);

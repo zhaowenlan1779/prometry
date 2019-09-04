@@ -10,6 +10,7 @@ add_executable(tests
     core/element_intersection.cpp
     integrated/proof_output.cpp
     transform/line_parallel_transitivity.cpp
+    transform/line_segment_concat.cpp
     tests.cpp
 )
 
