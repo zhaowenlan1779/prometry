@@ -2,6 +2,8 @@ add_library(geometry STATIC
     conclusion/conclusion_types.h
     conclusion/line_parallel.cpp
     conclusion/line_parallel.h
+    conclusion/line_prependicular.cpp
+    conclusion/line_prependicular.h
     construction/line_connect.cpp
     construction/line_connect.h
     construction/all_constructions.h
@@ -17,6 +19,8 @@ add_library(geometry STATIC
     transform/all_transforms.h
     transform/line_parallel_transitivity.cpp
     transform/line_parallel_transitivity.h
+    transform/pythagorean.cpp
+    transform/pythagorean.h
 )
 
 target_link_libraries(geometry PRIVATE common core)

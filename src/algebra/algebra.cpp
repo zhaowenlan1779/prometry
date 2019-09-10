@@ -86,7 +86,8 @@ std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& sy
     if (!SymEngine::is_a<SymEngine::FiniteSet>(*soln)) {
         // Something might have gone wrong
         // TODO: log this (and introduce a logging system at all)
-        UNREACHABLE_MSG("Solution is not a finite set");
+        UNREACHABLE_MSG("Solution is not a finite set {" + equation.get_basic()->__str__() + ", " +
+                        symbol->__str__() + "}");
         return {};
     } else {
         const auto& container =

@@ -12,25 +12,28 @@ LineParallelTransitivity::~LineParallelTransitivity() = default;
 
 void LineParallelTransitivity::Execute(System& system) {
 
+    std::vector<std::tuple<std::shared_ptr<Conclusion>, std::shared_ptr<Conclusion>,
+                           std::shared_ptr<Line>, std::shared_ptr<Line>>>
+        conclusions_to_create;
+
     for (const auto& conclusion : system.GetConclusions(Conclusions::LineParallel)) {
         const auto& elements = conclusion->GetRelatedElements();
 
-#define CHECK(i)                                                                                   \
-    for (const auto& conclusion2 : elements[1 - i]->GetConclusions(Conclusions::LineParallel)) {   \
-        const auto& elements2 = conclusion2->GetRelatedElements();                                 \
-        const auto& other_element =                                                                \
-            (elements2[0] == elements[1 - i] ? elements2[1] : elements2[0]);                       \
-        if (other_element != elements[i]) {                                                        \
-            system.CreateConclusion<LineParallel>("transitivity of line parallel",                 \
-                                                  {conclusion, conclusion2},                       \
-                                                  std::dynamic_pointer_cast<Line>(elements[0]),    \
-                                                  std::dynamic_pointer_cast<Line>(other_element)); \
-        }                                                                                          \
-    }
+        for (const auto i : {0, 1}) {
+            for (const auto& conclusion2 : elements[i]->GetConclusions(Conclusions::LineParallel)) {
+                if (conclusion2 == conclusion) {
+                    continue;
+                }
 
-        CHECK(0);
-        CHECK(1);
-#undef CHECK
+                const auto& elements2 = conclusion2->GetRelatedElements();
+                const auto& other_element =
+                    (elements2[0] == elements[i] ? elements2[1] : elements2[0]);
+                system.CreateConclusion<LineParallel>(
+                    "transitivity of line parallel", {conclusion, conclusion2},
+                    std::dynamic_pointer_cast<Line>(elements[1 - i]),
+                    std::dynamic_pointer_cast<Line>(other_element));
+            }
+        }
     }
 }
 

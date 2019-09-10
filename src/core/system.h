@@ -12,7 +12,7 @@
 
 namespace Algebra {
 class System;
-};
+}
 
 namespace Core {
 

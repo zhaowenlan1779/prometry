@@ -33,16 +33,6 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     message(SEND_ERROR "In-source builds are not allowed.")
 endif()
 
-if (MSVC)
-    if (PROMETRY_WARNINGS_AS_ERRORS)
-        set(PROMETRY_CXX_FLAGS "/WX")
-    endif()
-else()
-    if (PROMETRY_WARNINGS_AS_ERRORS)
-        set(PROMETRY_CXX_FLAGS "-Werror")
-    endif()
-endif()
-
 # System imported libraries
 # ======================
 find_package(SymEngine REQUIRED)
