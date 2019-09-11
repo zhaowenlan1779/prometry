@@ -10,6 +10,8 @@ add_library(geometry STATIC
     element/element_types.h
     element/line.cpp
     element/line.h
+    element/line_angle.cpp
+    element/line_angle.h
     element/line_segment.cpp
     element/line_segment.h
     element/point.cpp
@@ -19,6 +21,8 @@ add_library(geometry STATIC
     transform/all_transforms.h
     transform/line_parallel_transitivity.cpp
     transform/line_parallel_transitivity.h
+    transform/parallel_to_angles.cpp
+    transform/parallel_to_angles.h
     transform/pythagorean.cpp
     transform/pythagorean.h
 )

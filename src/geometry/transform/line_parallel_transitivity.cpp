@@ -11,11 +11,6 @@ namespace Core {
 LineParallelTransitivity::~LineParallelTransitivity() = default;
 
 void LineParallelTransitivity::Execute(System& system) {
-
-    std::vector<std::tuple<std::shared_ptr<Conclusion>, std::shared_ptr<Conclusion>,
-                           std::shared_ptr<Line>, std::shared_ptr<Line>>>
-        conclusions_to_create;
-
     for (const auto& conclusion : system.GetConclusions(Conclusions::LineParallel)) {
         const auto& elements = conclusion->GetRelatedElements();
 

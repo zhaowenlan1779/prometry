@@ -11,8 +11,11 @@ std::array<Algebra::Expression, 2> LineAngle(const std::shared_ptr<Line>& l1,
                                              const std::shared_ptr<Line>& l2) {
     ASSERT_MSG(!Intersection<Point>(l1, l2).empty(), "The two lines do not intersect");
 
-    const auto angle =
-        Algebra::Expression(SymEngine::symbol(l1->GetName() + "_" + l2->GetName() + "_angle"));
+    const auto& actual_l1 = std::min(l1, l2);
+    const auto& actual_l2 = std::max(l1, l2);
+
+    const auto angle = Algebra::Expression(
+        SymEngine::symbol(actual_l1->GetName() + "_" + actual_l2->GetName() + "_angle"));
     return {angle, SymEngine::pi - angle};
 }
 

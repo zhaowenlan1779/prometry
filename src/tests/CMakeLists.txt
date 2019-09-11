@@ -11,6 +11,7 @@ add_executable(tests
     integrated/proof_output.cpp
     transform/line_parallel_transitivity.cpp
     transform/line_segment_concat.cpp
+    transform/parallel_to_angles.cpp
     transform/pythagorean.cpp
     tests.cpp
 )
