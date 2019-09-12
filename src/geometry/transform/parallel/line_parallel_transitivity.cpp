@@ -3,8 +3,8 @@
 
 #include "geometry/conclusion/conclusion_types.h"
 #include "geometry/conclusion/line_parallel.h"
-#include "geometry/element/line.h"
-#include "geometry/transform/line_parallel_transitivity.h"
+#include "geometry/element/line/line.h"
+#include "geometry/transform/parallel/line_parallel_transitivity.h"
 
 namespace Core {
 

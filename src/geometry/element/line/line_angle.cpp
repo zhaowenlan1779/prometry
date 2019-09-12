@@ -2,7 +2,7 @@
 // All rights reserved.
 
 #include "common/assert.h"
-#include "geometry/element/line_angle.h"
+#include "geometry/element/line/line_angle.h"
 #include "geometry/element/point.h"
 
 namespace Core {

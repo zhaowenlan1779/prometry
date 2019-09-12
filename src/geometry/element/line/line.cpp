@@ -3,7 +3,7 @@
 
 #include "core/system.h"
 #include "geometry/element/element_types.h"
-#include "geometry/element/line.h"
+#include "geometry/element/line/line.h"
 #include "geometry/element/point.h"
 
 namespace Core {

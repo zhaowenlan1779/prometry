@@ -4,11 +4,11 @@
 #include <catch2/catch.hpp>
 #include "core/system.h"
 #include "geometry/conclusion/line_prependicular.h"
-#include "geometry/element/line.h"
-#include "geometry/element/line_segment.h"
+#include "geometry/element/line/line.h"
+#include "geometry/element/line/line_segment.h"
 #include "geometry/element/point.h"
 #include "geometry/transform/algebra/line_segment_concat.h"
-#include "geometry/transform/pythagorean.h"
+#include "geometry/transform/pythagorean/pythagorean.h"
 
 namespace Core {
 

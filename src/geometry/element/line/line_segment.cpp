@@ -1,7 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
-#include "geometry/element/line_segment.h"
+#include "geometry/element/line/line_segment.h"
 
 namespace Core {
 

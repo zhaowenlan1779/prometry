@@ -1,6 +1,10 @@
 # Enable modules to include each other's files
 include_directories(.)
 
+# CMake seems to only define _DEBUG on Windows
+set_property(DIRECTORY APPEND PROPERTY
+    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:_DEBUG> $<$<NOT:$<CONFIG:Debug>>:NDEBUG>)
+
 # Set compilation flags
 if (MSVC)
     set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE STRING "" FORCE)
@@ -97,10 +101,6 @@ else()
             add_definitions(-DQT_STATICPLUGIN)
             add_compile_options("-static")
         endif()
-    endif()
-
-    if (NOT DEBUG)
-       add_compile_options("-flto")
     endif()
 endif()
 

@@ -5,7 +5,7 @@
 
 #include <utility>
 #include "algebra/algebra.h"
-#include "geometry/element/line.h"
+#include "geometry/element/line/line.h"
 
 namespace Core {
 

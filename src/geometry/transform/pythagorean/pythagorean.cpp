@@ -4,8 +4,8 @@
 #include "common/assert.h"
 #include "geometry/conclusion/conclusion_types.h"
 #include "geometry/element/element_types.h"
-#include "geometry/element/line_segment.h"
-#include "geometry/transform/pythagorean.h"
+#include "geometry/element/line/line_segment.h"
+#include "geometry/transform/pythagorean/pythagorean.h"
 
 namespace Core {
 

@@ -4,7 +4,7 @@
 #include <catch2/catch.hpp>
 #include "core/system.h"
 #include "geometry/conclusion/line_parallel.h"
-#include "geometry/element/line.h"
+#include "geometry/element/line/line.h"
 #include "geometry/transform/all_transforms.h"
 
 #include <iostream>

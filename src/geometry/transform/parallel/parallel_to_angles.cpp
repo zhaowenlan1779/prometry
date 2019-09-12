@@ -4,10 +4,10 @@
 #include "geometry/conclusion/conclusion_types.h"
 #include "geometry/conclusion/line_parallel.h"
 #include "geometry/element/element_types.h"
-#include "geometry/element/line.h"
-#include "geometry/element/line_angle.h"
+#include "geometry/element/line/line.h"
+#include "geometry/element/line/line_angle.h"
 #include "geometry/element/point.h"
-#include "geometry/transform/parallel_to_angles.h"
+#include "geometry/transform/parallel/parallel_to_angles.h"
 
 namespace Core {
 

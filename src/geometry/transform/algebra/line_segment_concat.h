@@ -4,7 +4,7 @@
 #pragma once
 
 #include "core/transform.h"
-#include "geometry/element/line.h"
+#include "geometry/element/line/line.h"
 
 namespace Core {
 

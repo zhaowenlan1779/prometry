@@ -5,7 +5,7 @@
 #include "geometry/conclusion/conclusion_types.h"
 #include "geometry/conclusion/line_prependicular.h"
 #include "geometry/element/element_types.h"
-#include "geometry/element/line.h"
+#include "geometry/element/line/line.h"
 
 namespace Core {
 

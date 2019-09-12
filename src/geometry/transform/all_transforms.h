@@ -5,10 +5,10 @@
 
 #include "core/system.h"
 #include "geometry/transform/algebra/line_segment_concat.h"
-#include "geometry/transform/angles_to_parallel.h"
-#include "geometry/transform/line_parallel_transitivity.h"
-#include "geometry/transform/parallel_to_angles.h"
-#include "geometry/transform/pythagorean.h"
+#include "geometry/transform/parallel/angles_to_parallel.h"
+#include "geometry/transform/parallel/line_parallel_transitivity.h"
+#include "geometry/transform/parallel/parallel_to_angles.h"
+#include "geometry/transform/pythagorean/pythagorean.h"
 
 namespace Core {
 

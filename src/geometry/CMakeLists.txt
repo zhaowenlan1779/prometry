@@ -8,25 +8,25 @@ add_library(geometry STATIC
     construction/line_connect.h
     construction/all_constructions.h
     element/element_types.h
-    element/line.cpp
-    element/line.h
-    element/line_angle.cpp
-    element/line_angle.h
-    element/line_segment.cpp
-    element/line_segment.h
+    element/line/line.cpp
+    element/line/line.h
+    element/line/line_angle.cpp
+    element/line/line_angle.h
+    element/line/line_segment.cpp
+    element/line/line_segment.h
     element/point.cpp
     element/point.h
     transform/algebra/line_segment_concat.cpp
     transform/algebra/line_segment_concat.h
     transform/all_transforms.h
-    transform/angles_to_parallel.cpp
-    transform/angles_to_parallel.h
-    transform/line_parallel_transitivity.cpp
-    transform/line_parallel_transitivity.h
-    transform/parallel_to_angles.cpp
-    transform/parallel_to_angles.h
-    transform/pythagorean.cpp
-    transform/pythagorean.h
+    transform/parallel/angles_to_parallel.cpp
+    transform/parallel/angles_to_parallel.h
+    transform/parallel/line_parallel_transitivity.cpp
+    transform/parallel/line_parallel_transitivity.h
+    transform/parallel/parallel_to_angles.cpp
+    transform/parallel/parallel_to_angles.h
+    transform/pythagorean/pythagorean.cpp
+    transform/pythagorean/pythagorean.h
 )
 
 target_link_libraries(geometry PRIVATE common core)

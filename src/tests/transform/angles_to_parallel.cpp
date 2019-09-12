@@ -4,10 +4,10 @@
 #include <catch2/catch.hpp>
 #include "core/system.h"
 #include "geometry/conclusion/line_parallel.h"
-#include "geometry/element/line.h"
-#include "geometry/element/line_angle.h"
+#include "geometry/element/line/line.h"
+#include "geometry/element/line/line_angle.h"
 #include "geometry/element/point.h"
-#include "geometry/transform/angles_to_parallel.h"
+#include "geometry/transform/parallel/angles_to_parallel.h"
 
 namespace Core {
 

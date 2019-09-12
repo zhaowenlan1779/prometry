@@ -3,7 +3,7 @@
 
 #include "core/system.h"
 #include "geometry/element/element_types.h"
-#include "geometry/element/line_segment.h"
+#include "geometry/element/line/line_segment.h"
 #include "geometry/transform/algebra/line_segment_concat.h"
 
 namespace Core {
