@@ -11,55 +11,49 @@
 
 namespace Core {
 
-#define INITIALIZE()                                                                               \
-    System system;                                                                                 \
-    system.RegisterTransform<AnglesToParallel>();                                                  \
-    auto l1 = system.CreateElement<Line>("", "l1");                                                \
-    auto l2 = system.CreateElement<Line>("", "l2");                                                \
-    auto l = system.CreateElement<Line>("", "l");                                                  \
-    auto p1 = system.CreateElement<Point>("", "p1");                                               \
-    auto p2 = system.CreateElement<Point>("", "p2");                                               \
-                                                                                                   \
-    p1->AddParent(l1);                                                                             \
-    p1->AddParent(l);                                                                              \
-    p2->AddParent(l2);                                                                             \
+TEST_CASE("AnglesToParallel", "[transform]") {
+    System system;
+    system.RegisterTransform<AnglesToParallel>();
+    auto l1 = system.CreateElement<Line>("", "l1");
+    auto l2 = system.CreateElement<Line>("", "l2");
+    auto l = system.CreateElement<Line>("", "l");
+    auto p1 = system.CreateElement<Point>("", "p1");
+    auto p2 = system.CreateElement<Point>("", "p2");
+
+    p1->AddParent(l1);
+    p1->AddParent(l);
+    p2->AddParent(l2);
     p2->AddParent(l);
 
-TEST_CASE("AnglesToParallel_1", "[transform]") {
-    INITIALIZE();
+    SECTION("corresponding angles") {
+        system.Algebra().AddEquation(
+            LineAngle(l, LineDirection::Normal, l1, LineDirection::Normal) -
+            LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
 
-    system.Algebra().AddEquation(LineAngle(l, LineDirection::Normal, l1, LineDirection::Normal) -
-                                 LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
+        system.Execute([](System&) { return nullptr; });
 
-    system.Execute([](System&) { return nullptr; });
+        REQUIRE(system.GetConclusion(LineParallel(l1, l2)));
+    }
 
-    REQUIRE(system.GetConclusion(LineParallel(l1, l2)));
+    SECTION("alternate interior angles") {
+        system.Algebra().AddEquation(
+            LineAngle(l, LineDirection::Reversed, l1, LineDirection::Reversed) -
+            LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
+
+        system.Execute([](System&) { return nullptr; });
+
+        REQUIRE(system.GetConclusion(LineParallel(l1, l2)));
+    }
+
+    SECTION("interior angles on the same side") {
+        system.Algebra().AddEquation(
+            LineAngle(l, LineDirection::Reversed, l1, LineDirection::Normal) +
+            LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal) - SymEngine::pi);
+
+        system.Execute([](System&) { return nullptr; });
+
+        REQUIRE(system.GetConclusion(LineParallel(l1, l2)));
+    }
 }
-
-TEST_CASE("AnglesToParallel_2", "[transform]") {
-    INITIALIZE();
-
-    system.Algebra().AddEquation(
-        LineAngle(l, LineDirection::Reversed, l1, LineDirection::Reversed) -
-        LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
-
-    system.Execute([](System&) { return nullptr; });
-
-    REQUIRE(system.GetConclusion(LineParallel(l1, l2)));
-}
-
-TEST_CASE("AnglesToParallel_3", "[transform]") {
-    INITIALIZE();
-
-    system.Algebra().AddEquation(LineAngle(l, LineDirection::Reversed, l1, LineDirection::Normal) +
-                                 LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal) -
-                                 SymEngine::pi);
-
-    system.Execute([](System&) { return nullptr; });
-
-    REQUIRE(system.GetConclusion(LineParallel(l1, l2)));
-}
-
-#undef INITIALIZE
 
 } // namespace Core
