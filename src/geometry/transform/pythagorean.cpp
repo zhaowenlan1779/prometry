@@ -9,6 +9,8 @@
 
 namespace Core {
 
+Pythagorean::Pythagorean() = default;
+
 Pythagorean::~Pythagorean() = default;
 
 void Pythagorean::Execute(System& system) {

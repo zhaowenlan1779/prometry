@@ -11,6 +11,7 @@ class System;
 
 class ParallelToAngles : public Transform {
 public:
+    explicit ParallelToAngles();
     ~ParallelToAngles() override;
 
     void Execute(System& system);

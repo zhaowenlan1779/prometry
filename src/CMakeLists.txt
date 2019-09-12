@@ -99,9 +99,9 @@ else()
         endif()
     endif()
 
-    # if (NOT DEBUG)
-    #    add_compile_options("-flto")
-    # endif()
+    if (NOT DEBUG)
+       add_compile_options("-flto")
+    endif()
 endif()
 
 add_subdirectory(algebra)

@@ -11,6 +11,7 @@ class System;
 
 class LineParallelTransitivity : public Transform {
 public:
+    explicit LineParallelTransitivity();
     ~LineParallelTransitivity() override;
 
     void Execute(System& system);

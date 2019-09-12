@@ -12,6 +12,7 @@ class System;
 
 class LineSegmentConcat : public Wrapper<LineSegmentConcat, Line> {
 public:
+    explicit LineSegmentConcat();
     ~LineSegmentConcat() override;
 
     static void Execute(System& system, const std::shared_ptr<Line>& line);

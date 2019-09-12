@@ -8,6 +8,8 @@
 
 namespace Core {
 
+LineParallelTransitivity::LineParallelTransitivity() = default;
+
 LineParallelTransitivity::~LineParallelTransitivity() = default;
 
 void LineParallelTransitivity::Execute(System& system) {

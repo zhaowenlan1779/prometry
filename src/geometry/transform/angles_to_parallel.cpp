@@ -8,6 +8,8 @@
 
 namespace Core {
 
+AnglesToParallel::AnglesToParallel() = default;
+
 AnglesToParallel::~AnglesToParallel() = default;
 
 /*static*/ void AnglesToParallel::Execute(System& system, const std::shared_ptr<Line>& l,

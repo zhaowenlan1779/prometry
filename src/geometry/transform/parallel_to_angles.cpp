@@ -11,6 +11,8 @@
 
 namespace Core {
 
+ParallelToAngles::ParallelToAngles() = default;
+
 ParallelToAngles::~ParallelToAngles() = default;
 
 void ParallelToAngles::Execute(System& system) {

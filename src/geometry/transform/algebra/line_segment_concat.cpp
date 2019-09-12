@@ -8,6 +8,8 @@
 
 namespace Core {
 
+LineSegmentConcat::LineSegmentConcat() = default;
+
 LineSegmentConcat::~LineSegmentConcat() = default;
 
 /*static*/ void LineSegmentConcat::Execute(System& system, const std::shared_ptr<Line>& line) {

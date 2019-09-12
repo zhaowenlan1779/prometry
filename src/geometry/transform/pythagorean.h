@@ -11,6 +11,7 @@ class System;
 
 class Pythagorean : public Transform {
 public:
+    explicit Pythagorean();
     ~Pythagorean() override;
 
     void Execute(System& system);

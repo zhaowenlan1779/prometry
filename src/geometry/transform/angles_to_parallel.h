@@ -12,6 +12,7 @@ class System;
 
 class AnglesToParallel : public Wrapper<AnglesToParallel, Line, Line, Line> {
 public:
+    explicit AnglesToParallel();
     ~AnglesToParallel() override;
 
     static void Execute(System& system, const std::shared_ptr<Line>& l,
