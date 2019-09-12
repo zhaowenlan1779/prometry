@@ -21,6 +21,8 @@ add_library(geometry STATIC
     transform/all_transforms.h
     transform/parallel/angles_to_parallel.cpp
     transform/parallel/angles_to_parallel.h
+    transform/parallel/angles_to_prependicular.cpp
+    transform/parallel/angles_to_prependicular.h
     transform/parallel/line_parallel_transitivity.cpp
     transform/parallel/line_parallel_transitivity.h
     transform/parallel/parallel_to_angles.cpp

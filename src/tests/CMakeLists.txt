@@ -11,6 +11,7 @@ add_executable(tests
     integrated/proof_output.cpp
     transform/algebra/line_segment_concat.cpp
     transform/parallel/angles_to_parallel.cpp
+    transform/parallel/angles_to_prependicular.cpp
     transform/parallel/line_parallel_transitivity.cpp
     transform/parallel/parallel_to_angles.cpp
     transform/parallel/prependicular_to_angles.cpp
