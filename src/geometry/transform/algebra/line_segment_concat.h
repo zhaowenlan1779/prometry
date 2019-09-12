@@ -14,7 +14,7 @@ class LineSegmentConcat : public Wrapper<LineSegmentConcat, Line> {
 public:
     ~LineSegmentConcat() override;
 
-    static void Execute(System& system, std::shared_ptr<Line> line);
+    static void Execute(System& system, const std::shared_ptr<Line>& line);
 };
 
 } // namespace Core

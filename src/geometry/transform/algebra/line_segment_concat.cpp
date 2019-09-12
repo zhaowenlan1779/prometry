@@ -10,7 +10,7 @@ namespace Core {
 
 LineSegmentConcat::~LineSegmentConcat() = default;
 
-/*static*/ void LineSegmentConcat::Execute(System& system, std::shared_ptr<Line> line) {
+/*static*/ void LineSegmentConcat::Execute(System& system, const std::shared_ptr<Line>& line) {
     const auto& points = line->children[Elements::Point];
     for (std::size_t i = 0; i < points.size(); ++i) {
         for (std::size_t j = i + 1; j < points.size(); ++j) {
