@@ -9,6 +9,7 @@ add_executable(tests
     core/element_common_parent.cpp
     core/element_intersection.cpp
     integrated/proof_output.cpp
+    transform/angles_to_parallel.cpp
     transform/line_parallel_transitivity.cpp
     transform/line_segment_concat.cpp
     transform/parallel_to_angles.cpp

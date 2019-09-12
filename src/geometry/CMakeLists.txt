@@ -19,6 +19,8 @@ add_library(geometry STATIC
     transform/algebra/line_segment_concat.cpp
     transform/algebra/line_segment_concat.h
     transform/all_transforms.h
+    transform/angles_to_parallel.cpp
+    transform/angles_to_parallel.h
     transform/line_parallel_transitivity.cpp
     transform/line_parallel_transitivity.h
     transform/parallel_to_angles.cpp
