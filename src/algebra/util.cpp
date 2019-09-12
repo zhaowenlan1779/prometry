@@ -56,6 +56,15 @@ public:
         sign = 1;
     }
 
+    void bvisit(const SymEngine::Constant& x) {
+        if (SymEngine::eq(x, *SymEngine::pi)) {
+            sign = 1;
+        } else {
+            std::cout << x.get_name() << std::endl;
+            UNREACHABLE_MSG("Unknown constant in SignVisitor!");
+        }
+    }
+
     void bvisit(const SymEngine::Basic& x) {
         std::cout << x.__str__() << std::endl;
         UNREACHABLE_MSG("Unimplemented basic in SignVisitor!");
@@ -139,6 +148,14 @@ public:
     }
 
     void bvisit(const SymEngine::Symbol& x) {
+        if (is_mul) {
+            cur = false;
+        } else {
+            non_sqrt_items += SymEngine::Expression(x.rcp_from_this());
+        }
+    }
+
+    void bvisit(const SymEngine::Constant& x) {
         if (is_mul) {
             cur = false;
         } else {

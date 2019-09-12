@@ -18,6 +18,8 @@ TEST_CASE("SimplifyEquation", "[algebra]") {
 #define REQUIRE_SAME(equ1, equ2) REQUIRE(((equ1) == expand((equ2)) || (equ1) == expand(-(equ2))))
     REQUIRE_SAME(SimplifyEquation(sqrt(x * x - 2) - y), x * x - y * y - 2);
     REQUIRE_SAME(SimplifyEquation(sqrt(x * x - 2) - y - z), (y + z) * (y + z) - x * x + 2);
+    REQUIRE_SAME(SimplifyEquation(sqrt(x * x - 2) - SymEngine::Expression(SymEngine::pi)),
+                 (x * x - 2) - SymEngine::mul(SymEngine::pi, SymEngine::pi));
 #undef REQUIRE_SAME
 }
 

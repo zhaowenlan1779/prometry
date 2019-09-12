@@ -25,6 +25,8 @@ add_library(geometry STATIC
     transform/parallel/line_parallel_transitivity.h
     transform/parallel/parallel_to_angles.cpp
     transform/parallel/parallel_to_angles.h
+    transform/parallel/prependicular_to_angles.cpp
+    transform/parallel/prependicular_to_angles.h
     transform/pythagorean/pythagorean.cpp
     transform/pythagorean/pythagorean.h
 )

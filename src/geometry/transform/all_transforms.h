@@ -8,6 +8,7 @@
 #include "geometry/transform/parallel/angles_to_parallel.h"
 #include "geometry/transform/parallel/line_parallel_transitivity.h"
 #include "geometry/transform/parallel/parallel_to_angles.h"
+#include "geometry/transform/parallel/prependicular_to_angles.h"
 #include "geometry/transform/pythagorean/pythagorean.h"
 
 namespace Core {
@@ -19,6 +20,7 @@ void RegisterAllTransforms(System& system) {
     system.RegisterTransform<Pythagorean>();
     system.RegisterTransform<ParallelToAngles>();
     system.RegisterTransform<AnglesToParallel>();
+    system.RegisterTransform<PrependicularToAngles>();
 }
 
 } // namespace Core
