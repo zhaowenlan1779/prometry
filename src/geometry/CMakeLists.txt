@@ -37,6 +37,8 @@ add_library(geometry STATIC
     transform/parallel/prependicular_to_angles.h
     transform/pythagorean/pythagorean.cpp
     transform/pythagorean/pythagorean.h
+    transform/triangle/triangle_internal_angles.cpp
+    transform/triangle/triangle_internal_angles.h
 )
 
 target_link_libraries(geometry PRIVATE common core)
