@@ -10,12 +10,12 @@ namespace Core {
 
 class System;
 
-class LineConnect : public Wrapper<LineConnect, Point, Point> {
+class TriangleMake : public Wrapper<TriangleMake, Point, Point, Point> {
 public:
-    ~LineConnect() override;
+    ~TriangleMake() override;
 
     static void Execute(System& system, const std::shared_ptr<Point>& p1,
-                        const std::shared_ptr<Point>& p2);
+                        const std::shared_ptr<Point>& p2, const std::shared_ptr<Point>& p3);
 };
 
 } // namespace Core

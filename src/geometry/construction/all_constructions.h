@@ -3,14 +3,11 @@
 
 #pragma once
 
-#include "core/system.h"
-#include "geometry/construction/line_connect.h"
-
 namespace Core {
 
+class System;
+
 /// Registers all the constructions available currently.
-void RegisterAllConstructions(System& system) {
-    system.RegisterConstruction<LineConnect>();
-}
+void RegisterAllConstructions(System& system);
 
 } // namespace Core

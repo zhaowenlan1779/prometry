@@ -4,17 +4,18 @@
 #pragma once
 
 #include "core/transform.h"
+#include "geometry/element/triangle.h"
 
 namespace Core {
 
 class System;
 
-class Pythagorean : public Transform {
+class Pythagorean : public Wrapper<Pythagorean, Triangle> {
 public:
     explicit Pythagorean();
     ~Pythagorean() override;
 
-    void Execute(System& system);
+    static void Execute(System& system, const std::shared_ptr<Triangle>& t);
 };
 
 } // namespace Core

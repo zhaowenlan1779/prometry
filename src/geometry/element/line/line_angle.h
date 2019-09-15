@@ -9,11 +9,6 @@
 
 namespace Core {
 
-enum class LineDirection {
-    Normal,   ///< Starting from first child point
-    Reversed, ///< Starting from last child point
-};
-
 std::array<Algebra::Expression, 2> LineAngle(const std::shared_ptr<Line>& l1,
                                              const std::shared_ptr<Line>& l2);
 

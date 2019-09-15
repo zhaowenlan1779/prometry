@@ -10,6 +10,11 @@ namespace Core {
 class Point;
 class System;
 
+enum class LineDirection {
+    Normal,   ///< Starting from first child point
+    Reversed, ///< Starting from last child point
+};
+
 class Line : public Element {
 public:
     static ElementType Type;
@@ -20,6 +25,8 @@ public:
     std::string GetFullname() const override;
     ElementType GetType() const override;
     u64 GetHash() const override;
+    LineDirection GetLineDirection(const std::shared_ptr<Point>& p1,
+                                   const std::shared_ptr<Point>& p2) const;
 
     /**
      * Returns the line that connects the two points.

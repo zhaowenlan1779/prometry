@@ -1,6 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "common/assert.h"
 #include "core/system.h"
 #include "geometry/element/element_types.h"
 #include "geometry/element/line/line.h"
@@ -28,6 +29,20 @@ std::string Line::GetFullname() const {
 
 u64 Line::GetHash() const {
     return std::hash<std::string>()(GetFullname());
+}
+
+LineDirection Line::GetLineDirection(const std::shared_ptr<Point>& p1,
+                                     const std::shared_ptr<Point>& p2) const {
+    ASSERT(children.count(Elements::Point));
+    for (const auto& iter : children.at(Elements::Point)) {
+        if (iter.lock()->GetHash() == p1->GetHash()) {
+            return LineDirection::Normal;
+        }
+        if (iter.lock()->GetHash() == p2->GetHash()) {
+            return LineDirection::Reversed;
+        }
+    }
+    UNREACHABLE();
 }
 
 /*static*/ std::shared_ptr<Line> Line::Connect(System& system, const std::shared_ptr<Point>& p1,

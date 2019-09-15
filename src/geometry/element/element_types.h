@@ -11,6 +11,7 @@ enum ElementTypes : ElementType {
     Invalid = 0,
     Point = 1,
     Line = 2,
+    Triangle = 3,
     // TODO
 };
 }

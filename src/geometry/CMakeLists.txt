@@ -4,9 +4,12 @@ add_library(geometry STATIC
     conclusion/line_parallel.h
     conclusion/line_prependicular.cpp
     conclusion/line_prependicular.h
+    construction/all_constructions.cpp
+    construction/all_constructions.h
     construction/line_connect.cpp
     construction/line_connect.h
-    construction/all_constructions.h
+    construction/triangle_make.cpp
+    construction/triangle_make.h
     element/element_types.h
     element/line/line.cpp
     element/line/line.h
@@ -16,8 +19,11 @@ add_library(geometry STATIC
     element/line/line_segment.h
     element/point.cpp
     element/point.h
+    element/triangle.cpp
+    element/triangle.h
     transform/algebra/line_segment_concat.cpp
     transform/algebra/line_segment_concat.h
+    transform/all_transforms.cpp
     transform/all_transforms.h
     transform/parallel/angles_to_parallel.cpp
     transform/parallel/angles_to_parallel.h
