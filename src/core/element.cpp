@@ -2,6 +2,7 @@
 // All rights reserved.
 
 #include <exception>
+#include "common/proof_chain_node.h"
 #include "core/conclusion.h"
 #include "core/element.h"
 

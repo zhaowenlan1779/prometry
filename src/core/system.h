@@ -8,6 +8,8 @@
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include "common/proof_chain_node.h"
+#include "core/conclusion.h"
 #include "core/element.h"
 
 namespace Algebra {
@@ -16,7 +18,6 @@ class System;
 
 namespace Core {
 
-class Conclusion;
 class Transform;
 using Construction = Transform;
 using ElementType = u8;
@@ -65,7 +66,8 @@ public:
                 }
             }
         }
-        element->construction_statement = std::move(construction_statement);
+        element->proof_node = std::make_shared<Common::ProofChainNode>();
+        element->proof_node->statement = std::move(construction_statement);
         elements[T::Type].emplace_back(element);
         new_element = true;
         return element;
@@ -85,14 +87,17 @@ public:
         if (cur != nullptr) {
             return std::dynamic_pointer_cast<T>(cur);
         }
-        conclusion->transform_name = std::move(transform_name);
+        conclusion->proof_node = std::make_shared<Common::ProofChainNode>();
+        conclusion->proof_node->transform = std::move(transform_name);
+        conclusion->proof_node->statement = conclusion->ToString();
         for (const auto& iter : source_conclusions) {
-            conclusion->source_conclusions.emplace_back(iter);
+            conclusion->proof_node->reasons.emplace_back(iter->proof_node);
         }
 
         auto type = conclusion->GetType();
         conclusions[type].emplace_back(conclusion);
         for (auto& iter : conclusion->GetRelatedElements()) {
+            conclusion->proof_node->pre_conditions.emplace_back(iter->proof_node);
             iter->related_conclusions[type].emplace_back(conclusion);
         }
         new_conclusion = true;
@@ -133,10 +138,6 @@ public:
     std::string Execute(std::function<std::shared_ptr<Conclusion>(System&)> reached_goal_predicate);
 
 private:
-    std::string GenerateProof(const std::shared_ptr<Conclusion>& target,
-                              std::unordered_set<std::shared_ptr<Conclusion>>& visited,
-                              std::unordered_set<std::shared_ptr<Element>>& constructed);
-
     std::unordered_map<ElementType, std::vector<std::shared_ptr<Element>>> elements;
     std::unordered_map<ConclusionType, std::vector<std::shared_ptr<Conclusion>>> conclusions;
     std::vector<std::unique_ptr<Transform>> transforms;

@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include "common/common_types.h"
+#include "common/proof_chain_node.h"
 
 namespace Core {
 
@@ -47,9 +48,7 @@ public:
     bool operator!=(const Conclusion& other) const;
 
 protected:
-    std::vector<std::weak_ptr<Conclusion>>
-        source_conclusions;     ///< The conclusions this conclusion is based on.
-    std::string transform_name; ///< The transform that created this conclusion.
+    std::shared_ptr<Common::ProofChainNode> proof_node;
 
     friend class System;
 };

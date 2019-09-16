@@ -80,50 +80,10 @@ std::string System::Execute(
 
     if (target) {
         // Generate proof content
-        std::unordered_set<std::shared_ptr<Conclusion>> visited;
-        std::unordered_set<std::shared_ptr<Element>> constructed;
-        return GenerateProof(target, visited, constructed);
+        return Common::GenerateProof(target->proof_node);
     } else {
         return "";
     }
-}
-
-std::string System::GenerateProof(const std::shared_ptr<Conclusion>& target,
-                                  std::unordered_set<std::shared_ptr<Conclusion>>& visited,
-                                  std::unordered_set<std::shared_ptr<Element>>& constructed) {
-
-    visited.emplace(target);
-
-    // pre-conditions
-    std::string proof;
-    for (auto& iter : target->source_conclusions) {
-        if (auto ptr = iter.lock()) {
-            if (!visited.count(ptr)) {
-                proof += GenerateProof(ptr, visited, constructed);
-            }
-        }
-    }
-
-    // this statement
-    for (auto& iter : target->GetRelatedElements()) {
-        if (!constructed.count(iter)) {
-            constructed.emplace(iter);
-            if (!iter->construction_statement.empty())
-                proof += iter->construction_statement + "\n";
-        }
-    }
-
-    if (target->source_conclusions.empty()) {
-        return proof;
-    }
-
-    proof += "Since ";
-    for (auto& iter : target->source_conclusions) {
-        if (auto ptr = iter.lock())
-            proof += ptr->ToString() + ", ";
-    }
-    proof += "\nSo " + target->ToString() + ". (" + target->transform_name + ")\n";
-    return proof;
 }
 
 } // namespace Core
