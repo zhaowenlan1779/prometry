@@ -39,7 +39,8 @@ TEST_CASE("PythagoreanSimple", "[transform]") {
 
     system.Execute([](System& system) { return nullptr; });
 
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p2, p3) - SymEngine::integer(5)));
+    REQUIRE(
+        system.Algebra().CheckEquation(LineSegmentLength(p2, p3) - SymEngine::integer(5)).first);
 }
 
 } // namespace Core

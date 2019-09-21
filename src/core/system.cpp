@@ -48,13 +48,13 @@ std::shared_ptr<Conclusion> System::GetConclusion(const Conclusion& conclusion) 
 }
 
 std::string System::Execute(
-    std::function<std::shared_ptr<Conclusion>(System&)> reached_goal_predicate) {
+    std::function<std::shared_ptr<Common::ProofChainNode>(System&)> reached_goal_predicate) {
 
     if (reached_goal_predicate(*this) != nullptr) {
         return "No need to prove";
     }
 
-    std::shared_ptr<Conclusion> target{};
+    std::shared_ptr<Common::ProofChainNode> target{};
 
     while (true) {
         new_conclusion = false;
@@ -80,7 +80,7 @@ std::string System::Execute(
 
     if (target) {
         // Generate proof content
-        return Common::GenerateProof(target->proof_node);
+        return Common::GenerateProof(target);
     } else {
         return "";
     }

@@ -28,13 +28,13 @@ TEST_CASE("LineSegmentConcat", "[transform]") {
 
     system.Execute([](System& system) { return nullptr; });
 
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p2, p3) - SymEngine::integer(2)));
+    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p2, p3) - SymEngine::integer(2)).first);
 
     // Let: AD=8
     system.Algebra().AddEquation(LineSegmentLength(p1, p4) - SymEngine::integer(8));
 
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p3, p4) - SymEngine::integer(3)));
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p2, p4) - SymEngine::integer(5)));
+    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p3, p4) - SymEngine::integer(3)).first);
+    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(p2, p4) - SymEngine::integer(5)).first);
 }
 
 } // namespace Core

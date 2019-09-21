@@ -20,11 +20,12 @@ AnglesToParallel::~AnglesToParallel() = default;
         return;
     }
 
-    if (system.Algebra().CheckEquation(
-            LineAngle(l, LineDirection::Normal, l1, LineDirection::Normal) -
-            LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal))) {
+    const auto& [ret, proof_node] = system.Algebra().CheckEquation(
+        LineAngle(l, LineDirection::Normal, l1, LineDirection::Normal) -
+        LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
 
-        system.CreateConclusion<LineParallel>("angles to parallel", {}, l1, l2);
+    if (ret) {
+        system.CreateConclusion<LineParallel>("angles to parallel", {proof_node}, l1, l2);
     }
 }
 

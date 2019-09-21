@@ -11,9 +11,14 @@ Pythagorean::~Pythagorean() = default;
 
 /*static*/ void Pythagorean::Execute(System& system, const std::shared_ptr<Triangle>& t) {
 #define CHECK(angle, long, short1, short2)                                                         \
-    if (system.Algebra().CheckEquation(t->angle - SymEngine::Expression(SymEngine::pi) / 2)) {     \
-        system.Algebra().AddEquation(t->short1 * t->short1 + t->short2 * t->short2 -               \
-                                     t->long * t->long);                                           \
+    {                                                                                              \
+        const auto& [ret, proof_list] =                                                            \
+            system.Algebra().CheckEquation(t->angle - SymEngine::Expression(SymEngine::pi) / 2);   \
+        if (ret) {                                                                                 \
+            system.Algebra().AddEquation(t->short1 * t->short1 + t->short2 * t->short2 -           \
+                                             t->long * t->long,                                    \
+                                         "pythagorean theroem", {proof_list});                     \
+        }                                                                                          \
     }
 
     CHECK(angle_A, length_a, length_b, length_c);

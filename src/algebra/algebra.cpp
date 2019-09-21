@@ -11,6 +11,7 @@
 #include "algebra/algebra.h"
 #include "algebra/util.h"
 #include "common/assert.h"
+#include "common/proof_chain_node.h"
 
 // Necessary helpers to get std::unordered_map work
 
@@ -61,17 +62,31 @@ namespace Algebra {
 using ExpressionUsedSet = std::unordered_set<Expression>;
 
 struct System::Impl {
-    std::vector<Expression> equations;
-    std::unordered_map<std::pair<Expression, SymEngine::set_basic>, std::vector<Expression>> memory;
+    struct Equation {
+        Expression expr;
+        std::shared_ptr<Common::ProofChainNode> proof_node;
+    };
+
+    std::vector<Equation> equations;
+    std::unordered_map<std::pair<Expression, SymEngine::set_basic>,
+                       std::vector<std::pair<Expression, ProofList>>>
+        memory;
     // std::unordered_map<Symbol, Expression> symbol_subst_map;
     bool new_equations = false;
+
+    /// Holder of ProofChainNodes, so they do not get destructed
+    std::vector<std::shared_ptr<Common::ProofChainNode>> proof_node_holder;
 
     /**
      * Tries to solve all possible representations of the expression expr, with the
      * provided arguments. This is a recursive call and can be very expensive.
      */
-    std::vector<Expression> TrySolveAll(const Expression& expr, ExpressionUsedSet& used,
-                                        const SymEngine::set_basic& args);
+    std::vector<std::pair<Expression, ProofList>> TrySolveAll(const Expression& expr,
+                                                              ExpressionUsedSet& used,
+                                                              const SymEngine::set_basic& args);
+
+    std::vector<std::weak_ptr<Common::ProofChainNode>> GetParents(
+        const ProofList& proof_list) const;
 };
 
 /**
@@ -103,8 +118,8 @@ std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& sy
     }
 }
 
-std::vector<Expression> System::Impl::TrySolveAll(const Expression& expr_, ExpressionUsedSet& used,
-                                                  const SymEngine::set_basic& args) {
+std::vector<std::pair<Expression, ProofList>> System::Impl::TrySolveAll(
+    const Expression& expr_, ExpressionUsedSet& used, const SymEngine::set_basic& args) {
 
     Expression expr = SymEngine::expand(expr_);
 
@@ -116,7 +131,7 @@ std::vector<Expression> System::Impl::TrySolveAll(const Expression& expr_, Expre
     auto free_symbols = SymEngine::free_symbols(expr);
 
     bool has_unknown_value = false;
-    std::vector<Expression> ans;
+    std::vector<std::pair<Expression, ProofList>> ans;
 
     for (auto& iter : free_symbols) {
         Symbol symbol = SymEngine::rcp_static_cast<const SymEngine::Symbol>(iter);
@@ -126,14 +141,15 @@ std::vector<Expression> System::Impl::TrySolveAll(const Expression& expr_, Expre
 
         has_unknown_value = true;
 
-        for (const auto& equation : equations) {
-            if (used.count(equation) || !SymEngine::has_symbol(equation, *symbol))
+        for (std::size_t i = 0; i < equations.size(); ++i) {
+            const auto& equation = equations[i];
+            if (used.count(equation.expr) || !SymEngine::has_symbol(equation.expr, *symbol))
                 continue;
 
             // Simplify the equation to (symbol == xxx)
-            auto solns = SolveSingle(equation, symbol);
+            auto solns = SolveSingle(equation.expr, symbol);
 
-            used.emplace(equation);
+            used.emplace(equation.expr);
             for (const auto& soln : solns) {
                 // Solve the (xxx) to expressions with only current free symbol or arguments
                 auto new_args = free_symbols;
@@ -143,74 +159,123 @@ std::vector<Expression> System::Impl::TrySolveAll(const Expression& expr_, Expre
                 new_args.erase(iter);
                 auto solns2 = TrySolveAll(soln, used, new_args);
 
-                for (const auto& soln2 : solns2) {
+                for (const auto& [soln2, proof_list_2] : solns2) {
                     // Substitute and continue solving a next symbol
                     auto new_expr = SymEngine::expand(expr.subs({{iter, soln2}}));
                     const auto& solns3 = TrySolveAll(new_expr, used, args);
-                    ans.insert(ans.end(), solns3.begin(), solns3.end());
+                    for (const auto& [soln3, proof_list_3] : solns3) {
+                        ans.emplace_back(soln3, proof_list_3 | proof_list_2 | i);
+                    }
                 }
 
                 // Try to solve it with the symbol and then simplify it.
                 new_args.emplace(iter);
                 solns2 = TrySolveAll(soln, used, new_args);
 
-                for (const auto& soln2 : solns2) {
+                for (const auto& [soln2, proof_list_2] : solns2) {
                     auto simplified = soln2 - symbol;
                     if (SymEngine::has_symbol(simplified, *symbol)) {
                         auto real_solns2 = SolveSingle(simplified, symbol);
                         for (const auto& real_soln2 : real_solns2) {
                             auto new_expr = SymEngine::expand(expr.subs({{iter, real_soln2}}));
                             const auto& solns3 = TrySolveAll(new_expr, used, args);
-                            ans.insert(ans.end(), solns3.begin(), solns3.end());
+                            for (const auto& [soln3, proof_list_3] : solns3) {
+                                ans.emplace_back(soln3, proof_list_3 | proof_list_2 | i);
+                            }
                         }
                     }
                 }
             }
-            used.erase(equation);
+            used.erase(equation.expr);
         }
     }
 
     if (has_unknown_value) { // Isn't outright solved
         // Remove repeated entries
-        std::sort(ans.begin(), ans.end(), [](const Expression& lhs, const Expression& rhs) {
-            return std::hash<Expression>()(lhs) < std::hash<Expression>()(rhs);
-        });
-        ans.erase(std::unique(ans.begin(), ans.end()), ans.end());
+        std::sort(ans.begin(), ans.end(),
+                  [](const std::pair<Expression, ProofList>& lhs,
+                     const std::pair<Expression, ProofList>& rhs) {
+                      return g_basic_hasher(*lhs.first.get_basic()) <
+                             g_basic_hasher(*rhs.first.get_basic());
+                  });
+        std::vector<std::pair<Expression, ProofList>> unique_ans;
+        for (std::size_t i = 0; i < ans.size(); ++i) {
+            if (i == 0 || ans[i].first != ans[i - 1].first) {
+                unique_ans.emplace_back(ans[i]);
+            }
+        }
 
         if (used.empty())
-            memory[pair] = ans;
-        return ans;
+            memory[pair] = unique_ans;
+        return unique_ans;
     } else { // Already done
         if (used.empty())
-            memory[pair] = {expr};
-        return {expr};
+            memory[pair] = {{expr, {}}};
+        return {{expr, {}}};
     }
+}
+
+std::vector<std::weak_ptr<Common::ProofChainNode>> System::Impl::GetParents(
+    const ProofList& proof_list) const {
+    std::vector<std::weak_ptr<Common::ProofChainNode>> parents;
+    u64 capacity = std::min(proof_list.Size(), equations.size());
+    for (std::size_t i = 0; i < capacity; ++i) {
+        if (proof_list.At(i)) {
+            parents.emplace_back(equations[i].proof_node);
+        }
+    }
+    return parents;
 }
 
 System::System() : impl(std::make_unique<Impl>()) {}
 
 System::~System() = default;
 
-void System::AddEquation(const Expression& expr) {
-    if (CheckEquation(expr))
+void System::AddEquation(const Expression& expr, const std::string& transform,
+                         const std::vector<std::shared_ptr<Common::ProofChainNode>>& parents) {
+    if (CheckEquation(expr).first)
         return;
 
-    impl->equations.emplace_back(expr);
+    auto proof_node = std::make_shared<Common::ProofChainNode>();
+    proof_node->transform = transform;
+    proof_node->statement = expr.get_basic()->__str__() + " = 0";
+    for (const auto& iter : parents) {
+        proof_node->reasons.emplace_back(iter);
+    }
+
+    impl->equations.push_back(Impl::Equation{expr, proof_node});
     impl->memory.clear();
     impl->new_equations = true;
 }
 
-bool System::CheckEquation(const Expression& expr) {
+std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
+    const Expression& expr) {
+
     ExpressionUsedSet used;
     auto soln = impl->TrySolveAll(expr, used, {});
 
     // TODO: Why isn't everything EXACT zero?
-    return soln.size() > 0 &&
-           std::all_of(soln.begin(), soln.end(), [](const SymEngine::Expression& expr) {
-               return SymEngine::is_a_Number(*expr.get_basic()) &&
-                      SymEngine::rcp_static_cast<const SymEngine::Number>(expr.get_basic())
-                          ->is_zero();
-           });
+    bool ret =
+        soln.size() > 0 &&
+        std::all_of(soln.begin(), soln.end(), [](const std::pair<Expression, ProofList>& expr) {
+            return SymEngine::is_a_Number(*expr.first.get_basic()) &&
+                   SymEngine::rcp_static_cast<const SymEngine::Number>(expr.first.get_basic())
+                       ->is_zero();
+        });
+
+    if (!ret) {
+        return {ret, {}};
+    }
+
+    auto proof_node = std::make_shared<Common::ProofChainNode>();
+    proof_node->transform = "algebra";
+    proof_node->statement = expr.get_basic()->__str__() + " = 0";
+
+    // TODO: Pick a best one instead of a random one
+    proof_node->reasons = impl->GetParents(soln[0].second);
+
+    impl->proof_node_holder.emplace_back(proof_node);
+    return {ret, proof_node};
 }
 
 std::vector<Expression> System::TrySolveAll(const Symbol& sym, const std::vector<Symbol>& args) {
@@ -220,7 +285,13 @@ std::vector<Expression> System::TrySolveAll(const Symbol& sym, const std::vector
     }
 
     ExpressionUsedSet used;
-    return impl->TrySolveAll(SymEngine::Expression(sym), used, converted_args);
+    const auto& solns = impl->TrySolveAll(SymEngine::Expression(sym), used, converted_args);
+
+    std::vector<Expression> ans;
+    for (const auto& [soln, proof_list] : solns) {
+        ans.emplace_back(soln);
+    }
+    return ans;
 }
 
 bool System::HasNewEquations() {

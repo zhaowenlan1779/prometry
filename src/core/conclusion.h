@@ -43,6 +43,8 @@ public:
     virtual ConclusionType GetType() const = 0;
     virtual u64 GetHash() const = 0;
 
+    std::shared_ptr<Common::ProofChainNode> GetProofNode() const;
+
     /// Comparison operators
     bool operator==(const Conclusion& other) const;
     bool operator!=(const Conclusion& other) const;

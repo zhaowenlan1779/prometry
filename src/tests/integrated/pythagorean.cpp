@@ -34,10 +34,14 @@ TEST_CASE("Pythagorean+LineSegmentConcat", "[integrated]") {
     system.Algebra().AddEquation(LineSegmentLength(b, c) - 3);
     system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(d, b));
 
-    system.Execute([](System&) { return nullptr; });
+    const auto proof = system.Execute([&a, &d](System& system) {
+        const auto& [ret, proof_node] = system.Algebra().CheckEquation(
+            LineSegmentLength(a, d) - Algebra::Expression(5) / Algebra::Expression(3));
+        return ret ? proof_node : nullptr;
+    });
 
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(a, d) -
-                                           Algebra::Expression(5) / Algebra::Expression(3)));
+    std::cout << "Proof: " << proof << std::endl;
+    REQUIRE(!proof.empty());
 }
 
 } // namespace Core

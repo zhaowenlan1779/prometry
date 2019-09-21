@@ -37,13 +37,13 @@ TEST_CASE("ParallelToAngles", "[transform]") {
 
     REQUIRE(system.Algebra().CheckEquation(
         LineAngle(l1, LineDirection::Normal, l, LineDirection::Normal) -
-        LineAngle(l2, LineDirection::Normal, l, LineDirection::Normal)));
+        LineAngle(l2, LineDirection::Normal, l, LineDirection::Normal)).first);
     REQUIRE(system.Algebra().CheckEquation(
         LineAngle(l1, LineDirection::Reversed, l, LineDirection::Reversed) -
-        LineAngle(l2, LineDirection::Normal, l, LineDirection::Normal)));
+        LineAngle(l2, LineDirection::Normal, l, LineDirection::Normal)).first);
     REQUIRE(system.Algebra().CheckEquation(
         LineAngle(l1, LineDirection::Reversed, l, LineDirection::Normal) +
-        LineAngle(l2, LineDirection::Normal, l, LineDirection::Normal) - SymEngine::pi));
+        LineAngle(l2, LineDirection::Normal, l, LineDirection::Normal) - SymEngine::pi).first);
 }
 
 } // namespace Core

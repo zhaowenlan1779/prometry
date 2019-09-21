@@ -26,8 +26,10 @@ TEST_CASE("PrependicularToAngles", "[transform]") {
 
     for (auto dir1 : {LineDirection::Normal, LineDirection::Reversed}) {
         for (auto dir2 : {LineDirection::Normal, LineDirection::Reversed}) {
-            REQUIRE(system.Algebra().CheckEquation(LineAngle(l1, dir1, l2, dir2) -
-                                                   SymEngine::Expression(SymEngine::pi) / 2));
+            REQUIRE(system.Algebra()
+                        .CheckEquation(LineAngle(l1, dir1, l2, dir2) -
+                                       SymEngine::Expression(SymEngine::pi) / 2)
+                        .first);
         }
     }
 }

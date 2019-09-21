@@ -18,16 +18,16 @@ TEST_CASE("CheckEquation", "[algebra]") {
     system.AddEquation(3 * x + y - 2);
     system.AddEquation(y + z - 1);
 
-    REQUIRE(system.CheckEquation(3 * x + y - 2));
-    REQUIRE(system.CheckEquation(y + z - 1));
-    REQUIRE(system.CheckEquation(3 * x + 2 * y + z - 3));
-    REQUIRE(system.CheckEquation(3 * x - z - 1));
-    REQUIRE(system.CheckEquation(6 * x - 2 * z - 2));
-    REQUIRE(system.CheckEquation(12 * x + 4 * y - 8));
-    REQUIRE(system.CheckEquation(3 * x - y - 2 * z));
-    REQUIRE_FALSE(system.CheckEquation(x + y));
-    REQUIRE_FALSE(system.CheckEquation(3 * x + y));
-    REQUIRE_FALSE(system.CheckEquation(z));
+    REQUIRE(system.CheckEquation(3 * x + y - 2).first);
+    REQUIRE(system.CheckEquation(y + z - 1).first);
+    REQUIRE(system.CheckEquation(3 * x + 2 * y + z - 3).first);
+    REQUIRE(system.CheckEquation(3 * x - z - 1).first);
+    REQUIRE(system.CheckEquation(6 * x - 2 * z - 2).first);
+    REQUIRE(system.CheckEquation(12 * x + 4 * y - 8).first);
+    REQUIRE(system.CheckEquation(3 * x - y - 2 * z).first);
+    REQUIRE_FALSE(system.CheckEquation(x + y).first);
+    REQUIRE_FALSE(system.CheckEquation(3 * x + y).first);
+    REQUIRE_FALSE(system.CheckEquation(z).first);
 }
 
 } // namespace Algebra

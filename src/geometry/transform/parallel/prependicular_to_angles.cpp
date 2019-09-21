@@ -22,7 +22,8 @@ void PrependicularToAngles::Execute(System& system) {
         system.Algebra().AddEquation(
             LineAngle(std::dynamic_pointer_cast<Line>(elements[0]), LineDirection::Normal,
                       std::dynamic_pointer_cast<Line>(elements[1]), LineDirection::Normal) -
-            SymEngine::Expression(SymEngine::pi) / 2);
+                SymEngine::Expression(SymEngine::pi) / 2,
+            "prependicular to angles", {conclusion->GetProofNode()});
     }
 }
 

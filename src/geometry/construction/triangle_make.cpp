@@ -11,8 +11,9 @@ TriangleMake::~TriangleMake() = default;
 void TriangleMake::Execute(System& system, const std::shared_ptr<Point>& p1,
                            const std::shared_ptr<Point>& p2, const std::shared_ptr<Point>& p3) {
 
-    // Generally, triangles do not need construction statements. But the lines need.
-    system.CreateElement<Triangle>("", system, p1, p2, p3);
+    system.CreateElement<Triangle>("Declare Triangle " + p1->GetName() + "_" + p2->GetName() + "_" +
+                                       p3->GetName(),
+                                   system, p1, p2, p3);
 }
 
 } // namespace Core

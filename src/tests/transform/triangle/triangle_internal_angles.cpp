@@ -23,7 +23,7 @@ TEST_CASE("TriangleInternalAngles", "[transform]") {
 
     system.Execute([](System& system) { return nullptr; });
 
-    REQUIRE(system.Algebra().CheckEquation(t->angle_C - SymEngine::Expression(SymEngine::pi) / 2));
+    REQUIRE(system.Algebra().CheckEquation(t->angle_C - SymEngine::Expression(SymEngine::pi) / 2).first);
 }
 
 // TODO: More, better tests...

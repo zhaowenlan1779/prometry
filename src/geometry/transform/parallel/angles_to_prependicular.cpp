@@ -19,11 +19,12 @@ AnglesToPrependicular::~AnglesToPrependicular() = default;
         return;
     }
 
-    if (system.Algebra().CheckEquation(
-            LineAngle(l1, LineDirection::Normal, l2, LineDirection::Normal) -
-            SymEngine::Expression(SymEngine::pi) / 2)) {
+    const auto& [ret, proof_node] = system.Algebra().CheckEquation(
+        LineAngle(l1, LineDirection::Normal, l2, LineDirection::Normal) -
+        SymEngine::Expression(SymEngine::pi) / 2);
 
-        system.CreateConclusion<LinePrependicular>("angles to prependicular", {}, l1, l2);
+    if (ret) {
+        system.CreateConclusion<LinePrependicular>("angles to prependicular", {proof_node}, l1, l2);
     }
 }
 

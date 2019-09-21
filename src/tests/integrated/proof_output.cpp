@@ -24,8 +24,10 @@ TEST_CASE("ProofOutput[LineParallelTransitivity]", "[integrated]") {
     system.CreateConclusion<LineParallel>("", {}, l2, l3);
     system.CreateConclusion<LineParallel>("", {}, l3, l4);
 
-    auto proof = system.Execute(
-        [&l1, &l4](System& system) { return system.GetConclusion(LineParallel(l1, l4)); });
+    const auto proof = system.Execute([&l1, &l4](System& system) {
+        auto conclusion = system.GetConclusion(LineParallel(l1, l4));
+        return conclusion ? conclusion->GetProofNode() : nullptr;
+    });
 
     std::cout << "Proof: " << proof << std::endl;
     REQUIRE(!proof.empty());

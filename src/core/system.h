@@ -77,9 +77,10 @@ public:
      * Creates and adds a conclusion to the system, if the conclusion is not already present.
      */
     template <typename T, typename... Args>
-    std::shared_ptr<T> CreateConclusion(std::string transform_name,
-                                        std::vector<std::shared_ptr<Conclusion>> source_conclusions,
-                                        Args&&... args) {
+    std::shared_ptr<T> CreateConclusion(
+        std::string transform_name,
+        std::vector<std::shared_ptr<Common::ProofChainNode>> source_nodes, Args&&... args) {
+
         static_assert(std::is_base_of_v<Conclusion, T>, "T is not a subclass of Conclusion");
 
         auto conclusion = std::make_shared<T>(args...);
@@ -90,8 +91,8 @@ public:
         conclusion->proof_node = std::make_shared<Common::ProofChainNode>();
         conclusion->proof_node->transform = std::move(transform_name);
         conclusion->proof_node->statement = conclusion->ToString();
-        for (const auto& iter : source_conclusions) {
-            conclusion->proof_node->reasons.emplace_back(iter->proof_node);
+        for (const auto& iter : source_nodes) {
+            conclusion->proof_node->reasons.emplace_back(iter);
         }
 
         auto type = conclusion->GetType();
@@ -131,11 +132,12 @@ public:
      * Executes the main logic.
      *
      * @param reached_goal_predicate function object to judge whether the goal is reached.
-     * pointer to target conclusion is returned when the answer is positive, nullptr otherwise
+     * pointer to target proof chain node is returned when the answer is positive, nullptr otherwise
      *
      * @return A string of proof on success, an empty string otherwise
      */
-    std::string Execute(std::function<std::shared_ptr<Conclusion>(System&)> reached_goal_predicate);
+    std::string Execute(
+        std::function<std::shared_ptr<Common::ProofChainNode>(System&)> reached_goal_predicate);
 
 private:
     std::unordered_map<ElementType, std::vector<std::shared_ptr<Element>>> elements;

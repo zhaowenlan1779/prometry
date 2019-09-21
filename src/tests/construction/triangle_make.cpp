@@ -20,7 +20,7 @@ TEST_CASE("TriangleMake", "[construction]") {
 
     system.Execute([](System&) { return nullptr; });
 
-    REQUIRE(system.GetElements(Elements::Triangle).size() == 60);
+    REQUIRE(system.GetElements(Elements::Triangle).size() == 10);
 }
 
 } // namespace Core

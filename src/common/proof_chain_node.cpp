@@ -28,13 +28,13 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
     }
 
     if (!node->reasons.empty()) {
-        proof += "Since ";
+        proof += "\nSince     ";
         for (const auto& reason_weak : node->reasons) {
             if (auto reason = reason_weak.lock()) {
                 proof += reason->statement + ", ";
             }
         }
-        proof += "\nSo " + node->statement;
+        proof += "\nTherefore " + node->statement;
 
         if (!node->transform.empty()) {
             proof += " (" + node->transform + ")";

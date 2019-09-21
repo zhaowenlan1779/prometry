@@ -15,4 +15,8 @@ bool Conclusion::operator!=(const Conclusion& other) const {
     return GetHash() != other.GetHash();
 }
 
+std::shared_ptr<Common::ProofChainNode> Conclusion::GetProofNode() const {
+    return proof_node;
+}
+
 }

@@ -37,7 +37,8 @@ void ParallelToAngles::Execute(System& system) {
 
             system.Algebra().AddEquation(
                 LineAngle(l, LineDirection::Normal, l1, LineDirection::Normal) -
-                LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
+                    LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal),
+                "parallel to angles", {conclusion->GetProofNode()});
         }
     }
 }
