@@ -26,4 +26,11 @@ bool IsAcceptable(const SymEngine::Expression& expr);
  */
 SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr);
 
+/**
+ * Converts an equation to string.
+ * This may not be always equal to "X = 0". Instead it would put items with
+ * symbols on the left side and items without symbols on the right side.
+ */
+std::string EquationToString(const SymEngine::Expression& expr);
+
 } // namespace Algebra

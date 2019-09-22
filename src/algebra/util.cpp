@@ -195,4 +195,111 @@ SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr) {
     }
 }
 
+/**
+ * Visits items of an expression, dividing it into items that contain symbols
+ * and those that do not.
+ */
+class SymbolVisitor : public SymEngine::BaseVisitor<SymbolVisitor> {
+public:
+    SymEngine::Expression symbol_items, non_symbol_items;
+
+    void bvisit(const SymEngine::Add& x) {
+        for (const auto& iter : x.get_args()) {
+            iter->accept(*this);
+        }
+    }
+
+    void bvisit(const SymEngine::Basic& x) {
+        if (SymEngine::free_symbols(x).empty()) {
+            non_symbol_items += SymEngine::Expression(x.rcp_from_this());
+        } else {
+            symbol_items += SymEngine::Expression(x.rcp_from_this());
+        }
+    }
+
+    std::pair<SymEngine::Expression, SymEngine::Expression> accept(const SymEngine::Basic& x) {
+        symbol_items = non_symbol_items = 0;
+        x.accept(*this);
+        return {symbol_items, -non_symbol_items};
+    }
+};
+
+/**
+ * Visits items of an expression, checking the sign of the symbols.
+ */
+class SymbolSignVisitor : public SymEngine::BaseVisitor<SymbolSignVisitor> {
+public:
+    s8 sign = 1;
+
+    void bvisit(const SymEngine::Number& x) {
+        if (x.is_positive())
+            sign = 1;
+        else if (x.is_negative())
+            sign = -1;
+        else
+            sign = 0;
+    }
+
+    void bvisit(const SymEngine::Add& x) {
+        s8 cur_sign = -2; // Undetermined
+        for (const auto& iter : x.get_args()) {
+            if (SymEngine::free_symbols(*iter).empty()) {
+                continue;
+            }
+            iter->accept(*this);
+            if (cur_sign != -2 && sign != cur_sign) {
+                sign = 0;
+                return;
+            } else {
+                cur_sign = sign;
+            }
+        }
+        if (cur_sign == -2) { // No symbols at all
+            cur_sign = 0;
+        }
+        sign = cur_sign;
+    }
+
+    void bvisit(const SymEngine::Mul& x) {
+        s8 cur_sign = 1;
+        for (const auto& iter : x.get_args()) {
+            iter->accept(*this);
+            cur_sign *= sign;
+        }
+        sign = cur_sign;
+    }
+
+    void bvisit(const SymEngine::Basic& x) {
+        sign = 1;
+    }
+
+    s8 accept(const SymEngine::Basic& x) {
+        x.accept(*this);
+        return sign;
+    }
+};
+
+std::string EquationToString(const SymEngine::Expression& expr) {
+    using namespace SymEngine;
+    Expression expanded = expand(expr);
+
+    RCP<const Basic> num, den;
+    as_numer_denom(expanded.get_basic(), outArg(num), outArg(den));
+
+    SymbolVisitor symbol_visitor;
+    auto [symbol_items, non_symbol_items] = symbol_visitor.accept(*num);
+
+    SymbolSignVisitor symbol_sign_visitor;
+    s8 symbol_items_sign = symbol_sign_visitor.accept(*num);
+
+    if (symbol_items_sign == -1) { // Flip the sign
+        symbol_items = -symbol_items;
+        non_symbol_items = -non_symbol_items;
+    }
+
+    // TODO: Fix results like 3*x = 5
+
+    return symbol_items.get_basic()->__str__() + " = " + non_symbol_items.get_basic()->__str__();
+}
+
 } // namespace Algebra

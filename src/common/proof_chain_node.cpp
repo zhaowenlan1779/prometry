@@ -27,19 +27,30 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
         }
     }
 
-    if (!node->reasons.empty()) {
-        proof += "\nSince     ";
-        for (const auto& reason_weak : node->reasons) {
-            if (auto reason = reason_weak.lock()) {
-                proof += reason->statement + ", ";
+    do {
+        if (!node->reasons.empty()) {
+            if (node->reasons.size() == 1) {
+                if (auto reason = node->reasons[0].lock()) {
+                    if (reason->statement == node->statement) {
+                        // Ignore meaningless algebra transforms
+                        break;
+                    }
+                }
+            }
+
+            proof += "\nSince     ";
+            for (const auto& reason_weak : node->reasons) {
+                if (auto reason = reason_weak.lock()) {
+                    proof += reason->statement + ", ";
+                }
+            }
+            proof += "\nTherefore " + node->statement;
+
+            if (!node->transform.empty()) {
+                proof += " (" + node->transform + ")";
             }
         }
-        proof += "\nTherefore " + node->statement;
-
-        if (!node->transform.empty()) {
-            proof += " (" + node->transform + ")";
-        }
-    }
+    } while (0);
 
     return proof;
 }

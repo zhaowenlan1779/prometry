@@ -4,6 +4,7 @@ add_executable(tests
     algebra/solve_1.cpp
     algebra/solve_2.cpp
     algebra/util_check_sign.cpp
+    algebra/util_equation_to_string.cpp
     algebra/util_simplify_equation.cpp
     common/dynamic_bitset.cpp
     construction/line_connect.cpp

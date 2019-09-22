@@ -101,7 +101,7 @@ std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& sy
     if (!SymEngine::is_a<SymEngine::FiniteSet>(*soln)) {
         // Something might have gone wrong
         // TODO: log this (and introduce a logging system at all)
-        UNREACHABLE_MSG("Solution is not a finite set {" + equation.get_basic()->__str__() + ", " +
+        UNREACHABLE_MSG("Solution is not a finite set {" + EquationToString(equation) + ", " +
                         symbol->__str__() + "}");
         return {};
     } else {
@@ -238,7 +238,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
 
     auto proof_node = std::make_shared<Common::ProofChainNode>();
     proof_node->transform = transform;
-    proof_node->statement = expr.get_basic()->__str__() + " = 0";
+    proof_node->statement = EquationToString(expr);
     for (const auto& iter : parents) {
         proof_node->reasons.emplace_back(iter);
     }
@@ -269,7 +269,7 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
 
     auto proof_node = std::make_shared<Common::ProofChainNode>();
     proof_node->transform = "algebra";
-    proof_node->statement = expr.get_basic()->__str__() + " = 0";
+    proof_node->statement = EquationToString(expr);
 
     // TODO: Pick a best one instead of a random one
     proof_node->reasons = impl->GetParents(soln[0].second);
