@@ -8,6 +8,7 @@ add_executable(tests
     algebra/util_simplify_equation.cpp
     common/dynamic_bitset.cpp
     construction/line_connect.cpp
+    construction/triangle_make.cpp
     core/element_common_parent.cpp
     core/element_intersection.cpp
     integrated/proof_output.cpp
