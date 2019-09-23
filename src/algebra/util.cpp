@@ -3,6 +3,7 @@
 
 #include <symengine/expression.h>
 #include <symengine/visitor.h>
+#include "algebra/algebra.h"
 #include "algebra/util.h"
 #include "common/assert.h"
 
@@ -101,8 +102,8 @@ bool IsAcceptable(const SymEngine::Expression& expr) {
 class SqrtVisitor : public SymEngine::BaseVisitor<SqrtVisitor> {
 public:
     SymEngine::Expression sqrt_items, non_sqrt_items;
-    bool cur;
-    bool is_mul;
+    bool cur = false;
+    bool is_mul = false;
 
     void bvisit(const SymEngine::Add& x) {
         for (const auto& iter : x.get_args()) {
@@ -113,6 +114,7 @@ public:
 
     void bvisit(const SymEngine::Mul& x) {
         for (const auto& iter : x.get_args()) {
+            cur = false;
             is_mul = true;
             iter->accept(*this);
             if (cur) {
@@ -286,18 +288,35 @@ std::string EquationToString(const SymEngine::Expression& expr) {
     RCP<const Basic> num, den;
     as_numer_denom(expanded.get_basic(), outArg(num), outArg(den));
 
+    {
+        // Special check for linear equations
+        const auto& symbols = free_symbols(*num);
+        if (symbols.size() == 1) {
+            const auto& symbol = *symbols.begin();
+            const Expression expr(num);
+            // TODO: Using diff for this is simply horrible
+            if (expr.diff(symbol).diff(symbol) == 0) {
+                const auto& solns =
+                    SolveSingle(expr, rcp_static_cast<const SymEngine::Symbol>(symbol));
+                if (solns.size() == 1) {
+                    return symbol->__str__() + " = " + solns[0].get_basic()->__str__();
+                }
+            }
+        }
+    }
+
+    // Split the equation into symbol part and non-symbol part
     SymbolVisitor symbol_visitor;
     auto [symbol_items, non_symbol_items] = symbol_visitor.accept(*num);
 
+    // Flip the sign when symbol part is all negative
     SymbolSignVisitor symbol_sign_visitor;
     s8 symbol_items_sign = symbol_sign_visitor.accept(*num);
 
-    if (symbol_items_sign == -1) { // Flip the sign
+    if (symbol_items_sign == -1) {
         symbol_items = -symbol_items;
         non_symbol_items = -non_symbol_items;
     }
-
-    // TODO: Fix results like 3*x = 5
 
     return symbol_items.get_basic()->__str__() + " = " + non_symbol_items.get_basic()->__str__();
 }

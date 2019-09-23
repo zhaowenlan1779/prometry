@@ -20,6 +20,14 @@ using Expression = SymEngine::Expression;
 using Symbol = SymEngine::RCP<const SymEngine::Symbol>;
 using ProofList = Common::DynamicBitset;
 
+/**
+ * Solves a single equation with regard to a single symbol, there are no limits
+ * about what arguments to use to represent the symbol in question.
+ *
+ * Eg. 3x + 2y == 0 can solve to x == -2/3y (wrt x) and y == -3/2x (wrt y).
+ */
+std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& symbol);
+
 class System {
 public:
     explicit System();

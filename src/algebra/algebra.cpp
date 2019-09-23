@@ -55,9 +55,33 @@ struct std::equal_to<std::pair<Algebra::Expression, SymEngine::set_basic>> {
     }
 };
 
-// Implementation of Algebra::System
-
 namespace Algebra {
+
+std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& symbol) {
+    const auto& simplified = SimplifyEquation(equation);
+    auto soln = SymEngine::solve(simplified, symbol);
+
+    if (!SymEngine::is_a<SymEngine::FiniteSet>(*soln)) {
+        // Something might have gone wrong
+        // TODO: log this (and introduce a logging system at all)
+        UNREACHABLE_MSG("Solution is not a finite set {" + simplified.get_basic()->__str__() +
+                        ", " + symbol->__str__() + "}");
+        return {};
+    } else {
+        const auto& container =
+            SymEngine::down_cast<const SymEngine::FiniteSet&>(*soln).get_container();
+
+        std::vector<Expression> ans;
+        for (const auto& iter : container) {
+            if (IsAcceptable(iter)) {
+                ans.emplace_back(iter);
+            }
+        }
+        return ans;
+    }
+}
+
+// Implementation of Algebra::System
 
 using ExpressionUsedSet = std::unordered_set<Expression>;
 
@@ -88,35 +112,6 @@ struct System::Impl {
     std::vector<std::weak_ptr<Common::ProofChainNode>> GetParents(
         const ProofList& proof_list) const;
 };
-
-/**
- * Solves a single equation with regard to a single symbol, there are no limits
- * about what arguments to use to represent the symbol in question.
- *
- * Eg. 3x + 2y == 0 can solve to x == -2/3y (wrt x) and y == -3/2x (wrt y).
- */
-std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& symbol) {
-    auto soln = SymEngine::solve(SimplifyEquation(equation), symbol);
-
-    if (!SymEngine::is_a<SymEngine::FiniteSet>(*soln)) {
-        // Something might have gone wrong
-        // TODO: log this (and introduce a logging system at all)
-        UNREACHABLE_MSG("Solution is not a finite set {" + EquationToString(equation) + ", " +
-                        symbol->__str__() + "}");
-        return {};
-    } else {
-        const auto& container =
-            SymEngine::down_cast<const SymEngine::FiniteSet&>(*soln).get_container();
-
-        std::vector<Expression> ans;
-        for (const auto& iter : container) {
-            if (IsAcceptable(iter)) {
-                ans.emplace_back(iter);
-            }
-        }
-        return ans;
-    }
-}
 
 std::vector<std::pair<Expression, ProofList>> System::Impl::TrySolveAll(
     const Expression& expr_, ExpressionUsedSet& used, const SymEngine::set_basic& args) {
