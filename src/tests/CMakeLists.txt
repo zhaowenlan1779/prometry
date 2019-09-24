@@ -11,6 +11,7 @@ add_executable(tests
     construction/triangle_make.cpp
     core/element_common_parent.cpp
     core/element_intersection.cpp
+    element/triangle_order.cpp
     integrated/proof_output.cpp
     integrated/pythagorean.cpp
     transform/algebra/line_segment_concat.cpp

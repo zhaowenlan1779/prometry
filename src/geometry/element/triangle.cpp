@@ -1,6 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "common/assert.h"
 #include "core/system.h"
 #include "geometry/element/element_types.h"
 #include "geometry/element/line/line.h"
@@ -47,6 +48,48 @@ std::string Triangle::GetFullname() const {
 
 u64 Triangle::GetHash() const {
     return std::hash<std::string>()(GetFullname());
+}
+
+TriangleOrder GetRelativeTriangleOrder(TriangleOrder a, TriangleOrder b) {
+    using namespace TriangleOrders;
+    /// Map for quick lookup
+    static constexpr std::array<std::array<TriangleOrder, Count>, Count> TriangleOrderMap = {{
+        {/* ABC */ {ABC, ACB, BAC, BCA, CAB, CBA}},
+        {/* ACB */ {ACB, ABC, CAB, CBA, BAC, BCA}},
+        {/* BAC */ {BAC, BCA, ABC, ACB, CBA, CAB}},
+        {/* BCA */ {CAB, CBA, ACB, ABC, BCA, BAC}},
+        {/* CAB */ {BCA, BAC, CBA, CAB, ABC, ACB}},
+        {/* CBA */ {CBA, CAB, BCA, BAC, ACB, ABC}},
+    }};
+
+    return TriangleOrderMap[a][b];
+}
+
+std::pair<std::shared_ptr<Triangle>, TriangleOrder> MakeTriangle(System& system,
+                                                                 const std::shared_ptr<Point>& p1,
+                                                                 const std::shared_ptr<Point>& p2,
+                                                                 const std::shared_ptr<Point>& p3) {
+    const auto& t = system.CreateElement<Triangle>(
+        "Make triangle " + p1->GetName() + p2->GetName() + p3->GetName(), system, p1, p2, p3);
+
+    const std::array<std::pair<TriangleOrder, std::array<std::shared_ptr<Point>, 3>>, 6>
+        PointsOrderMap{{
+            {TriangleOrders::ABC, {t->A, t->B, t->C}},
+            {TriangleOrders::ACB, {t->A, t->C, t->B}},
+            {TriangleOrders::BAC, {t->B, t->A, t->C}},
+            {TriangleOrders::BCA, {t->B, t->C, t->A}},
+            {TriangleOrders::CAB, {t->C, t->A, t->B}},
+            {TriangleOrders::CBA, {t->C, t->B, t->A}},
+        }};
+    const std::array<std::shared_ptr<Point>, 3> current_order{{p1, p2, p3}};
+
+    for (const auto& [triangle_order, points_order] : PointsOrderMap) {
+        if (points_order == current_order) {
+            return {t, triangle_order};
+        }
+    }
+
+    UNREACHABLE();
 }
 
 } // namespace Core
