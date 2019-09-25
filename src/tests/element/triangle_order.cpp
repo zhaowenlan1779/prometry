@@ -8,34 +8,16 @@
 
 namespace Core {
 
-template <typename T>
-void ApplyTransform(const std::array<int, 3>& transform, std::array<T, 3>& cur) {
-    std::array<T, 3> nxt;
-    for (std::size_t i = 0; i < transform.size(); ++i) {
-        nxt[i] = cur[transform[i]];
-    }
-    cur = nxt;
-}
-
-static constexpr std::array<std::array<int, 3>, 6> Transforms{{
-    {0, 1, 2},
-    {0, 2, 1},
-    {1, 0, 2},
-    {1, 2, 0},
-    {2, 0, 1},
-    {2, 1, 0},
-}};
-
 TEST_CASE("RelativeTriangleOrder", "[element]") {
     for (std::size_t i = 0; i < TriangleOrders::Count; ++i) {
         for (std::size_t j = 0; j < TriangleOrders::Count; ++j) {
             std::array<int, 3> order1{{0, 1, 2}};
-            ApplyTransform(Transforms[i], order1);
+            ApplyTransform(TriangleOrder(i), order1);
             const auto new_transform = GetRelativeTriangleOrder(TriangleOrder(i), TriangleOrder(j));
-            ApplyTransform(Transforms[new_transform], order1);
+            ApplyTransform(new_transform, order1);
 
             std::array<int, 3> order2{{0, 1, 2}};
-            ApplyTransform(Transforms[j], order2);
+            ApplyTransform(TriangleOrder(j), order2);
 
             REQUIRE(order1 == order2);
         }
@@ -56,7 +38,7 @@ TEST_CASE("MakeTriangle", "[element]") {
         std::array<std::shared_ptr<Point>, 3> cur{{t->A, t->B, t->C}};                             \
         const auto& [triangle, order] = MakeTriangle(system, p1, p2, p3);                          \
         REQUIRE(triangle == t);                                                                    \
-        ApplyTransform(Transforms[order], cur);                                                    \
+        ApplyTransform(order, cur);                                                                \
         REQUIRE((cur[0] == p1 && cur[1] == p2 && cur[2] == p3));                                   \
     }
 

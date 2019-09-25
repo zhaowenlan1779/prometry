@@ -44,6 +44,25 @@ enum TriangleOrder {
 
 using TriangleOrders::TriangleOrder;
 
+/// Map of transforms for the triangle orders
+static constexpr std::array<std::array<int, 3>, 6> OrderTransforms{{
+    {0, 1, 2},
+    {0, 2, 1},
+    {1, 0, 2},
+    {1, 2, 0},
+    {2, 0, 1},
+    {2, 1, 0},
+}};
+
+template <typename T>
+void ApplyTransform(TriangleOrder order, std::array<T, 3>& cur) {
+    std::array<T, 3> nxt;
+    for (std::size_t i = 0; i < nxt.size(); ++i) {
+        nxt[i] = cur[OrderTransforms[order][i]];
+    }
+    cur = nxt;
+}
+
 /// Get the relative order of B to A. E.g. ACB to ACB is ABC.
 TriangleOrder GetRelativeTriangleOrder(TriangleOrder a, TriangleOrder b);
 

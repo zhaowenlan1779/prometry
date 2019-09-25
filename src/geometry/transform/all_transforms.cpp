@@ -10,6 +10,7 @@
 #include "geometry/transform/parallel/parallel_to_angles.h"
 #include "geometry/transform/parallel/prependicular_to_angles.h"
 #include "geometry/transform/pythagorean/pythagorean.h"
+#include "geometry/transform/triangle/similar_to_angles.h"
 #include "geometry/transform/triangle/triangle_internal_angles.h"
 
 namespace Core {
@@ -29,6 +30,7 @@ void RegisterAllTransforms(System& system) {
     system.RegisterTransform<Pythagorean>();
 
     // Triangle
+    system.RegisterTransform<SimilarToAngles>();
     system.RegisterTransform<TriangleInternalAngles>();
 }
 

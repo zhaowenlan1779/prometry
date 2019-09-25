@@ -25,9 +25,9 @@ Triangle::Triangle(System& system, const std::shared_ptr<Point>& A_,
     A = std::move(points[0]);
     B = std::move(points[1]);
     C = std::move(points[2]);
-    a = Line::Connect(system, B, C);
-    b = Line::Connect(system, A, C);
-    c = Line::Connect(system, A, B);
+    a = Line::Connect(system, B, C).first;
+    b = Line::Connect(system, A, C).first;
+    c = Line::Connect(system, A, B).first;
     length_a = LineSegmentLength(B, C);
     length_b = LineSegmentLength(A, C);
     length_c = LineSegmentLength(A, B);

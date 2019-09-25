@@ -12,6 +12,7 @@ enum ConclusionTypes : ConclusionType {
     Invalid,
     LineParallel,
     LinePrependicular,
+    TriangleSimilar,
     // TODO
 };
 }

@@ -45,17 +45,18 @@ LineDirection Line::GetLineDirection(const std::shared_ptr<Point>& p1,
     UNREACHABLE();
 }
 
-/*static*/ std::shared_ptr<Line> Line::Connect(System& system, const std::shared_ptr<Point>& p1,
-                                               const std::shared_ptr<Point>& p2) {
+/*static*/ std::pair<std::shared_ptr<Line>, LineDirection> Line::Connect(
+    System& system, const std::shared_ptr<Point>& p1, const std::shared_ptr<Point>& p2) {
     auto lines = Core::CommonParent<Line>(p1, p2);
     if (lines.empty()) {
         auto line = system.CreateElement<Line>("Connect " + p1->GetName() + p2->GetName(),
                                                p1->GetName() + p2->GetName());
         p1->AddParent(line);
         p2->AddParent(line);
-        return line;
+        return {line, line->GetLineDirection(p1, p2)};
     } else {
-        return std::dynamic_pointer_cast<Line>(*lines.begin());
+        const auto& line = std::dynamic_pointer_cast<Line>(*lines.begin());
+        return {line, line->GetLineDirection(p1, p2)};
     }
 }
 

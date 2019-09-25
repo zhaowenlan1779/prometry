@@ -4,6 +4,8 @@ add_library(geometry STATIC
     conclusion/line_parallel.h
     conclusion/line_prependicular.cpp
     conclusion/line_prependicular.h
+    conclusion/triangle_similar.cpp
+    conclusion/triangle_similar.h
     construction/all_constructions.cpp
     construction/all_constructions.h
     construction/line_connect.cpp
@@ -37,6 +39,8 @@ add_library(geometry STATIC
     transform/parallel/prependicular_to_angles.h
     transform/pythagorean/pythagorean.cpp
     transform/pythagorean/pythagorean.h
+    transform/triangle/similar_to_angles.cpp
+    transform/triangle/similar_to_angles.h
     transform/triangle/triangle_internal_angles.cpp
     transform/triangle/triangle_internal_angles.h
 )

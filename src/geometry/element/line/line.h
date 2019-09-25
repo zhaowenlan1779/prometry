@@ -33,8 +33,8 @@ public:
      * If such a line already exists, returns that line. Otherwise create a new one with the two
      * points added as children.
      */
-    static std::shared_ptr<Line> Connect(System& system, const std::shared_ptr<Point>& p1,
-                                         const std::shared_ptr<Point>& p2);
+    static std::pair<std::shared_ptr<Line>, LineDirection> Connect(
+        System& system, const std::shared_ptr<Point>& p1, const std::shared_ptr<Point>& p2);
 
 private:
     std::string name;
