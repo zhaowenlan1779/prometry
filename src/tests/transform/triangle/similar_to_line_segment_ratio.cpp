@@ -26,18 +26,31 @@ TEST_CASE("SimilarToLineSegmentRatio", "[transform]") {
     const auto& [t2, order2] = MakeTriangle(system, f, d, e);
 
     // Let ABC similar FDE
-    system.CreateConclusion<TriangleSimilar>("", {}, t1, order1, t2, order2);
+    auto similar = system.CreateConclusion<TriangleSimilar>("", {}, t1, order1, t2, order2);
 
     system.Algebra().AddEquation(LineSegmentLength(a, b) - SymEngine::integer(3));
     system.Algebra().AddEquation(LineSegmentLength(b, c) - SymEngine::integer(4));
     system.Algebra().AddEquation(LineSegmentLength(c, a) - SymEngine::integer(5));
 
-    system.Algebra().AddEquation(LineSegmentLength(f, d) - SymEngine::integer(6));
-
     system.Execute([](System& system) { return nullptr; });
 
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(d, e) - SymEngine::integer(8)).first);
-    REQUIRE(system.Algebra().CheckEquation(LineSegmentLength(e, f) - SymEngine::integer(10)).first);
+    SECTION("specify the ratio") {
+        system.Algebra().AddEquation(similar->GetSimilarRatio() - SymEngine::integer(2));
+
+        REQUIRE(
+            system.Algebra().CheckEquation(LineSegmentLength(d, e) - SymEngine::integer(8)).first);
+        REQUIRE(
+            system.Algebra().CheckEquation(LineSegmentLength(e, f) - SymEngine::integer(10)).first);
+    }
+
+    SECTION("specify a length") {
+        system.Algebra().AddEquation(LineSegmentLength(f, d) - SymEngine::integer(6));
+
+        REQUIRE(
+            system.Algebra().CheckEquation(LineSegmentLength(d, e) - SymEngine::integer(8)).first);
+        REQUIRE(
+            system.Algebra().CheckEquation(LineSegmentLength(e, f) - SymEngine::integer(10)).first);
+    }
 }
 
 // TODO: More, better tests...
