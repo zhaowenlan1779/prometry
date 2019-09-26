@@ -11,6 +11,7 @@
 #include "geometry/transform/parallel/prependicular_to_angles.h"
 #include "geometry/transform/pythagorean/pythagorean.h"
 #include "geometry/transform/triangle/similar_to_angles.h"
+#include "geometry/transform/triangle/similar_to_line_segment_ratio.h"
 #include "geometry/transform/triangle/triangle_internal_angles.h"
 
 namespace Core {
@@ -20,17 +21,18 @@ void RegisterAllTransforms(System& system) {
     system.RegisterTransform<LineSegmentConcat>();
 
     // Parallel
+    system.RegisterTransform<AnglesToParallel>();
+    system.RegisterTransform<AnglesToPrependicular>();
     system.RegisterTransform<LineParallelTransitivity>();
     system.RegisterTransform<ParallelToAngles>();
-    system.RegisterTransform<AnglesToParallel>();
     system.RegisterTransform<PrependicularToAngles>();
-    system.RegisterTransform<AnglesToPrependicular>();
 
     // Pythagorean
     system.RegisterTransform<Pythagorean>();
 
     // Triangle
     system.RegisterTransform<SimilarToAngles>();
+    system.RegisterTransform<SimilarToLineSegmentRatio>();
     system.RegisterTransform<TriangleInternalAngles>();
 }
 

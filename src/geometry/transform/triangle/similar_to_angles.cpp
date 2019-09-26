@@ -24,9 +24,12 @@ void SimilarToAngles::Execute(System& system) {
             {triangles[1]->angle_A, triangles[1]->angle_B, triangles[1]->angle_C}};
         ApplyTransform(similar->GetOrder(), angles);
 
-        system.Algebra().AddEquation(triangles[0]->angle_A - angles[0]);
-        system.Algebra().AddEquation(triangles[0]->angle_B - angles[1]);
-        system.Algebra().AddEquation(triangles[0]->angle_C - angles[2]);
+        system.Algebra().AddEquation(triangles[0]->angle_A - angles[0], "similar to angles",
+                                     {similar->GetProofNode()});
+        system.Algebra().AddEquation(triangles[0]->angle_B - angles[1], "similar to angles",
+                                     {similar->GetProofNode()});
+        system.Algebra().AddEquation(triangles[0]->angle_C - angles[2], "similar to angles",
+                                     {similar->GetProofNode()});
     }
 }
 
