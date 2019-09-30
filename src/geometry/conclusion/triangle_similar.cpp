@@ -12,18 +12,28 @@ TriangleSimilar::TriangleSimilar(const std::shared_ptr<Triangle>& t1_, TriangleO
                                  const std::shared_ptr<Triangle>& t2_, TriangleOrder order2)
     : t1(std::min(t1_, t2_)), t2(std::max(t1_, t2_)) {
 
-    order = (t1.lock() == t1_) ? GetRelativeTriangleOrder(order1, order2)
-                               : GetRelativeTriangleOrder(order2, order1);
+    order = (t1.lock() == t1_) ? CombineTriangleOrder(order1, InverseTriangleOrder(order2))
+                               : CombineTriangleOrder(order2, InverseTriangleOrder(order1));
 
     ratio = Algebra::Expression(
-        SymEngine::symbol(t1.lock()->GetName() + "_" + GetTriangle2Text() + "_similar_k"));
+        SymEngine::symbol(GetTriangle1Text() + "_" + t2.lock()->GetName() + "_similar_k"));
+}
+
+TriangleSimilar::TriangleSimilar(const std::shared_ptr<Triangle>& t1_,
+                                 const std::shared_ptr<Triangle>& t2_, TriangleOrder order_)
+    : t1(std::min(t1_, t2_)), t2(std::max(t1_, t2_)) {
+
+    order = (t1.lock() == t1_) ? order_ : InverseTriangleOrder(order_);
+
+    ratio = Algebra::Expression(
+        SymEngine::symbol(GetTriangle1Text() + "_" + t2.lock()->GetName() + "_similar_k"));
 }
 
 TriangleSimilar::~TriangleSimilar() = default;
 
-std::string TriangleSimilar::GetTriangle2Text() const {
-    if (auto triangle2 = t2.lock()) {
-        std::array<std::shared_ptr<Point>, 3> points{{triangle2->A, triangle2->B, triangle2->C}};
+std::string TriangleSimilar::GetTriangle1Text() const {
+    if (auto triangle1 = t1.lock()) {
+        std::array<std::shared_ptr<Point>, 3> points{{triangle1->A, triangle1->B, triangle1->C}};
         ApplyTransform(order, points);
         return points[0]->GetName() + points[1]->GetName() + points[2]->GetName();
     }
@@ -31,8 +41,8 @@ std::string TriangleSimilar::GetTriangle2Text() const {
 }
 
 std::string TriangleSimilar::ToString() const {
-    if (auto triangle1 = t1.lock()) {
-        return triangle1->GetName() + " similar " + GetTriangle2Text();
+    if (auto triangle2 = t2.lock()) {
+        return GetTriangle1Text() + " similar " + triangle2->GetName();
     }
     UNREACHABLE_MSG("Unexpected expired weak_ptr!");
 }

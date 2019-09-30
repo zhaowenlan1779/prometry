@@ -21,14 +21,14 @@ void SimilarToAngles::Execute(System& system) {
              std::dynamic_pointer_cast<Triangle>(elements[1])}};
 
         std::array<Algebra::Expression, 3> angles{
-            {triangles[1]->angle_A, triangles[1]->angle_B, triangles[1]->angle_C}};
+            {triangles[0]->angle_A, triangles[0]->angle_B, triangles[0]->angle_C}};
         ApplyTransform(similar->GetOrder(), angles);
 
-        system.Algebra().AddEquation(triangles[0]->angle_A - angles[0], "similar to angles",
+        system.Algebra().AddEquation(triangles[1]->angle_A - angles[0], "similar to angles",
                                      {similar->GetProofNode()});
-        system.Algebra().AddEquation(triangles[0]->angle_B - angles[1], "similar to angles",
+        system.Algebra().AddEquation(triangles[1]->angle_B - angles[1], "similar to angles",
                                      {similar->GetProofNode()});
-        system.Algebra().AddEquation(triangles[0]->angle_C - angles[2], "similar to angles",
+        system.Algebra().AddEquation(triangles[1]->angle_C - angles[2], "similar to angles",
                                      {similar->GetProofNode()});
     }
 }

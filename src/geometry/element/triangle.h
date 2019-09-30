@@ -66,6 +66,12 @@ void ApplyTransform(TriangleOrder order, std::array<T, 3>& cur) {
 /// Get the relative order of B to A. E.g. ACB to ACB is ABC.
 TriangleOrder GetRelativeTriangleOrder(TriangleOrder a, TriangleOrder b);
 
+/// Gets the inverse triangle order.
+TriangleOrder InverseTriangleOrder(TriangleOrder order);
+
+/// Combines order a and b to get another order.
+TriangleOrder CombineTriangleOrder(TriangleOrder a, TriangleOrder b);
+
 /**
  * Finds a triangle, constructing one if not exist, and returns
  * the relative order of P1 P2 P3 to it.

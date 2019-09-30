@@ -65,6 +65,25 @@ TriangleOrder GetRelativeTriangleOrder(TriangleOrder a, TriangleOrder b) {
     return TriangleOrderMap[a][b];
 }
 
+TriangleOrder InverseTriangleOrder(TriangleOrder order) {
+    return GetRelativeTriangleOrder(order, TriangleOrders::ABC);
+}
+
+TriangleOrder CombineTriangleOrder(TriangleOrder a, TriangleOrder b) {
+    using namespace TriangleOrders;
+    /// Map for quick lookup
+    static constexpr std::array<std::array<TriangleOrder, Count>, Count> TriangleOrderMap = {{
+        {/* ABC */ {ABC, ACB, BAC, BCA, CAB, CBA}},
+        {/* ACB */ {ACB, ABC, CAB, CBA, BAC, BCA}},
+        {/* BAC */ {BAC, BCA, ABC, ACB, CBA, CAB}},
+        {/* BCA */ {BCA, BAC, CBA, CAB, ABC, ACB}},
+        {/* CAB */ {CAB, CBA, ACB, ABC, BCA, BAC}},
+        {/* CBA */ {CBA, CAB, BCA, BAC, ACB, ABC}},
+    }};
+
+    return TriangleOrderMap[a][b];
+}
+
 std::pair<std::shared_ptr<Triangle>, TriangleOrder> MakeTriangle(System& system,
                                                                  const std::shared_ptr<Point>& p1,
                                                                  const std::shared_ptr<Point>& p2,

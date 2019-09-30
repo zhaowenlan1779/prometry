@@ -24,6 +24,21 @@ TEST_CASE("RelativeTriangleOrder", "[element]") {
     }
 }
 
+TEST_CASE("CombineTriangleOrder", "[element]") {
+    for (std::size_t i = 0; i < TriangleOrders::Count; ++i) {
+        for (std::size_t j = 0; j < TriangleOrders::Count; ++j) {
+            std::array<int, 3> order1{{0, 1, 2}};
+            ApplyTransform(TriangleOrder(i), order1);
+            ApplyTransform(TriangleOrder(j), order1);
+
+            std::array<int, 3> order2{{0, 1, 2}};
+            ApplyTransform(CombineTriangleOrder(TriangleOrder(i), TriangleOrder(j)), order2);
+
+            REQUIRE(order1 == order2);
+        }
+    }
+}
+
 TEST_CASE("MakeTriangle", "[element]") {
     System system;
     auto p1 = system.CreateElement<Point>("", "p1");

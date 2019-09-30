@@ -31,32 +31,32 @@ TEST_CASE("SimilarToAngles", "[transform]") {
     system.Execute([](System& system) { return nullptr; });
 
     {
-        const auto& [ab, dir1] = Line::Connect(system, a, b);
+        const auto& [ba, dir1] = Line::Connect(system, b, a);
         const auto& [bc, dir2] = Line::Connect(system, b, c);
-        const auto& [fd, dir3] = Line::Connect(system, f, d);
+        const auto& [df, dir3] = Line::Connect(system, d, f);
         const auto& [de, dir4] = Line::Connect(system, d, e);
         REQUIRE(system.Algebra()
-                    .CheckEquation(LineAngle(ab, dir1, bc, dir2) - LineAngle(fd, dir3, de, dir4))
+                    .CheckEquation(LineAngle(ba, dir1, bc, dir2) - LineAngle(df, dir3, de, dir4))
                     .first);
     }
 
     {
-        const auto& [bc, dir1] = Line::Connect(system, b, c);
+        const auto& [cb, dir1] = Line::Connect(system, c, b);
         const auto& [ca, dir2] = Line::Connect(system, c, a);
-        const auto& [de, dir3] = Line::Connect(system, d, e);
+        const auto& [ed, dir3] = Line::Connect(system, e, d);
         const auto& [ef, dir4] = Line::Connect(system, e, f);
         REQUIRE(system.Algebra()
-                    .CheckEquation(LineAngle(bc, dir1, ca, dir2) - LineAngle(de, dir3, ef, dir4))
+                    .CheckEquation(LineAngle(cb, dir1, ca, dir2) - LineAngle(ed, dir3, ef, dir4))
                     .first);
     }
 
     {
-        const auto& [ca, dir1] = Line::Connect(system, c, a);
+        const auto& [ac, dir1] = Line::Connect(system, a, c);
         const auto& [ab, dir2] = Line::Connect(system, a, b);
-        const auto& [ef, dir3] = Line::Connect(system, e, f);
+        const auto& [fe, dir3] = Line::Connect(system, f, e);
         const auto& [fd, dir4] = Line::Connect(system, f, d);
         REQUIRE(system.Algebra()
-                    .CheckEquation(LineAngle(ca, dir1, ab, dir2) - LineAngle(ef, dir3, fd, dir4))
+                    .CheckEquation(LineAngle(ac, dir1, ab, dir2) - LineAngle(fe, dir3, fd, dir4))
                     .first);
     }
 }

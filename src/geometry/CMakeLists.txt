@@ -39,6 +39,8 @@ add_library(geometry STATIC
     transform/parallel/prependicular_to_angles.h
     transform/pythagorean/pythagorean.cpp
     transform/pythagorean/pythagorean.h
+    transform/triangle/aa_similar.cpp
+    transform/triangle/aa_similar.h
     transform/triangle/similar_to_angles.cpp
     transform/triangle/similar_to_angles.h
     transform/triangle/similar_to_line_segment_ratio.cpp

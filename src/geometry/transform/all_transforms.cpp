@@ -10,6 +10,7 @@
 #include "geometry/transform/parallel/parallel_to_angles.h"
 #include "geometry/transform/parallel/prependicular_to_angles.h"
 #include "geometry/transform/pythagorean/pythagorean.h"
+#include "geometry/transform/triangle/aa_similar.h"
 #include "geometry/transform/triangle/similar_to_angles.h"
 #include "geometry/transform/triangle/similar_to_line_segment_ratio.h"
 #include "geometry/transform/triangle/triangle_internal_angles.h"
@@ -31,6 +32,7 @@ void RegisterAllTransforms(System& system) {
     system.RegisterTransform<Pythagorean>();
 
     // Triangle
+    system.RegisterTransform<AASimilar>();
     system.RegisterTransform<SimilarToAngles>();
     system.RegisterTransform<SimilarToLineSegmentRatio>();
     system.RegisterTransform<TriangleInternalAngles>();

@@ -21,16 +21,16 @@ void SimilarToLineSegmentRatio::Execute(System& system) {
              std::dynamic_pointer_cast<Triangle>(elements[1])}};
 
         std::array<Algebra::Expression, 3> line_segments{
-            {triangles[1]->length_a, triangles[1]->length_b, triangles[1]->length_c}};
+            {triangles[0]->length_a, triangles[0]->length_b, triangles[0]->length_c}};
         ApplyTransform(similar->GetOrder(), line_segments);
 
         const auto& ratio = similar->GetSimilarRatio();
 
-        system.Algebra().AddEquation((line_segments[0] / triangles[0]->length_a) - ratio,
+        system.Algebra().AddEquation((triangles[1]->length_a / line_segments[0]) - ratio,
                                      "similar to line segment ratio", {similar->GetProofNode()});
-        system.Algebra().AddEquation((line_segments[1] / triangles[0]->length_b) - ratio,
+        system.Algebra().AddEquation((triangles[1]->length_b / line_segments[1]) - ratio,
                                      "similar to line segment ratio", {similar->GetProofNode()});
-        system.Algebra().AddEquation((line_segments[2] / triangles[0]->length_c) - ratio,
+        system.Algebra().AddEquation((triangles[1]->length_c / line_segments[2]) - ratio,
                                      "similar to line segment ratio", {similar->GetProofNode()});
     }
 }

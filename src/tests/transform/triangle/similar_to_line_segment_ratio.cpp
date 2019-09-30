@@ -35,7 +35,12 @@ TEST_CASE("SimilarToLineSegmentRatio", "[transform]") {
     system.Execute([](System& system) { return nullptr; });
 
     SECTION("specify the ratio") {
-        system.Algebra().AddEquation(similar->GetSimilarRatio() - SymEngine::integer(2));
+        // TODO: more elegantly
+        const auto& ratio = similar->GetRelatedElements()[0] == t1
+                                ? SymEngine::Expression(SymEngine::integer(2))
+                                : SymEngine::Expression(
+                                      SymEngine::div(SymEngine::integer(1), SymEngine::integer(2)));
+        system.Algebra().AddEquation(similar->GetSimilarRatio() - ratio);
 
         REQUIRE(
             system.Algebra().CheckEquation(LineSegmentLength(d, e) - SymEngine::integer(8)).first);
