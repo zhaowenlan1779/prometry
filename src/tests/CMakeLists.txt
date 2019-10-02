@@ -23,6 +23,8 @@ add_executable(tests
     transform/pythagorean/pythagorean.cpp
     transform/triangle/aa_similar.cpp
     transform/triangle/aas_asa.cpp
+    transform/triangle/hl_similar.cpp
+    transform/triangle/isosceles_to_angles.cpp
     transform/triangle/sas_similar.cpp
     transform/triangle/similar_to_angles.cpp
     transform/triangle/similar_to_line_segment_ratio.cpp
