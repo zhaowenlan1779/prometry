@@ -34,6 +34,9 @@ TEST_CASE("CheckSign", "[algebra]") {
     REQUIRE(CheckSign(-x - y / z) == -1);
     REQUIRE(CheckSign(SymEngine::sqrt(x * x + y) - y / z) == 0);
     REQUIRE(CheckSign(SymEngine::sqrt(x * x + y) + y / z) == 1);
+    REQUIRE(CheckSign(SymEngine::sqrt(x - 1)) == 1);
+    REQUIRE(CheckSign(SymEngine::sqrt(x - 3) - x) == 0);
+    REQUIRE(CheckSign(-SymEngine::Expression(SymEngine::sqrt(x - 2)) - x - 3) == -1);
 }
 
 } // namespace Algebra

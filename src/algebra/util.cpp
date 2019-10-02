@@ -50,6 +50,9 @@ public:
     }
 
     void bvisit(const SymEngine::Pow& x) {
+        // We would assume that geometry equations only come in pows of 2,
+        // that is to say, either 2, 4, 8, ... or 1/2, 1/4, ...
+        // They are all guaranteed to be positive.
         sign = 1;
     }
 
@@ -126,7 +129,9 @@ public:
     }
 
     void bvisit(const SymEngine::Pow& x) {
-        if (SymEngine::eq(*x.get_exp(), *SymEngine::rational(1, 2))) {
+        if (SymEngine::eq(*x.get_exp(), *SymEngine::rational(1, 2)) &&
+            !SymEngine::free_symbols(*x.get_base()).empty()) {
+
             if (is_mul) {
                 cur = true;
             } else {
@@ -190,6 +195,12 @@ SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr) {
     if (sqrt_items == 0) {
         return expand(div(non_sqrt_items.get_basic(), den));
     } else {
+        if ((CheckSign(sqrt_items) == 1 && CheckSign(non_sqrt_items) == 1) ||
+            (CheckSign(sqrt_items) == -1 && CheckSign(non_sqrt_items) == -1)) {
+            // 'Impossible' : '1=0'
+            return 1;
+        }
+
         // TODO: Handle limitations here (sqrt_items and non_sqrt_items must be non-negative)
         return SimplifyEquation(
             div(sub(expand(pow(non_sqrt_items, integer(2))), expand(pow(sqrt_items, integer(2)))),

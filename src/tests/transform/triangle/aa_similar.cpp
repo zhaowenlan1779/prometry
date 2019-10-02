@@ -9,8 +9,6 @@
 #include "geometry/transform/triangle/aa_similar.h"
 #include "geometry/transform/triangle/triangle_internal_angles.h"
 
-#include "geometry/conclusion/conclusion_types.h"
-
 namespace Core {
 
 TEST_CASE("AASimilar", "[transform]") {

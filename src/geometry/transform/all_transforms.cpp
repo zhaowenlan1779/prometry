@@ -13,6 +13,7 @@
 #include "geometry/transform/triangle/aa_similar.h"
 #include "geometry/transform/triangle/similar_to_angles.h"
 #include "geometry/transform/triangle/similar_to_line_segment_ratio.h"
+#include "geometry/transform/triangle/sss_similar.h"
 #include "geometry/transform/triangle/triangle_internal_angles.h"
 
 namespace Core {
@@ -35,6 +36,7 @@ void RegisterAllTransforms(System& system) {
     system.RegisterTransform<AASimilar>();
     system.RegisterTransform<SimilarToAngles>();
     system.RegisterTransform<SimilarToLineSegmentRatio>();
+    system.RegisterTransform<SSS_Similar>();
     system.RegisterTransform<TriangleInternalAngles>();
 }
 

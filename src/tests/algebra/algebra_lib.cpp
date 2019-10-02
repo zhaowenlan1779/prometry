@@ -13,6 +13,7 @@ TEST_CASE("AlgebraLib", "[algebra]") {
 
     REQUIRE((x * x / x) == x);
     REQUIRE(((x * y * 2) / (2 * z)) == (x * y) / z);
+    REQUIRE(SymEngine::pow(x, -1) == 1 / x);
 }
 
 } // namespace Algebra

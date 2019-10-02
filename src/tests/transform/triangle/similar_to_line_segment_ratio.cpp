@@ -37,9 +37,8 @@ TEST_CASE("SimilarToLineSegmentRatio", "[transform]") {
     SECTION("specify the ratio") {
         // TODO: more elegantly
         const auto& ratio = similar->GetRelatedElements()[0] == t1
-                                ? SymEngine::Expression(SymEngine::integer(2))
-                                : SymEngine::Expression(
-                                      SymEngine::div(SymEngine::integer(1), SymEngine::integer(2)));
+                                ? SymEngine::Expression(2)
+                                : SymEngine::Expression(SymEngine::rational(1, 2));
         system.Algebra().AddEquation(similar->GetSimilarRatio() - ratio);
 
         REQUIRE(

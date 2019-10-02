@@ -45,6 +45,8 @@ add_library(geometry STATIC
     transform/triangle/similar_to_angles.h
     transform/triangle/similar_to_line_segment_ratio.cpp
     transform/triangle/similar_to_line_segment_ratio.h
+    transform/triangle/sss_similar.cpp
+    transform/triangle/sss_similar.h
     transform/triangle/triangle_internal_angles.cpp
     transform/triangle/triangle_internal_angles.h
 )

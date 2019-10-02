@@ -61,6 +61,10 @@ std::vector<Expression> SolveSingle(const Expression& equation, const Symbol& sy
     const auto& simplified = SimplifyEquation(equation);
     auto soln = SymEngine::solve(simplified, symbol);
 
+    if (SymEngine::is_a<SymEngine::EmptySet>(*soln)) {
+        return {};
+    }
+
     if (!SymEngine::is_a<SymEngine::FiniteSet>(*soln)) {
         // Something might have gone wrong
         // TODO: log this (and introduce a logging system at all)
