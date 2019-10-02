@@ -22,6 +22,7 @@ add_executable(tests
     transform/parallel/prependicular_to_angles.cpp
     transform/pythagorean/pythagorean.cpp
     transform/triangle/aa_similar.cpp
+    transform/triangle/sas_similar.cpp
     transform/triangle/similar_to_angles.cpp
     transform/triangle/similar_to_line_segment_ratio.cpp
     transform/triangle/sss_similar.cpp

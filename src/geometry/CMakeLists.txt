@@ -41,6 +41,8 @@ add_library(geometry STATIC
     transform/pythagorean/pythagorean.h
     transform/triangle/aa_similar.cpp
     transform/triangle/aa_similar.h
+    transform/triangle/sas_similar.cpp
+    transform/triangle/sas_similar.h
     transform/triangle/similar_to_angles.cpp
     transform/triangle/similar_to_angles.h
     transform/triangle/similar_to_line_segment_ratio.cpp
