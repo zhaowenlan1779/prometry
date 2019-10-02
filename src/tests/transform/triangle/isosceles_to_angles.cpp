@@ -25,7 +25,7 @@ TEST_CASE("IsoscelesToAngles", "[transform]") {
     REQUIRE(system.Algebra().CheckEquation(triangle->angle_A - triangle->angle_B).first);
 }
 
-TEST_CASE("EquilateralTriangle", "[transform]") {
+TEST_CASE("IsoscelesToAngles[EquilateralTriangle]", "[transform]") {
     System system;
     system.RegisterTransform<IsoscelesToAngles>();
     system.RegisterTransform<TriangleInternalAngles>();

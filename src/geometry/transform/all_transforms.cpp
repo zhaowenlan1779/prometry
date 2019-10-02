@@ -11,6 +11,7 @@
 #include "geometry/transform/parallel/prependicular_to_angles.h"
 #include "geometry/transform/pythagorean/pythagorean.h"
 #include "geometry/transform/triangle/aa_similar.h"
+#include "geometry/transform/triangle/angles_to_isosceles.h"
 #include "geometry/transform/triangle/hl_similar.h"
 #include "geometry/transform/triangle/isosceles_to_angles.h"
 #include "geometry/transform/triangle/sas_similar.h"
@@ -37,6 +38,7 @@ void RegisterAllTransforms(System& system) {
 
     // Triangle
     system.RegisterTransform<AASimilar>();
+    system.RegisterTransform<AnglesToIsosceles>();
     system.RegisterTransform<HLSimilar>();
     system.RegisterTransform<IsoscelesToAngles>();
     system.RegisterTransform<SAS_Similar>();

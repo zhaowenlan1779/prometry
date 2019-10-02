@@ -5,17 +5,23 @@
 #include "core/system.h"
 #include "geometry/conclusion/line_prependicular.h"
 #include "geometry/construction/all_constructions.h"
+#include "geometry/construction/triangle_make.h"
 #include "geometry/element/line/line.h"
 #include "geometry/element/line/line_segment.h"
 #include "geometry/element/point.h"
-#include "geometry/transform/all_transforms.h"
+#include "geometry/transform/algebra/line_segment_concat.h"
+#include "geometry/transform/parallel/prependicular_to_angles.h"
+#include "geometry/transform/pythagorean/pythagorean.h"
 
 namespace Core {
 
 TEST_CASE("Pythagorean+LineSegmentConcat", "[integrated]") {
     System system;
-    RegisterAllTransforms(system);
-    RegisterAllConstructions(system);
+    system.RegisterTransform<LineSegmentConcat>();
+    system.RegisterTransform<PrependicularToAngles>();
+    system.RegisterTransform<Pythagorean>();
+    system.RegisterConstruction<TriangleMake>();
+
     auto a = system.CreateElement<Point>("", "A");
     auto b = system.CreateElement<Point>("", "B");
     auto c = system.CreateElement<Point>("", "C");
