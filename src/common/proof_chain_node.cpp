@@ -14,15 +14,15 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
     for (const auto& reason_weak : node->reasons) {
         if (auto reason = reason_weak.lock()) {
             if (!visited.count(reason)) {
-                proof += GenerateProof(reason);
+                proof += GenerateProof(reason, visited);
             }
         }
     }
-
     for (const auto& pre_weak : node->pre_conditions) {
         if (auto pre_condition = pre_weak.lock()) {
             if (!visited.count(pre_condition) && !pre_condition->statement.empty()) {
-                proof += pre_condition->statement + "\n";
+                proof += "\n" + pre_condition->statement;
+                visited.emplace(pre_condition);
             }
         }
     }

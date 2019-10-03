@@ -186,8 +186,11 @@ SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr) {
     using namespace SymEngine;
     Expression expanded = expand(expr);
 
+    ASSERT_MSG(expanded.get_basic()->__str__().size() <= 1000, "Size of expression too big!");
+
     RCP<const Basic> num, den;
     as_numer_denom(expanded.get_basic(), outArg(num), outArg(den));
+    num = expand(num);
 
     SqrtVisitor visitor;
     auto [sqrt_items, non_sqrt_items] = visitor.accept(*num);

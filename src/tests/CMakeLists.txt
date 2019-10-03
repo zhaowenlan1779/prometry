@@ -14,6 +14,7 @@ add_executable(tests
     element/triangle_order.cpp
     integrated/proof_output.cpp
     integrated/pythagorean.cpp
+    integrated/triangle_equality_1.cpp
     transform/algebra/line_segment_concat.cpp
     transform/parallel/angles_to_parallel.cpp
     transform/parallel/angles_to_prependicular.cpp
