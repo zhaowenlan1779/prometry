@@ -91,6 +91,11 @@ struct System::Impl {
     std::unordered_map<std::pair<Expression, SymEngine::set_basic>,
                        std::vector<std::pair<Expression, ProofList>>>
         memory;
+    SymEngine::set_basic primary_symbols;
+    SymEngine::map_basic_basic symbol_subst_map;
+    std::map<SymEngine::RCP<const SymEngine::Basic>, std::shared_ptr<Common::ProofChainNode>,
+             SymEngine::RCPBasicKeyLess>
+        symbol_subst_proof_nodes;
     // std::unordered_map<Symbol, Expression> symbol_subst_map;
     bool new_equations = false;
 
@@ -107,6 +112,9 @@ struct System::Impl {
 
     std::vector<std::weak_ptr<Common::ProofChainNode>> GetParents(
         const ProofList& proof_list) const;
+
+    std::pair<Expression, std::vector<std::shared_ptr<Common::ProofChainNode>>> SubstituteEquation(
+        const Expression& expr);
 };
 
 std::vector<std::pair<Expression, ProofList>> System::Impl::TrySolveAll(
@@ -218,23 +226,77 @@ std::vector<std::weak_ptr<Common::ProofChainNode>> System::Impl::GetParents(
     return parents;
 }
 
+std::pair<Expression, std::vector<std::shared_ptr<Common::ProofChainNode>>>
+System::Impl::SubstituteEquation(const Expression& expr) {
+    auto expanded = SymEngine::expand(expr);
+    std::vector<std::shared_ptr<Common::ProofChainNode>> proof_nodes;
+
+    for (const auto& subst : symbol_subst_map) {
+        // This free_symbols is recalculated on every iteration to make sure
+        // no unnecessary substitutions are made.
+        if (SymEngine::free_symbols(*expanded.get_basic()).count(subst.first)) {
+            expanded = expanded.subs({subst});
+            proof_nodes.emplace_back(symbol_subst_proof_nodes.at(subst.first));
+        }
+    }
+
+    return {SymEngine::expand(expanded), proof_nodes};
+}
+
 System::System() : impl(std::make_unique<Impl>()) {}
 
 System::~System() = default;
 
 void System::AddEquation(const Expression& expr, const std::string& transform,
                          const std::vector<std::shared_ptr<Common::ProofChainNode>>& parents) {
-    if (CheckEquation(expr).first)
-        return;
+
+    const auto& [substituted, subst_reasons] = impl->SubstituteEquation(expr);
 
     auto proof_node = std::make_shared<Common::ProofChainNode>();
     proof_node->transform = transform;
-    proof_node->statement = EquationToString(expr);
+
+    auto str1 = EquationToString(expr);
+    auto str2 = EquationToString(substituted);
+    proof_node->statement =
+        (str1 == str2 || str2 == "0 = 0") ? str1 : str1 + " (aka. " + str2 + ")";
+
     for (const auto& iter : parents) {
         proof_node->reasons.emplace_back(iter);
     }
+    proof_node->reasons.insert(proof_node->reasons.end(), subst_reasons.begin(),
+                               subst_reasons.end());
 
-    impl->equations.push_back(Impl::Equation{expr, proof_node});
+    SymEngine::vec_basic new_symbols;
+    for (const auto& symbol : SymEngine::free_symbols(*substituted.get_basic())) {
+        if (!impl->primary_symbols.count(symbol)) {
+            new_symbols.emplace_back(symbol);
+        }
+    }
+
+    if (new_symbols.size() >= 1) {
+        // This equation surely can't have existed.
+        impl->new_equations = true;
+        for (std::size_t i = 1; i < new_symbols.size(); ++i) {
+            impl->primary_symbols.emplace(new_symbols[i]);
+        }
+        const auto& solns = SolveSingle(
+            substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(new_symbols[0]));
+        if (solns.size() == 1) {
+            // Add to substitute map
+            impl->symbol_subst_map.emplace(new_symbols[0], solns[0].get_basic());
+            impl->symbol_subst_proof_nodes.emplace(new_symbols[0], proof_node);
+            return;
+        } else {
+            // Use as a primary symbol
+            impl->primary_symbols.emplace(new_symbols[0]);
+        }
+    } else {
+        // Perform a check to avoid duplicate equations.
+        if (CheckEquation(expr).first)
+            return;
+    }
+
+    impl->equations.push_back(Impl::Equation{substituted, proof_node});
     impl->memory.clear();
     impl->new_equations = true;
 }
@@ -242,8 +304,10 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
 std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
     const Expression& expr) {
 
+    const auto& [substituted, subst_reasons] = impl->SubstituteEquation(expr);
+
     ExpressionUsedSet used;
-    auto soln = impl->TrySolveAll(expr, used, {});
+    auto soln = impl->TrySolveAll(substituted, used, {});
 
     // TODO: Why isn't everything EXACT zero?
     bool ret =
@@ -260,29 +324,19 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
 
     auto proof_node = std::make_shared<Common::ProofChainNode>();
     proof_node->transform = "algebra";
-    proof_node->statement = EquationToString(expr);
+
+    auto str1 = EquationToString(expr);
+    auto str2 = EquationToString(substituted);
+    proof_node->statement =
+        (str1 == str2 || str2 == "0 = 0") ? str1 : str1 + " (aka. " + str2 + ")";
 
     // TODO: Pick a best one instead of a random one
     proof_node->reasons = impl->GetParents(soln[0].second);
+    proof_node->reasons.insert(proof_node->reasons.end(), subst_reasons.begin(),
+                               subst_reasons.end());
 
     impl->proof_node_holder.emplace_back(proof_node);
     return {ret, proof_node};
-}
-
-std::vector<Expression> System::TrySolveAll(const Symbol& sym, const std::vector<Symbol>& args) {
-    SymEngine::set_basic converted_args;
-    for (const auto& iter : args) {
-        converted_args.emplace(iter);
-    }
-
-    ExpressionUsedSet used;
-    const auto& solns = impl->TrySolveAll(SymEngine::Expression(sym), used, converted_args);
-
-    std::vector<Expression> ans;
-    for (const auto& [soln, proof_list] : solns) {
-        ans.emplace_back(soln);
-    }
-    return ans;
 }
 
 bool System::HasNewEquations() {

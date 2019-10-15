@@ -1,8 +1,6 @@
 add_executable(tests
     algebra/algebra_lib.cpp
     algebra/check_equation.cpp
-    algebra/solve_1.cpp
-    algebra/solve_2.cpp
     algebra/util_check_sign.cpp
     algebra/util_equation_to_string.cpp
     algebra/util_simplify_equation.cpp

@@ -26,11 +26,11 @@ void SimilarToLineSegmentRatio::Execute(System& system) {
 
         const auto& ratio = similar->GetSimilarRatio();
 
-        system.Algebra().AddEquation((triangles[1]->length_a / line_segments[0]) - ratio,
+        system.Algebra().AddEquation(triangles[1]->length_a - ratio * line_segments[0],
                                      "similar to line segment ratio", {similar->GetProofNode()});
-        system.Algebra().AddEquation((triangles[1]->length_b / line_segments[1]) - ratio,
+        system.Algebra().AddEquation(triangles[1]->length_b - ratio * line_segments[1],
                                      "similar to line segment ratio", {similar->GetProofNode()});
-        system.Algebra().AddEquation((triangles[1]->length_c / line_segments[2]) - ratio,
+        system.Algebra().AddEquation(triangles[1]->length_c - ratio * line_segments[2],
                                      "similar to line segment ratio", {similar->GetProofNode()});
     }
 }
