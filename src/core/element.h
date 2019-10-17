@@ -10,6 +10,7 @@
 #include "algebra/algebra.h"
 #include "common/common_types.h"
 #include "common/proof_chain_node.h"
+#include "core/printer.h"
 
 namespace Core {
 
@@ -43,18 +44,7 @@ public:
 
     virtual ~Element();
 
-    /**
-     * Returns the name (display name) of the element.
-     * This can be simpler than the full name, sometimes omitting the type. Eg. "AB" instead of
-     * "Line AB" can be used.
-     */
-    virtual std::string GetName() const;
-
-    /**
-     * Returns the full name of the element.
-     * Full names should contain the type and name of the element, Eg. "Line AB"
-     */
-    virtual std::string GetFullname() const;
+    virtual std::string Print(PrintFormat format = PrintFormat::Plain) const;
 
     virtual u64 GetHash() const;
 

@@ -10,7 +10,7 @@ Algebra::Expression LineSegmentLength(const std::shared_ptr<Point>& p1_,
     const auto& p1 = std::min(p1_, p2_);
     const auto& p2 = std::max(p1_, p2_);
 
-    return Algebra::Expression(SymEngine::symbol(p1->GetName() + p2->GetName() + "_length"));
+    return Algebra::Expression(SymEngine::symbol(p1->Print() + p2->Print() + "_length"));
 }
 
 } // namespace Core

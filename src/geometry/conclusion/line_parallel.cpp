@@ -14,13 +14,22 @@ LineParallel::LineParallel(const std::shared_ptr<Line>& l1_, const std::shared_p
 
 LineParallel::~LineParallel() = default;
 
-std::string LineParallel::ToString() const {
-    if (auto line1 = l1.lock()) {
-        if (auto line2 = l2.lock()) {
-            return line1->GetName() + " // " + line2->GetName();
+std::string LineParallel::Print(PrintFormat format) const {
+    if (format == PrintFormat::Plain) {
+        if (auto line1 = l1.lock()) {
+            if (auto line2 = l2.lock()) {
+                return line1->Print(format) + " // " + line2->Print(format);
+            }
+        }
+    } else if (format == PrintFormat::Latex) {
+        if (auto line1 = l1.lock()) {
+            if (auto line2 = l2.lock()) {
+                return line1->Print(format) + " \\parallel " + line2->Print(format);
+            }
         }
     }
-    UNREACHABLE_MSG("Unexpected expired weak_ptr!");
+
+    UNREACHABLE_MSG("Unexpected!");
 }
 
 std::vector<std::shared_ptr<Element>> LineParallel::GetRelatedElements() const {

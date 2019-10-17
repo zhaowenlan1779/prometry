@@ -15,7 +15,7 @@ std::array<Algebra::Expression, 2> LineAngle(const std::shared_ptr<Line>& l1,
     const auto& actual_l2 = std::max(l1, l2);
 
     const auto angle = Algebra::Expression(
-        SymEngine::symbol(actual_l1->GetName() + "_" + actual_l2->GetName() + "_angle"));
+        SymEngine::symbol(actual_l1->Print() + "_" + actual_l2->Print() + "_angle"));
     return {angle, SymEngine::pi - angle};
 }
 

@@ -15,13 +15,22 @@ LinePrependicular::LinePrependicular(const std::shared_ptr<Line>& l1_,
 
 LinePrependicular::~LinePrependicular() = default;
 
-std::string LinePrependicular::ToString() const {
-    if (auto line1 = l1.lock()) {
-        if (auto line2 = l2.lock()) {
-            return line1->GetName() + " prependicular " + line2->GetName();
+std::string LinePrependicular::Print(PrintFormat format) const {
+    if (format == PrintFormat::Plain) {
+        if (auto line1 = l1.lock()) {
+            if (auto line2 = l2.lock()) {
+                return line1->Print(format) + " prependicular " + line2->Print(format);
+            }
+        }
+    } else if (format == PrintFormat::Latex) {
+        if (auto line1 = l1.lock()) {
+            if (auto line2 = l2.lock()) {
+                return line1->Print(format) + " \\perp " + line2->Print(format);
+            }
         }
     }
-    UNREACHABLE_MSG("Unexpected expired weak_ptr!");
+
+    UNREACHABLE_MSG("Unexpected!");
 }
 
 std::vector<std::shared_ptr<Element>> LinePrependicular::GetRelatedElements() const {

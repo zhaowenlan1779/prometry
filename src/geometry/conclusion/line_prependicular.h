@@ -15,7 +15,7 @@ class LinePrependicular : public Conclusion {
 public:
     explicit LinePrependicular(const std::shared_ptr<Line>& l1, const std::shared_ptr<Line>& l2);
     ~LinePrependicular() override;
-    std::string ToString() const override;
+    std::string Print(PrintFormat format = PrintFormat::Plain) const override;
     std::vector<std::shared_ptr<Element>> GetRelatedElements() const override;
     ConclusionType GetType() const override;
     u64 GetHash() const override;

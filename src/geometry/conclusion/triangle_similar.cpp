@@ -16,7 +16,7 @@ TriangleSimilar::TriangleSimilar(const std::shared_ptr<Triangle>& t1_, TriangleO
                                : CombineTriangleOrder(order2, InverseTriangleOrder(order1));
 
     ratio = Algebra::Expression(
-        SymEngine::symbol(GetTriangle1Text() + "_" + t2.lock()->GetName() + "_similar_k"));
+        SymEngine::symbol(GetTriangle1Text() + "_" + t2.lock()->Print() + "_similar_k"));
 }
 
 TriangleSimilar::TriangleSimilar(const std::shared_ptr<Triangle>& t1_,
@@ -26,25 +26,32 @@ TriangleSimilar::TriangleSimilar(const std::shared_ptr<Triangle>& t1_,
     order = (t1.lock() == t1_) ? order_ : InverseTriangleOrder(order_);
 
     ratio = Algebra::Expression(
-        SymEngine::symbol(GetTriangle1Text() + "_" + t2.lock()->GetName() + "_similar_k"));
+        SymEngine::symbol(GetTriangle1Text() + "_" + t2.lock()->Print() + "_similar_k"));
 }
 
 TriangleSimilar::~TriangleSimilar() = default;
 
-std::string TriangleSimilar::GetTriangle1Text() const {
+std::string TriangleSimilar::GetTriangle1Text(PrintFormat format) const {
     if (auto triangle1 = t1.lock()) {
         std::array<std::shared_ptr<Point>, 3> points{{triangle1->A, triangle1->B, triangle1->C}};
         ApplyTransform(order, points);
-        return points[0]->GetName() + points[1]->GetName() + points[2]->GetName();
+        return points[0]->Print(format) + points[1]->Print(format) + points[2]->Print(format);
     }
     UNREACHABLE_MSG("Unexpected expired weak_ptr!");
 }
 
-std::string TriangleSimilar::ToString() const {
-    if (auto triangle2 = t2.lock()) {
-        return GetTriangle1Text() + " similar " + triangle2->GetName();
+std::string TriangleSimilar::Print(PrintFormat format) const {
+    if (format == PrintFormat::Plain) {
+        if (auto triangle2 = t2.lock()) {
+            return GetTriangle1Text(format) + " similar " + triangle2->Print(format);
+        }
+    } else if (format == PrintFormat::Latex) {
+        if (auto triangle2 = t2.lock()) {
+            return GetTriangle1Text(format) + " \\sim " + triangle2->Print(format);
+        }
     }
-    UNREACHABLE_MSG("Unexpected expired weak_ptr!");
+
+    UNREACHABLE_MSG("Unexpected!");
 }
 
 std::vector<std::shared_ptr<Element>> TriangleSimilar::GetRelatedElements() const {

@@ -21,8 +21,7 @@ public:
 
     explicit Line(const std::string& name);
     ~Line() override;
-    std::string GetName() const override;
-    std::string GetFullname() const override;
+    std::string Print(PrintFormat format = PrintFormat::Plain) const override;
     ElementType GetType() const override;
     u64 GetHash() const override;
     LineDirection GetLineDirection(const std::shared_ptr<Point>& p1,

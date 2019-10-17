@@ -17,7 +17,7 @@ public:
     explicit TriangleSimilar(const std::shared_ptr<Triangle>& t1,
                              const std::shared_ptr<Triangle>& t2, TriangleOrder order);
     ~TriangleSimilar() override;
-    std::string ToString() const override;
+    std::string Print(PrintFormat format = PrintFormat::Plain) const override;
     std::vector<std::shared_ptr<Element>> GetRelatedElements() const override;
     ConclusionType GetType() const override;
     u64 GetHash() const override;
@@ -26,7 +26,7 @@ public:
     Algebra::Expression GetSimilarRatio() const;
 
 private:
-    std::string GetTriangle1Text() const;
+    std::string GetTriangle1Text(PrintFormat format = PrintFormat::Plain) const;
 
     std::weak_ptr<Triangle> t1;
     std::weak_ptr<Triangle> t2;

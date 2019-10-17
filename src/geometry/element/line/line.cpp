@@ -19,16 +19,18 @@ Line::Line(const std::string& name_) : name(name_) {}
 
 Line::~Line() = default;
 
-std::string Line::GetName() const {
-    return name;
-}
+std::string Line::Print(PrintFormat format) const {
+    if (format == PrintFormat::Plain) {
+        return "Line " + name;
+    } else if (format == PrintFormat::Latex) {
+        return name;
+    }
 
-std::string Line::GetFullname() const {
-    return "Line " + name;
+    UNREACHABLE_MSG("Unexpected format!");
 }
 
 u64 Line::GetHash() const {
-    return std::hash<std::string>()(GetFullname());
+    return std::hash<std::string>()(Print());
 }
 
 LineDirection Line::GetLineDirection(const std::shared_ptr<Point>& p1,
@@ -49,8 +51,8 @@ LineDirection Line::GetLineDirection(const std::shared_ptr<Point>& p1,
     System& system, const std::shared_ptr<Point>& p1, const std::shared_ptr<Point>& p2) {
     auto lines = Core::CommonParent<Line>(p1, p2);
     if (lines.empty()) {
-        auto line = system.CreateElement<Line>("Connect " + p1->GetName() + p2->GetName(),
-                                               p1->GetName() + p2->GetName());
+        auto line = system.CreateElement<Line>("Connect " + p1->Print() + p2->Print(),
+                                               p1->Print() + p2->Print());
         p1->AddParent(line);
         p2->AddParent(line);
         return {line, line->GetLineDirection(p1, p2)};

@@ -12,12 +12,8 @@ namespace Core {
 
 Element::~Element() = default;
 
-std::string Element::GetName() const {
+std::string Element::Print(PrintFormat format) const {
     return "Unknown";
-}
-
-std::string Element::GetFullname() const {
-    return "Unknown Unknown";
 }
 
 u64 Element::GetHash() const {

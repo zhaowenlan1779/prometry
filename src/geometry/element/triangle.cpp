@@ -38,16 +38,19 @@ Triangle::Triangle(System& system, const std::shared_ptr<Point>& A_,
 
 Triangle::~Triangle() = default;
 
-std::string Triangle::GetName() const {
-    return A->GetName() + B->GetName() + C->GetName();
-}
+std::string Triangle::Print(PrintFormat format) const {
+    const auto name = A->Print(format) + B->Print(format) + C->Print(format);
+    if (format == PrintFormat::Plain) {
+        return "Triangle " + name;
+    } else if (format == PrintFormat::Latex) {
+        return "\\bigtriangleup " + name;
+    }
 
-std::string Triangle::GetFullname() const {
-    return "Triangle " + GetName();
+    UNREACHABLE_MSG("Unexpected format!");
 }
 
 u64 Triangle::GetHash() const {
-    return std::hash<std::string>()(GetFullname());
+    return std::hash<std::string>()(Print());
 }
 
 TriangleOrder GetRelativeTriangleOrder(TriangleOrder a, TriangleOrder b) {
@@ -89,7 +92,7 @@ std::pair<std::shared_ptr<Triangle>, TriangleOrder> MakeTriangle(System& system,
                                                                  const std::shared_ptr<Point>& p2,
                                                                  const std::shared_ptr<Point>& p3) {
     const auto& t = system.CreateElement<Triangle>(
-        "Make triangle " + p1->GetName() + p2->GetName() + p3->GetName(), system, p1, p2, p3);
+        "Make triangle " + p1->Print() + p2->Print() + p3->Print(), system, p1, p2, p3);
 
     const std::array<std::pair<TriangleOrder, std::array<std::shared_ptr<Point>, 3>>, 6>
         PointsOrderMap{{

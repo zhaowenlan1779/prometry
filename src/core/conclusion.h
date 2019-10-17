@@ -8,6 +8,7 @@
 #include <vector>
 #include "common/common_types.h"
 #include "common/proof_chain_node.h"
+#include "core/printer.h"
 
 namespace Core {
 
@@ -27,12 +28,7 @@ class Conclusion {
 public:
     virtual ~Conclusion();
 
-    /**
-     * Output the string for this conclusion. E.g. "AB // CD".
-     */
-    virtual std::string ToString() const {
-        return "Unknown";
-    }
+    virtual std::string Print(PrintFormat format = PrintFormat::Plain) const;
 
     /**
      * Get the elements related to this conclusion.

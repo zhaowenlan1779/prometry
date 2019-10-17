@@ -16,8 +16,8 @@ void TriangleMake::Execute(System& system, const std::shared_ptr<Point>& p1,
         return;
     }
 
-    system.CreateElement<Triangle>("Declare Triangle " + p1->GetName() + "_" + p2->GetName() + "_" +
-                                       p3->GetName(),
+    system.CreateElement<Triangle>("Declare Triangle " + p1->Print() + "_" + p2->Print() + "_" +
+                                       p3->Print(),
                                    system, p1, p2, p3);
 }
 

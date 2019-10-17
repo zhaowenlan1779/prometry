@@ -7,6 +7,10 @@ namespace Core {
 
 Conclusion::~Conclusion() = default;
 
+std::string Conclusion::Print(PrintFormat format) const {
+    return "Unknown";
+}
+
 bool Conclusion::operator==(const Conclusion& other) const {
     return GetHash() == other.GetHash();
 }

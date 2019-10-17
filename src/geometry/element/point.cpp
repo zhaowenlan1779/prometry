@@ -1,6 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "common/assert.h"
 #include "geometry/element/element_types.h"
 #include "geometry/element/point.h"
 
@@ -12,12 +13,14 @@ Point::Point(const std::string& name_) : name(name_) {}
 
 Point::~Point() = default;
 
-std::string Point::GetName() const {
-    return name;
-}
+std::string Point::Print(PrintFormat format) const {
+    if (format == PrintFormat::Plain) {
+        return "Point " + name;
+    } else if (format == PrintFormat::Latex) {
+        return name;
+    }
 
-std::string Point::GetFullname() const {
-    return "Point " + name;
+    UNREACHABLE_MSG("Unexpected format!");
 }
 
 ElementType Point::GetType() const {
@@ -25,7 +28,7 @@ ElementType Point::GetType() const {
 }
 
 u64 Point::GetHash() const {
-    return std::hash<std::string>()(GetFullname());
+    return std::hash<std::string>()(Print());
 }
 
 } // namespace Core

@@ -90,7 +90,7 @@ public:
         }
         conclusion->proof_node = std::make_shared<Common::ProofChainNode>();
         conclusion->proof_node->transform = std::move(transform_name);
-        conclusion->proof_node->statement = conclusion->ToString();
+        conclusion->proof_node->statement = conclusion->Print();
         for (const auto& iter : source_nodes) {
             conclusion->proof_node->reasons.emplace_back(iter);
         }
