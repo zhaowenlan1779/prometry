@@ -41,16 +41,16 @@ Triangle::~Triangle() = default;
 std::string Triangle::Print(PrintFormat format) const {
     const auto name = A->Print(format) + B->Print(format) + C->Print(format);
     if (format == PrintFormat::Plain) {
-        return "Triangle " + name;
+        return name;
     } else if (format == PrintFormat::Latex) {
-        return "\\bigtriangleup " + name;
+        return "\\bigtriangleup" + name;
     }
 
     UNREACHABLE_MSG("Unexpected format!");
 }
 
 u64 Triangle::GetHash() const {
-    return std::hash<std::string>()(Print());
+    return std::hash<std::string>()("Triangle " + Print());
 }
 
 TriangleOrder GetRelativeTriangleOrder(TriangleOrder a, TriangleOrder b) {

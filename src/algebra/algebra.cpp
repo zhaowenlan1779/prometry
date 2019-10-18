@@ -252,19 +252,22 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
 
     const auto& [substituted, subst_reasons] = impl->SubstituteEquation(expr);
 
-    auto proof_node = std::make_shared<Common::ProofChainNode>();
-    proof_node->transform = transform;
-
-    auto str1 = EquationToString(expr);
-    auto str2 = EquationToString(substituted);
-    proof_node->statement =
-        (str1 == str2 || str2 == "0 = 0") ? str1 : str1 + " (aka. " + str2 + ")";
-
+    // Original equation proof node
+    auto original_proof_node = std::make_shared<Common::ProofChainNode>();
+    original_proof_node->transform = transform;
+    original_proof_node->statement = EquationToString(expr);
     for (const auto& iter : parents) {
-        proof_node->reasons.emplace_back(iter);
+        original_proof_node->reasons.emplace_back(iter);
     }
-    proof_node->reasons.insert(proof_node->reasons.end(), subst_reasons.begin(),
-                               subst_reasons.end());
+    impl->proof_node_holder.emplace_back(original_proof_node);
+
+    // Substituted equation proof node
+    auto subst_proof_node = std::make_shared<Common::ProofChainNode>();
+    subst_proof_node->transform = "algebra";
+    subst_proof_node->statement = EquationToString(substituted);
+    subst_proof_node->reasons.emplace_back(original_proof_node);
+    subst_proof_node->reasons.insert(subst_proof_node->reasons.end(), subst_reasons.begin(),
+                                     subst_reasons.end());
 
     SymEngine::vec_basic new_symbols;
     for (const auto& symbol : SymEngine::free_symbols(*substituted.get_basic())) {
@@ -284,7 +287,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
         if (solns.size() == 1) {
             // Add to substitute map
             impl->symbol_subst_map.emplace(new_symbols[0], solns[0].get_basic());
-            impl->symbol_subst_proof_nodes.emplace(new_symbols[0], proof_node);
+            impl->symbol_subst_proof_nodes.emplace(new_symbols[0], subst_proof_node);
             return;
         } else {
             // Use as a primary symbol
@@ -296,7 +299,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
             return;
     }
 
-    impl->equations.push_back(Impl::Equation{substituted, proof_node});
+    impl->equations.push_back(Impl::Equation{substituted, subst_proof_node});
     impl->memory.clear();
     impl->new_equations = true;
 }
@@ -322,21 +325,31 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
         return {ret, {}};
     }
 
-    auto proof_node = std::make_shared<Common::ProofChainNode>();
-    proof_node->transform = "algebra";
-
-    auto str1 = EquationToString(expr);
-    auto str2 = EquationToString(substituted);
-    proof_node->statement =
-        (str1 == str2 || str2 == "0 = 0") ? str1 : str1 + " (aka. " + str2 + ")";
+    // Substituted equation proof node
+    auto subst_proof_node = std::make_shared<Common::ProofChainNode>();
+    subst_proof_node->transform = "algebra";
+    subst_proof_node->statement = EquationToString(substituted);
 
     // TODO: Pick a best one instead of a random one
-    proof_node->reasons = impl->GetParents(soln[0].second);
-    proof_node->reasons.insert(proof_node->reasons.end(), subst_reasons.begin(),
-                               subst_reasons.end());
+    subst_proof_node->reasons = impl->GetParents(soln[0].second);
 
-    impl->proof_node_holder.emplace_back(proof_node);
-    return {ret, proof_node};
+    impl->proof_node_holder.emplace_back(subst_proof_node);
+
+    // Original equation proof node
+    auto original_proof_node = std::make_shared<Common::ProofChainNode>();
+    original_proof_node->transform = "algebra";
+    original_proof_node->statement = EquationToString(expr);
+    if (substituted != 0) {
+        original_proof_node->reasons.emplace_back(subst_proof_node);
+    }
+    if (substituted == 0 && subst_reasons.size() == 1) {
+        original_proof_node->hidden = true;
+    }
+    original_proof_node->reasons.insert(original_proof_node->reasons.end(), subst_reasons.begin(),
+                                        subst_reasons.end());
+    impl->proof_node_holder.emplace_back(original_proof_node);
+
+    return {ret, original_proof_node};
 }
 
 bool System::HasNewEquations() {

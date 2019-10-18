@@ -15,7 +15,7 @@ Point::~Point() = default;
 
 std::string Point::Print(PrintFormat format) const {
     if (format == PrintFormat::Plain) {
-        return "Point " + name;
+        return name;
     } else if (format == PrintFormat::Latex) {
         return name;
     }
@@ -28,7 +28,7 @@ ElementType Point::GetType() const {
 }
 
 u64 Point::GetHash() const {
-    return std::hash<std::string>()(Print());
+    return std::hash<std::string>()("Point " + Print());
 }
 
 } // namespace Core

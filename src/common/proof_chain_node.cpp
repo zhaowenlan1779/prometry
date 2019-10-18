@@ -27,17 +27,21 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
         }
     }
 
+    if (node->hidden) {
+        return proof;
+    }
+
     do {
-        if (!node->reasons.empty()) {
-            if (node->reasons.size() == 1) {
-                if (auto reason = node->reasons[0].lock()) {
-                    if (reason->statement == node->statement) {
-                        // Ignore meaningless algebra transforms
-                        break;
-                    }
+        if (node->reasons.size() == 1) {
+            if (auto reason = node->reasons[0].lock()) {
+                if (reason->statement == node->statement) {
+                    // Ignore meaningless algebra transforms
+                    break;
                 }
             }
+        }
 
+        if (!node->reasons.empty()) {
             proof += "\nSince     ";
             for (const auto& reason_weak : node->reasons) {
                 if (auto reason = reason_weak.lock()) {
@@ -45,10 +49,12 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
                 }
             }
             proof += "\nTherefore " + node->statement;
+        } else {
+            proof += "\nWe have   " + node->statement;
+        }
 
-            if (!node->transform.empty()) {
-                proof += " (" + node->transform + ")";
-            }
+        if (!node->transform.empty()) {
+            proof += " (" + node->transform + ")";
         }
     } while (0);
 

@@ -21,7 +21,7 @@ Line::~Line() = default;
 
 std::string Line::Print(PrintFormat format) const {
     if (format == PrintFormat::Plain) {
-        return "Line " + name;
+        return name;
     } else if (format == PrintFormat::Latex) {
         return name;
     }
@@ -30,7 +30,7 @@ std::string Line::Print(PrintFormat format) const {
 }
 
 u64 Line::GetHash() const {
-    return std::hash<std::string>()(Print());
+    return std::hash<std::string>()("Line " + Print());
 }
 
 LineDirection Line::GetLineDirection(const std::shared_ptr<Point>& p1,

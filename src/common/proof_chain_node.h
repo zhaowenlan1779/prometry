@@ -27,6 +27,9 @@ struct ProofChainNode {
 
     /// The pre-conditions of the current proof node.
     std::vector<std::weak_ptr<ProofChainNode>> pre_conditions;
+
+    /// Whether this node should be hidden.
+    bool hidden = false;
 };
 
 std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node);
