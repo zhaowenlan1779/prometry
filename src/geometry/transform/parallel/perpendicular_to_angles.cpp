@@ -2,28 +2,28 @@
 // All rights reserved.
 
 #include "geometry/conclusion/conclusion_types.h"
-#include "geometry/conclusion/line_prependicular.h"
+#include "geometry/conclusion/line_perpendicular.h"
 #include "geometry/element/element_types.h"
 #include "geometry/element/line/line.h"
 #include "geometry/element/line/line_angle.h"
 #include "geometry/element/point.h"
-#include "geometry/transform/parallel/prependicular_to_angles.h"
+#include "geometry/transform/parallel/perpendicular_to_angles.h"
 
 namespace Core {
 
-PrependicularToAngles::PrependicularToAngles() = default;
+PerpendicularToAngles::PerpendicularToAngles() = default;
 
-PrependicularToAngles::~PrependicularToAngles() = default;
+PerpendicularToAngles::~PerpendicularToAngles() = default;
 
-void PrependicularToAngles::Execute(System& system) {
-    for (const auto& conclusion : system.GetConclusions(Conclusions::LinePrependicular)) {
+void PerpendicularToAngles::Execute(System& system) {
+    for (const auto& conclusion : system.GetConclusions(Conclusions::LinePerpendicular)) {
         const auto& elements = conclusion->GetRelatedElements();
 
         system.Algebra().AddEquation(
             LineAngle(std::dynamic_pointer_cast<Line>(elements[0]), LineDirection::Normal,
                       std::dynamic_pointer_cast<Line>(elements[1]), LineDirection::Normal) -
                 SymEngine::Expression(SymEngine::pi) / 2,
-            "prependicular to angles", {conclusion->GetProofNode()});
+            "perpendicular to angles", {conclusion->GetProofNode()});
     }
 }
 

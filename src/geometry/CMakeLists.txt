@@ -2,8 +2,8 @@ add_library(geometry STATIC
     conclusion/conclusion_types.h
     conclusion/line_parallel.cpp
     conclusion/line_parallel.h
-    conclusion/line_prependicular.cpp
-    conclusion/line_prependicular.h
+    conclusion/line_perpendicular.cpp
+    conclusion/line_perpendicular.h
     conclusion/triangle_similar.cpp
     conclusion/triangle_similar.h
     construction/all_constructions.cpp
@@ -29,14 +29,14 @@ add_library(geometry STATIC
     transform/all_transforms.h
     transform/parallel/angles_to_parallel.cpp
     transform/parallel/angles_to_parallel.h
-    transform/parallel/angles_to_prependicular.cpp
-    transform/parallel/angles_to_prependicular.h
+    transform/parallel/angles_to_perpendicular.cpp
+    transform/parallel/angles_to_perpendicular.h
     transform/parallel/line_parallel_transitivity.cpp
     transform/parallel/line_parallel_transitivity.h
     transform/parallel/parallel_to_angles.cpp
     transform/parallel/parallel_to_angles.h
-    transform/parallel/prependicular_to_angles.cpp
-    transform/parallel/prependicular_to_angles.h
+    transform/parallel/perpendicular_to_angles.cpp
+    transform/parallel/perpendicular_to_angles.h
     transform/pythagorean/pythagorean.cpp
     transform/pythagorean/pythagorean.h
     transform/triangle/aa_similar.cpp

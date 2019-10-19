@@ -9,10 +9,10 @@ namespace Core {
 
 class System;
 
-class PrependicularToAngles : public Transform {
+class PerpendicularToAngles : public Transform {
 public:
-    explicit PrependicularToAngles();
-    ~PrependicularToAngles() override;
+    explicit PerpendicularToAngles();
+    ~PerpendicularToAngles() override;
 
     void Execute(System& system);
 };

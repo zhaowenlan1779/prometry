@@ -3,17 +3,17 @@
 
 #include <catch2/catch.hpp>
 #include "core/system.h"
-#include "geometry/conclusion/line_prependicular.h"
+#include "geometry/conclusion/line_perpendicular.h"
 #include "geometry/element/line/line.h"
 #include "geometry/element/line/line_angle.h"
 #include "geometry/element/point.h"
-#include "geometry/transform/parallel/angles_to_prependicular.h"
+#include "geometry/transform/parallel/angles_to_perpendicular.h"
 
 namespace Core {
 
-TEST_CASE("AnglesToPrependicular", "[transform]") {
+TEST_CASE("AnglesToPerpendicular", "[transform]") {
     System system;
-    system.RegisterTransform<AnglesToPrependicular>();
+    system.RegisterTransform<AnglesToPerpendicular>();
     auto l1 = system.CreateElement<Line>("", "l1");
     auto l2 = system.CreateElement<Line>("", "l2");
     auto p1 = system.CreateElement<Point>("", "p1");
@@ -26,7 +26,7 @@ TEST_CASE("AnglesToPrependicular", "[transform]") {
 
     system.Execute([](System&) { return nullptr; });
 
-    REQUIRE(system.GetConclusion(LinePrependicular(l1, l2)));
+    REQUIRE(system.GetConclusion(LinePerpendicular(l1, l2)));
 }
 
 } // namespace Core

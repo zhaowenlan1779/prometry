@@ -17,10 +17,10 @@ add_executable(tests
     integrated/triangle_equality_2.cpp
     transform/algebra/line_segment_concat.cpp
     transform/parallel/angles_to_parallel.cpp
-    transform/parallel/angles_to_prependicular.cpp
+    transform/parallel/angles_to_perpendicular.cpp
     transform/parallel/line_parallel_transitivity.cpp
     transform/parallel/parallel_to_angles.cpp
-    transform/parallel/prependicular_to_angles.cpp
+    transform/parallel/perpendicular_to_angles.cpp
     transform/pythagorean/pythagorean.cpp
     transform/triangle/aa_similar.cpp
     transform/triangle/aas_asa.cpp

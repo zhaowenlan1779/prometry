@@ -3,7 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include "core/system.h"
-#include "geometry/conclusion/line_prependicular.h"
+#include "geometry/conclusion/line_perpendicular.h"
 #include "geometry/construction/all_constructions.h"
 #include "geometry/element/line/line.h"
 #include "geometry/element/line/line_segment.h"
@@ -23,7 +23,7 @@ TEST_CASE("Pythagorean+LineSegmentConcat", "[integrated]") {
     auto d = system.CreateElement<Point>("", "D");
     auto l1 = system.CreateElement<Line>("", "l1");
     auto l2 = system.CreateElement<Line>("", "l2");
-    system.CreateConclusion<LinePrependicular>("", {}, l1, l2);
+    system.CreateConclusion<LinePerpendicular>("", {}, l1, l2);
 
     a->AddParent(l1);
     b->AddParent(l2);

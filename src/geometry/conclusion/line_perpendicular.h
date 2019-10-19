@@ -11,10 +11,10 @@ namespace Core {
 class Element;
 class Line;
 
-class LinePrependicular : public Conclusion {
+class LinePerpendicular : public Conclusion {
 public:
-    explicit LinePrependicular(const std::shared_ptr<Line>& l1, const std::shared_ptr<Line>& l2);
-    ~LinePrependicular() override;
+    explicit LinePerpendicular(const std::shared_ptr<Line>& l1, const std::shared_ptr<Line>& l2);
+    ~LinePerpendicular() override;
     std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const override;
     std::vector<std::shared_ptr<Element>> GetRelatedElements() const override;
     ConclusionType GetType() const override;

@@ -5,10 +5,10 @@
 #include "geometry/transform/algebra/line_segment_concat.h"
 #include "geometry/transform/all_transforms.h"
 #include "geometry/transform/parallel/angles_to_parallel.h"
-#include "geometry/transform/parallel/angles_to_prependicular.h"
+#include "geometry/transform/parallel/angles_to_perpendicular.h"
 #include "geometry/transform/parallel/line_parallel_transitivity.h"
 #include "geometry/transform/parallel/parallel_to_angles.h"
-#include "geometry/transform/parallel/prependicular_to_angles.h"
+#include "geometry/transform/parallel/perpendicular_to_angles.h"
 #include "geometry/transform/pythagorean/pythagorean.h"
 #include "geometry/transform/triangle/aa_similar.h"
 #include "geometry/transform/triangle/angles_to_isosceles.h"
@@ -28,10 +28,10 @@ void RegisterAllTransforms(System& system) {
 
     // Parallel
     system.RegisterTransform<AnglesToParallel>();
-    system.RegisterTransform<AnglesToPrependicular>();
+    system.RegisterTransform<AnglesToPerpendicular>();
     system.RegisterTransform<LineParallelTransitivity>();
     system.RegisterTransform<ParallelToAngles>();
-    system.RegisterTransform<PrependicularToAngles>();
+    system.RegisterTransform<PerpendicularToAngles>();
 
     // Pythagorean
     system.RegisterTransform<Pythagorean>();

@@ -10,10 +10,10 @@ namespace Core {
 
 class System;
 
-class AnglesToPrependicular : public Wrapper<AnglesToPrependicular, Line, Line> {
+class AnglesToPerpendicular : public Wrapper<AnglesToPerpendicular, Line, Line> {
 public:
-    explicit AnglesToPrependicular();
-    ~AnglesToPrependicular() override;
+    explicit AnglesToPerpendicular();
+    ~AnglesToPerpendicular() override;
 
     static void Execute(System& system, const std::shared_ptr<Line>& l1,
                         const std::shared_ptr<Line>& l2);

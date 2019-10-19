@@ -11,7 +11,7 @@ namespace Conclusions {
 enum ConclusionTypes : ConclusionType {
     Invalid,
     LineParallel,
-    LinePrependicular,
+    LinePerpendicular,
     TriangleSimilar,
     // TODO
 };
