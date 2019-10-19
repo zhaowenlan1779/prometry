@@ -51,8 +51,10 @@ LineDirection Line::GetLineDirection(const std::shared_ptr<Point>& p1,
     System& system, const std::shared_ptr<Point>& p1, const std::shared_ptr<Point>& p2) {
     auto lines = Core::CommonParent<Line>(p1, p2);
     if (lines.empty()) {
-        auto line = system.CreateElement<Line>("Connect " + p1->PrintAll() + p2->PrintAll(),
-                                               p1->Print() + p2->Print());
+        const auto statement = "Connect " + Common::StringPack{/*Plain*/ "", /*Latex*/ "\\("} +
+                               p1->PrintAll() + p2->PrintAll() +
+                               Common::StringPack{/*Plain*/ "", /*Latex*/ "\\)"};
+        auto line = system.CreateElement<Line>(statement, p1->Print() + p2->Print());
         p1->AddParent(line);
         p2->AddParent(line);
         return {line, line->GetLineDirection(p1, p2)};

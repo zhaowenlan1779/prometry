@@ -10,8 +10,8 @@ namespace Common {
  * String resources.
  */
 static const StringPack LineBreak = {/*Plain*/ "\n", /*Latex*/ "\n\n"};
-static const StringPack StrSince = {/*Plain*/ "Since     ", /*Latex*/ "\\because "};
-static const StringPack StrTherefore = {/*Plain*/ "Therefore ", /*Latex*/ "\\therefore "};
+static const StringPack StrSince = {/*Plain*/ "Since     ", /*Latex*/ "\\(\\because\\) "};
+static const StringPack StrTherefore = {/*Plain*/ "Therefore ", /*Latex*/ "\\(\\therefore\\) "};
 static const StringPack StrWeHave = {/*Plain*/ "We have   ", /*Latex*/ "We have "};
 
 std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,

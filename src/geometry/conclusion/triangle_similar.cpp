@@ -48,7 +48,7 @@ std::string TriangleSimilar::Print(Common::PrintFormat format) const {
         }
     } else if (format == Common::PrintFormat::Latex) {
         if (auto triangle2 = t2.lock()) {
-            return GetTriangle1Text(format) + " \\sim " + triangle2->Print(format);
+            return "\\(" + GetTriangle1Text(format) + " \\sim " + triangle2->Print(format) + "\\)";
         }
     }
 

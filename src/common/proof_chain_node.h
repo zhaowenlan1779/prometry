@@ -34,6 +34,6 @@ struct ProofChainNode {
 };
 
 std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
-                          PrintFormat format = PrintFormat::Plain);
+                          PrintFormat format = PrintFormat::Latex);
 
 } // namespace Common

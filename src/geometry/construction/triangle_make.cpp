@@ -16,9 +16,11 @@ void TriangleMake::Execute(System& system, const std::shared_ptr<Point>& p1,
         return;
     }
 
-    system.CreateElement<Triangle>("Declare " + Common::StringPack{"Triangle", "\\bigtriangleup"} +
-                                       " " + p1->PrintAll() + p2->PrintAll() + p3->PrintAll(),
-                                   system, p1, p2, p3);
+    const auto statement =
+        "Declare " + Common::StringPack{/*Plain*/ "Triangle", /*Latex*/ "\\(\\bigtriangleup"} +
+        " " + p1->PrintAll() + p2->PrintAll() + p3->PrintAll() +
+        Common::StringPack{/*Plain*/ "", /*Latex*/ "\\)"};
+    system.CreateElement<Triangle>(statement, system, p1, p2, p3);
 }
 
 } // namespace Core

@@ -24,7 +24,7 @@ std::string LineParallel::Print(Common::PrintFormat format) const {
     } else if (format == Common::PrintFormat::Latex) {
         if (auto line1 = l1.lock()) {
             if (auto line2 = l2.lock()) {
-                return line1->Print(format) + " \\parallel " + line2->Print(format);
+                return "\\(" + line1->Print(format) + " \\parallel " + line2->Print(format) + "\\)";
             }
         }
     }
