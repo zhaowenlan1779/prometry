@@ -55,7 +55,8 @@ public:
      * Creates and adds an element to the system, if the conclusion is not already present.
      */
     template <typename T, typename... Args>
-    std::shared_ptr<T> CreateElement(std::string construction_statement, Args&&... args) {
+    std::shared_ptr<T> CreateElement(const Common::StringPack& construction_statement,
+                                     Args&&... args) {
         static_assert(std::is_base_of_v<Element, T>, "T is not a subclass of Element");
 
         auto element = std::make_shared<T>(args...);
@@ -67,7 +68,7 @@ public:
             }
         }
         element->proof_node = std::make_shared<Common::ProofChainNode>();
-        element->proof_node->statement = std::move(construction_statement);
+        element->proof_node->statement = construction_statement;
         elements[T::Type].emplace_back(element);
         new_element = true;
         return element;
@@ -78,7 +79,7 @@ public:
      */
     template <typename T, typename... Args>
     std::shared_ptr<T> CreateConclusion(
-        std::string transform_name,
+        const Common::StringPack& transform_name,
         std::vector<std::shared_ptr<Common::ProofChainNode>> source_nodes, Args&&... args) {
 
         static_assert(std::is_base_of_v<Conclusion, T>, "T is not a subclass of Conclusion");
@@ -89,8 +90,8 @@ public:
             return std::dynamic_pointer_cast<T>(cur);
         }
         conclusion->proof_node = std::make_shared<Common::ProofChainNode>();
-        conclusion->proof_node->transform = std::move(transform_name);
-        conclusion->proof_node->statement = conclusion->Print();
+        conclusion->proof_node->transform = transform_name;
+        conclusion->proof_node->statement = conclusion->PrintAll();
         for (const auto& iter : source_nodes) {
             conclusion->proof_node->reasons.emplace_back(iter);
         }

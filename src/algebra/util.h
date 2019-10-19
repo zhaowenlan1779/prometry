@@ -5,6 +5,7 @@
 
 #include <symengine/basic.h>
 #include "common/common_types.h"
+#include "common/printer.h"
 
 namespace Algebra {
 
@@ -27,10 +28,10 @@ bool IsAcceptable(const SymEngine::Expression& expr);
 SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr);
 
 /**
- * Converts an equation to string.
+ * Converts an equation to strings (of different formats).
  * This may not be always equal to "X = 0". Instead it would put items with
  * symbols on the left side and items without symbols on the right side.
  */
-std::string EquationToString(const SymEngine::Expression& expr);
+Common::StringPack EquationToString(const SymEngine::Expression& expr);
 
 } // namespace Algebra

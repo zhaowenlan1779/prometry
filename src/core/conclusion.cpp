@@ -11,6 +11,10 @@ std::string Conclusion::Print(Common::PrintFormat format) const {
     return "Unknown";
 }
 
+Common::StringPack Conclusion::PrintAll() const {
+    return {Print(Common::PrintFormat::Plain), Print(Common::PrintFormat::Latex)};
+}
+
 bool Conclusion::operator==(const Conclusion& other) const {
     return GetHash() == other.GetHash();
 }

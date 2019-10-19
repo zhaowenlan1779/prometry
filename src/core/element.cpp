@@ -16,6 +16,10 @@ std::string Element::Print(Common::PrintFormat format) const {
     return "Unknown";
 }
 
+Common::StringPack Element::PrintAll() const {
+    return {Print(Common::PrintFormat::Plain), Print(Common::PrintFormat::Latex)};
+}
+
 u64 Element::GetHash() const {
     return 0;
 }

@@ -20,16 +20,6 @@ enum class PrintFormat {
 
 static constexpr std::size_t PrintFormatCount = 2;
 
-/**
- * Printer template. Default specialization is to call object.Print(format).
- */
-template <PrintFormat format, typename T>
-struct Printer {
-    static std::string Print(const T& object) {
-        return object.Print(format);
-    }
-};
-
 class StringPack {
 public:
     // Intentional non-explicit

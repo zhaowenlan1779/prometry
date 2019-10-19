@@ -9,7 +9,7 @@
 namespace Algebra {
 
 void Check(const SymEngine::Expression& equation) {
-    const auto res = EquationToString(equation);
+    const auto res = EquationToString(equation).Get(Common::PrintFormat::Plain);
     const u64 pos = res.find("=");
     REQUIRE(pos != std::string::npos);
 

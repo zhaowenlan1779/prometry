@@ -9,6 +9,7 @@ namespace Common {
 /**
  * String resources.
  */
+static const StringPack LineBreak = {/*Plain*/ "\n", /*Latex*/ "\n\n"};
 static const StringPack StrSince = {/*Plain*/ "Since     ", /*Latex*/ "\\because "};
 static const StringPack StrTherefore = {/*Plain*/ "Therefore ", /*Latex*/ "\\therefore "};
 static const StringPack StrWeHave = {/*Plain*/ "We have   ", /*Latex*/ "We have "};
@@ -29,7 +30,7 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
     for (const auto& pre_weak : node->pre_conditions) {
         if (auto pre_condition = pre_weak.lock()) {
             if (!visited.count(pre_condition) && !pre_condition->statement.Get(format).empty()) {
-                proof += "\n" + pre_condition->statement.Get(format);
+                proof += LineBreak.Get(format) + pre_condition->statement.Get(format);
                 visited.emplace(pre_condition);
             }
         }
@@ -50,15 +51,15 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
         }
 
         if (!node->reasons.empty()) {
-            proof += "\n" + StrSince.Get(format);
+            proof += LineBreak.Get(format) + StrSince.Get(format);
             for (const auto& reason_weak : node->reasons) {
                 if (auto reason = reason_weak.lock()) {
                     proof += reason->statement.Get(format) + ", ";
                 }
             }
-            proof += "\n" + StrTherefore.Get(format) + node->statement.Get(format);
+            proof += LineBreak.Get(format) + StrTherefore.Get(format) + node->statement.Get(format);
         } else {
-            proof += "\n" + StrWeHave.Get(format) + node->statement.Get(format);
+            proof += LineBreak.Get(format) + StrWeHave.Get(format) + node->statement.Get(format);
         }
 
         if (!node->transform.Get(format).empty()) {

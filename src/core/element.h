@@ -45,6 +45,7 @@ public:
     virtual ~Element();
 
     virtual std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const;
+    Common::StringPack PrintAll() const;
 
     virtual u64 GetHash() const;
 

@@ -1,6 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include <regex>
 #include <symengine/expression.h>
 #include <symengine/visitor.h>
 #include "algebra/algebra.h"
@@ -295,7 +296,34 @@ public:
     }
 };
 
-std::string EquationToString(const SymEngine::Expression& expr) {
+Common::StringPack Print(const SymEngine::RCP<const SymEngine::Basic>& expr) {
+    return {SymEngine::str(*expr), SymEngine::latex(*expr)};
+}
+
+Common::StringPack AfterProcess(const Common::StringPack& str) {
+    const std::string plain = str.Get(Common::PrintFormat::Plain);
+
+    // For Latex, there are some additional processing
+    std::string latex = str.Get(Common::PrintFormat::Latex);
+
+    // Symbol name replacements
+    static const std::regex LineLengthRegex{"([^- ]+)_length"};
+    latex = std::regex_replace(latex, LineLengthRegex, "\\overline{$1}");
+
+    static const std::regex LineAngleRegex{"([^- ]+)_([^- ]+)_angle"};
+    latex = std::regex_replace(latex, LineAngleRegex, "angle_{$1, $2}");
+
+    static const std::regex SimilarRatioRegex{"([^- ]+)_([^- ]+)_similar_k"};
+    latex = std::regex_replace(latex, SimilarRatioRegex,
+                               "k_{\\bigtriangleup $1 \\sim \\bigtriangleup $2}");
+
+    // Mathematical environment
+    latex = "\\(" + latex + "\\)";
+
+    return {plain, latex};
+}
+
+Common::StringPack EquationToString(const SymEngine::Expression& expr) {
     using namespace SymEngine;
     Expression expanded = expand(expr);
 
@@ -313,7 +341,7 @@ std::string EquationToString(const SymEngine::Expression& expr) {
                 const auto& solns =
                     SolveSingle(expr, rcp_static_cast<const SymEngine::Symbol>(symbol));
                 if (solns.size() == 1) {
-                    return symbol->__str__() + " = " + solns[0].get_basic()->__str__();
+                    return AfterProcess(Print(symbol) + " = " + Print(solns[0].get_basic()));
                 }
             }
         }
@@ -332,7 +360,8 @@ std::string EquationToString(const SymEngine::Expression& expr) {
         non_symbol_items = -non_symbol_items;
     }
 
-    return symbol_items.get_basic()->__str__() + " = " + non_symbol_items.get_basic()->__str__();
+    return AfterProcess(Print(symbol_items.get_basic()) + " = " +
+                        Print(non_symbol_items.get_basic()));
 }
 
 } // namespace Algebra

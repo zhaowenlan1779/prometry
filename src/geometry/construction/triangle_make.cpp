@@ -16,8 +16,8 @@ void TriangleMake::Execute(System& system, const std::shared_ptr<Point>& p1,
         return;
     }
 
-    system.CreateElement<Triangle>("Declare Triangle " + p1->Print() + "_" + p2->Print() + "_" +
-                                       p3->Print(),
+    system.CreateElement<Triangle>("Declare " + Common::StringPack{"Triangle", "\\bigtriangleup"} +
+                                       " " + p1->PrintAll() + p2->PrintAll() + p3->PrintAll(),
                                    system, p1, p2, p3);
 }
 

@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 #include "common/common_types.h"
-#include "common/proof_chain_node.h"
 #include "common/printer.h"
+#include "common/proof_chain_node.h"
 
 namespace Core {
 
@@ -29,6 +29,7 @@ public:
     virtual ~Conclusion();
 
     virtual std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const;
+    Common::StringPack PrintAll() const;
 
     /**
      * Get the elements related to this conclusion.

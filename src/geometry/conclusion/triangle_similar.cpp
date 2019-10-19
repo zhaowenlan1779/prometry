@@ -35,7 +35,8 @@ std::string TriangleSimilar::GetTriangle1Text(Common::PrintFormat format) const 
     if (auto triangle1 = t1.lock()) {
         std::array<std::shared_ptr<Point>, 3> points{{triangle1->A, triangle1->B, triangle1->C}};
         ApplyTransform(order, points);
-        return points[0]->Print(format) + points[1]->Print(format) + points[2]->Print(format);
+        return (format == Common::PrintFormat::Plain ? "" : "\\bigtriangleup ") +
+               points[0]->Print(format) + points[1]->Print(format) + points[2]->Print(format);
     }
     UNREACHABLE_MSG("Unexpected expired weak_ptr!");
 }
