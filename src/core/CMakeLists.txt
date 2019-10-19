@@ -3,7 +3,6 @@ add_library(core STATIC
     conclusion.h
     element.cpp
     element.h
-    printer.h
     system.cpp
     system.h
     transform.h

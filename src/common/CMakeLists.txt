@@ -4,6 +4,8 @@ add_library(common STATIC
   common_types.h
   dynamic_bitset.cpp
   dynamic_bitset.h
+  printer.cpp
+  printer.h
   proof_chain_node.cpp
   proof_chain_node.h
 )

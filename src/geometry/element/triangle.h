@@ -19,7 +19,7 @@ public:
     explicit Triangle(System& system, const std::shared_ptr<Point>& A,
                       const std::shared_ptr<Point>& B, const std::shared_ptr<Point>& C);
     ~Triangle() override;
-    std::string Print(PrintFormat format = PrintFormat::Plain) const override;
+    std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const override;
     ElementType GetType() const override;
     u64 GetHash() const override;
 

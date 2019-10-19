@@ -12,7 +12,7 @@ namespace Core {
 
 Element::~Element() = default;
 
-std::string Element::Print(PrintFormat format) const {
+std::string Element::Print(Common::PrintFormat format) const {
     return "Unknown";
 }
 

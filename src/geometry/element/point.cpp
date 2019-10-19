@@ -13,10 +13,10 @@ Point::Point(const std::string& name_) : name(name_) {}
 
 Point::~Point() = default;
 
-std::string Point::Print(PrintFormat format) const {
-    if (format == PrintFormat::Plain) {
+std::string Point::Print(Common::PrintFormat format) const {
+    if (format == Common::PrintFormat::Plain) {
         return name;
-    } else if (format == PrintFormat::Latex) {
+    } else if (format == Common::PrintFormat::Latex) {
         return name;
     }
 

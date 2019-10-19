@@ -13,7 +13,7 @@ public:
 
     explicit Point(const std::string& name);
     ~Point() override;
-    std::string Print(PrintFormat format = PrintFormat::Plain) const override;
+    std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const override;
     ElementType GetType() const override;
     u64 GetHash() const override;
 

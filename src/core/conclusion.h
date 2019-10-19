@@ -8,7 +8,7 @@
 #include <vector>
 #include "common/common_types.h"
 #include "common/proof_chain_node.h"
-#include "core/printer.h"
+#include "common/printer.h"
 
 namespace Core {
 
@@ -28,7 +28,7 @@ class Conclusion {
 public:
     virtual ~Conclusion();
 
-    virtual std::string Print(PrintFormat format = PrintFormat::Plain) const;
+    virtual std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const;
 
     /**
      * Get the elements related to this conclusion.

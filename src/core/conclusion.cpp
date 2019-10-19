@@ -7,7 +7,7 @@ namespace Core {
 
 Conclusion::~Conclusion() = default;
 
-std::string Conclusion::Print(PrintFormat format) const {
+std::string Conclusion::Print(Common::PrintFormat format) const {
     return "Unknown";
 }
 

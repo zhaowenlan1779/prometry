@@ -9,8 +9,8 @@
 #include <vector>
 #include "algebra/algebra.h"
 #include "common/common_types.h"
+#include "common/printer.h"
 #include "common/proof_chain_node.h"
-#include "core/printer.h"
 
 namespace Core {
 
@@ -44,7 +44,7 @@ public:
 
     virtual ~Element();
 
-    virtual std::string Print(PrintFormat format = PrintFormat::Plain) const;
+    virtual std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const;
 
     virtual u64 GetHash() const;
 

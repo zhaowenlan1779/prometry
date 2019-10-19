@@ -15,7 +15,7 @@ class LineParallel : public Conclusion {
 public:
     explicit LineParallel(const std::shared_ptr<Line>& l1, const std::shared_ptr<Line>& l2);
     ~LineParallel() override;
-    std::string Print(PrintFormat format = PrintFormat::Plain) const override;
+    std::string Print(Common::PrintFormat format = Common::PrintFormat::Plain) const override;
     std::vector<std::shared_ptr<Element>> GetRelatedElements() const override;
     ConclusionType GetType() const override;
     u64 GetHash() const override;

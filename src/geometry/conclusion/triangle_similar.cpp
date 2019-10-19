@@ -31,7 +31,7 @@ TriangleSimilar::TriangleSimilar(const std::shared_ptr<Triangle>& t1_,
 
 TriangleSimilar::~TriangleSimilar() = default;
 
-std::string TriangleSimilar::GetTriangle1Text(PrintFormat format) const {
+std::string TriangleSimilar::GetTriangle1Text(Common::PrintFormat format) const {
     if (auto triangle1 = t1.lock()) {
         std::array<std::shared_ptr<Point>, 3> points{{triangle1->A, triangle1->B, triangle1->C}};
         ApplyTransform(order, points);
@@ -40,12 +40,12 @@ std::string TriangleSimilar::GetTriangle1Text(PrintFormat format) const {
     UNREACHABLE_MSG("Unexpected expired weak_ptr!");
 }
 
-std::string TriangleSimilar::Print(PrintFormat format) const {
-    if (format == PrintFormat::Plain) {
+std::string TriangleSimilar::Print(Common::PrintFormat format) const {
+    if (format == Common::PrintFormat::Plain) {
         if (auto triangle2 = t2.lock()) {
             return GetTriangle1Text(format) + " similar " + triangle2->Print(format);
         }
-    } else if (format == PrintFormat::Latex) {
+    } else if (format == Common::PrintFormat::Latex) {
         if (auto triangle2 = t2.lock()) {
             return GetTriangle1Text(format) + " \\sim " + triangle2->Print(format);
         }

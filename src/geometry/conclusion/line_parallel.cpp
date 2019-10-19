@@ -14,14 +14,14 @@ LineParallel::LineParallel(const std::shared_ptr<Line>& l1_, const std::shared_p
 
 LineParallel::~LineParallel() = default;
 
-std::string LineParallel::Print(PrintFormat format) const {
-    if (format == PrintFormat::Plain) {
+std::string LineParallel::Print(Common::PrintFormat format) const {
+    if (format == Common::PrintFormat::Plain) {
         if (auto line1 = l1.lock()) {
             if (auto line2 = l2.lock()) {
                 return line1->Print(format) + " // " + line2->Print(format);
             }
         }
-    } else if (format == PrintFormat::Latex) {
+    } else if (format == Common::PrintFormat::Latex) {
         if (auto line1 = l1.lock()) {
             if (auto line2 = l2.lock()) {
                 return line1->Print(format) + " \\parallel " + line2->Print(format);

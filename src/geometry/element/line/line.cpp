@@ -19,10 +19,10 @@ Line::Line(const std::string& name_) : name(name_) {}
 
 Line::~Line() = default;
 
-std::string Line::Print(PrintFormat format) const {
-    if (format == PrintFormat::Plain) {
+std::string Line::Print(Common::PrintFormat format) const {
+    if (format == Common::PrintFormat::Plain) {
         return name;
-    } else if (format == PrintFormat::Latex) {
+    } else if (format == Common::PrintFormat::Latex) {
         return name;
     }
 

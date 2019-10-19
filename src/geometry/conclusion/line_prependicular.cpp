@@ -15,14 +15,14 @@ LinePrependicular::LinePrependicular(const std::shared_ptr<Line>& l1_,
 
 LinePrependicular::~LinePrependicular() = default;
 
-std::string LinePrependicular::Print(PrintFormat format) const {
-    if (format == PrintFormat::Plain) {
+std::string LinePrependicular::Print(Common::PrintFormat format) const {
+    if (format == Common::PrintFormat::Plain) {
         if (auto line1 = l1.lock()) {
             if (auto line2 = l2.lock()) {
                 return line1->Print(format) + " prependicular " + line2->Print(format);
             }
         }
-    } else if (format == PrintFormat::Latex) {
+    } else if (format == Common::PrintFormat::Latex) {
         if (auto line1 = l1.lock()) {
             if (auto line2 = l2.lock()) {
                 return line1->Print(format) + " \\perp " + line2->Print(format);

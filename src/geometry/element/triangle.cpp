@@ -38,11 +38,11 @@ Triangle::Triangle(System& system, const std::shared_ptr<Point>& A_,
 
 Triangle::~Triangle() = default;
 
-std::string Triangle::Print(PrintFormat format) const {
+std::string Triangle::Print(Common::PrintFormat format) const {
     const auto name = A->Print(format) + B->Print(format) + C->Print(format);
-    if (format == PrintFormat::Plain) {
+    if (format == Common::PrintFormat::Plain) {
         return name;
-    } else if (format == PrintFormat::Latex) {
+    } else if (format == Common::PrintFormat::Latex) {
         return "\\bigtriangleup" + name;
     }
 
