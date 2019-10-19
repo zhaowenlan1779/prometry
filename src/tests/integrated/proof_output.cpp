@@ -19,9 +19,9 @@ TEST_CASE("ProofOutput[LineParallelTransitivity]", "[integrated]") {
     auto l2 = system.CreateElement<Line>("", "l2");
     auto l3 = system.CreateElement<Line>("", "l3");
     auto l4 = system.CreateElement<Line>("", "l4");
-    system.CreateConclusion<LineParallel>("", {}, l1, l2);
-    system.CreateConclusion<LineParallel>("", {}, l2, l3);
-    system.CreateConclusion<LineParallel>("", {}, l3, l4);
+    system.CreateConclusion<LineParallel>("hypothesis", {}, l1, l2);
+    system.CreateConclusion<LineParallel>("hypothesis", {}, l2, l3);
+    system.CreateConclusion<LineParallel>("hypothesis", {}, l3, l4);
 
     const auto proof = system.Execute([&l1, &l4](System& system) {
         auto conclusion = system.GetConclusion(LineParallel(l1, l4));

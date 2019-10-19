@@ -28,8 +28,8 @@ TEST_CASE("TriangleEquality_1", "[integrated]") {
     c->AddParent(l);
     e->AddParent(l);
 
-    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, c));
-    system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(a, e));
+    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, c), "hypothesis");
+    system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(a, e), "hypothesis");
 
     const auto proof = system.Execute([&b, &c, &d, &e](System& system) {
         const auto& [ret, proof_node] =

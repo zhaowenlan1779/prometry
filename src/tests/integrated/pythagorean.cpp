@@ -23,7 +23,7 @@ TEST_CASE("Pythagorean+LineSegmentConcat", "[integrated]") {
     auto d = system.CreateElement<Point>("", "D");
     auto l1 = system.CreateElement<Line>("", "l1");
     auto l2 = system.CreateElement<Line>("", "l2");
-    system.CreateConclusion<LinePerpendicular>("", {}, l1, l2);
+    system.CreateConclusion<LinePerpendicular>("hypothesis", {}, l1, l2);
 
     a->AddParent(l1);
     b->AddParent(l2);
@@ -31,9 +31,9 @@ TEST_CASE("Pythagorean+LineSegmentConcat", "[integrated]") {
     c->AddParent(l2);
     d->AddParent(l2);
 
-    system.Algebra().AddEquation(LineSegmentLength(a, c) - 1);
-    system.Algebra().AddEquation(LineSegmentLength(b, c) - 3);
-    system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(d, b));
+    system.Algebra().AddEquation(LineSegmentLength(a, c) - 1, "hypothesis");
+    system.Algebra().AddEquation(LineSegmentLength(b, c) - 3, "hypothesis");
+    system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(d, b), "hypothesis");
 
     const auto proof = system.Execute([&a, &d](System& system) {
         const auto& [ret, proof_node] = system.Algebra().CheckEquation(

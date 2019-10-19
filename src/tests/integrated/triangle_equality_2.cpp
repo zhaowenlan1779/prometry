@@ -23,15 +23,17 @@ TEST_CASE("TriangleEquality_2", "[integrated]") {
     auto d = system.CreateElement<Point>("", "D");
     auto e = system.CreateElement<Point>("", "E");
 
-    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, c));
-    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, d));
-    system.Algebra().AddEquation(LineSegmentLength(a, c) - LineSegmentLength(a, e));
+    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, c), "hypothesis");
+    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, d), "hypothesis");
+    system.Algebra().AddEquation(LineSegmentLength(a, c) - LineSegmentLength(a, e), "hypothesis");
     system.Algebra().AddEquation(
         LineAngle(Line::Connect(system, a, b).first, Line::Connect(system, a, d).first).at(0) -
-        SymEngine::Expression(SymEngine::pi) / 2);
+            SymEngine::Expression(SymEngine::pi) / 2,
+        "hypothesis");
     system.Algebra().AddEquation(
         LineAngle(Line::Connect(system, a, c).first, Line::Connect(system, a, e).first).at(0) -
-        SymEngine::Expression(SymEngine::pi) / 2);
+            SymEngine::Expression(SymEngine::pi) / 2,
+        "hypothesis");
 
     const auto proof1 = system.Execute([&b, &c, &d, &e](System& system) {
         const auto& [ret, proof_node] =

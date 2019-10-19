@@ -21,7 +21,8 @@ LineSegmentConcat::~LineSegmentConcat() = default;
                 const auto& p2 = std::dynamic_pointer_cast<Point>(points[j].lock());
                 const auto& p3 = std::dynamic_pointer_cast<Point>(points[k].lock());
                 system.Algebra().AddEquation(LineSegmentLength(p1, p2) + LineSegmentLength(p2, p3) -
-                                             LineSegmentLength(p1, p3));
+                                                 LineSegmentLength(p1, p3),
+                                             "line segment concat");
             }
         }
     }

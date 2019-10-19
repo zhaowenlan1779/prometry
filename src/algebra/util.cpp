@@ -219,7 +219,7 @@ SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr) {
  */
 class SymbolVisitor : public SymEngine::BaseVisitor<SymbolVisitor> {
 public:
-    SymEngine::Expression symbol_items, non_symbol_items;
+    SymEngine::Expression positive_symbol_items, negative_symbol_items, non_symbol_items;
 
     void bvisit(const SymEngine::Add& x) {
         for (const auto& iter : x.get_args()) {
@@ -231,69 +231,19 @@ public:
         if (SymEngine::free_symbols(x).empty()) {
             non_symbol_items += SymEngine::Expression(x.rcp_from_this());
         } else {
-            symbol_items += SymEngine::Expression(x.rcp_from_this());
-        }
-    }
-
-    std::pair<SymEngine::Expression, SymEngine::Expression> accept(const SymEngine::Basic& x) {
-        symbol_items = non_symbol_items = 0;
-        x.accept(*this);
-        return {symbol_items, -non_symbol_items};
-    }
-};
-
-/**
- * Visits items of an expression, checking the sign of the symbols.
- */
-class SymbolSignVisitor : public SymEngine::BaseVisitor<SymbolSignVisitor> {
-public:
-    s8 sign = 1;
-
-    void bvisit(const SymEngine::Number& x) {
-        if (x.is_positive())
-            sign = 1;
-        else if (x.is_negative())
-            sign = -1;
-        else
-            sign = 0;
-    }
-
-    void bvisit(const SymEngine::Add& x) {
-        s8 cur_sign = -2; // Undetermined
-        for (const auto& iter : x.get_args()) {
-            if (SymEngine::free_symbols(*iter).empty()) {
-                continue;
-            }
-            iter->accept(*this);
-            if (cur_sign != -2 && sign != cur_sign) {
-                sign = 0;
-                return;
+            if (CheckSign(x.rcp_from_this()) == -1) {
+                negative_symbol_items += SymEngine::Expression(x.rcp_from_this());
             } else {
-                cur_sign = sign;
+                positive_symbol_items += SymEngine::Expression(x.rcp_from_this());
             }
         }
-        if (cur_sign == -2) { // No symbols at all
-            cur_sign = 0;
-        }
-        sign = cur_sign;
     }
 
-    void bvisit(const SymEngine::Mul& x) {
-        s8 cur_sign = 1;
-        for (const auto& iter : x.get_args()) {
-            iter->accept(*this);
-            cur_sign *= sign;
-        }
-        sign = cur_sign;
-    }
-
-    void bvisit(const SymEngine::Basic& x) {
-        sign = 1;
-    }
-
-    s8 accept(const SymEngine::Basic& x) {
+    std::tuple<SymEngine::Expression, SymEngine::Expression, SymEngine::Expression> accept(
+        const SymEngine::Basic& x) {
+        positive_symbol_items = negative_symbol_items = non_symbol_items = 0;
         x.accept(*this);
-        return sign;
+        return {positive_symbol_items, negative_symbol_items, -non_symbol_items};
     }
 };
 
@@ -381,18 +331,25 @@ Common::StringPack EquationToString(const SymEngine::Expression& expr) {
 
     // Split the equation into symbol part and non-symbol part
     SymbolVisitor symbol_visitor;
-    auto [symbol_items, non_symbol_items] = symbol_visitor.accept(*num);
+    auto [positive_symbol_items, negative_symbol_items, non_symbol_items] =
+        symbol_visitor.accept(*num);
 
-    // Flip the sign when symbol part is all negative
-    SymbolSignVisitor symbol_sign_visitor;
-    s8 symbol_items_sign = symbol_sign_visitor.accept(*num);
-
-    if (symbol_items_sign == -1) {
-        symbol_items = -symbol_items;
-        non_symbol_items = -non_symbol_items;
+    // In case everything are symbols, move the negative ones to the right
+    if (non_symbol_items == 0) {
+        negative_symbol_items = -negative_symbol_items;
+        return AfterProcess(Print(positive_symbol_items.get_basic()) + " = " +
+                            Print(negative_symbol_items.get_basic()));
     }
 
-    return AfterProcess(Print(symbol_items.get_basic()) + " = " +
+    // Flip the sign when symbol part is all negative
+    if (positive_symbol_items == 0) {
+        negative_symbol_items = -negative_symbol_items;
+        non_symbol_items = -non_symbol_items;
+        return AfterProcess(Print(negative_symbol_items.get_basic()) + " = " +
+                            Print(non_symbol_items.get_basic()));
+    }
+
+    return AfterProcess(Print((positive_symbol_items + negative_symbol_items).get_basic()) + " = " +
                         Print(non_symbol_items.get_basic()));
 }
 
