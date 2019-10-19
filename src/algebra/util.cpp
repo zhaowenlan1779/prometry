@@ -336,15 +336,15 @@ Common::StringPack EquationToString(const SymEngine::Expression& expr) {
 
     // In case everything are symbols, move the negative ones to the right
     if (non_symbol_items == 0) {
-        negative_symbol_items = -negative_symbol_items;
+        negative_symbol_items = SymEngine::expand(-negative_symbol_items);
         return AfterProcess(Print(positive_symbol_items.get_basic()) + " = " +
                             Print(negative_symbol_items.get_basic()));
     }
 
     // Flip the sign when symbol part is all negative
     if (positive_symbol_items == 0) {
-        negative_symbol_items = -negative_symbol_items;
-        non_symbol_items = -non_symbol_items;
+        negative_symbol_items = SymEngine::expand(-negative_symbol_items);
+        non_symbol_items = SymEngine::expand(-non_symbol_items);
         return AfterProcess(Print(negative_symbol_items.get_basic()) + " = " +
                             Print(non_symbol_items.get_basic()));
     }
