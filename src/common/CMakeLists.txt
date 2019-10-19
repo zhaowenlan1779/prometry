@@ -1,6 +1,5 @@
 add_library(common STATIC
   assert.h
-  common_funcs.h
   common_types.h
   dynamic_bitset.cpp
   dynamic_bitset.h
