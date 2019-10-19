@@ -43,7 +43,7 @@ std::string Triangle::Print(Common::PrintFormat format) const {
     if (format == Common::PrintFormat::Plain) {
         return name;
     } else if (format == Common::PrintFormat::Latex) {
-        return "\\bigtriangleup" + name;
+        return "\\bigtriangleup " + name;
     }
 
     UNREACHABLE_MSG("Unexpected format!");

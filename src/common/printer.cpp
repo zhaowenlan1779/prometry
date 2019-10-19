@@ -18,9 +18,13 @@ StringPack::StringPack(const std::string& str) {
 }
 
 StringPack::StringPack(const std::initializer_list<std::string>& list) {
-    ASSERT(list.size() == PrintFormatCount);
+    ASSERT(list.size() <= PrintFormatCount);
     for (std::size_t i = 0; i < list.size(); ++i) {
         data[i] = *(list.begin() + i);
+    }
+    for (std::size_t i = list.size(); i < PrintFormatCount; ++i) {
+        // Use plain text as default.
+        data[i] = *(list.begin());
     }
 }
 

@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "common/printer.h"
 
 namespace Common {
 
@@ -17,10 +18,10 @@ namespace Common {
  */
 struct ProofChainNode {
     /// The statement of the current proof node.
-    std::string statement;
+    StringPack statement;
 
     /// The transform to get the current proof node.
-    std::string transform;
+    StringPack transform;
 
     /// The reasons for the current proof node.
     std::vector<std::weak_ptr<ProofChainNode>> reasons;
@@ -32,6 +33,7 @@ struct ProofChainNode {
     bool hidden = false;
 };
 
-std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node);
+std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
+                          PrintFormat format = PrintFormat::Plain);
 
 } // namespace Common

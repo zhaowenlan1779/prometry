@@ -6,22 +6,30 @@
 
 namespace Common {
 
+/**
+ * String resources.
+ */
+static const StringPack StrSince = {/*Plain*/ "Since     ", /*Latex*/ "\\because "};
+static const StringPack StrTherefore = {/*Plain*/ "Therefore ", /*Latex*/ "\\therefore "};
+static const StringPack StrWeHave = {/*Plain*/ "We have   ", /*Latex*/ "We have "};
+
 std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
-                          std::unordered_set<std::shared_ptr<ProofChainNode>>& visited) {
+                          std::unordered_set<std::shared_ptr<ProofChainNode>>& visited,
+                          PrintFormat format) {
     std::string proof;
 
     visited.emplace(node);
     for (const auto& reason_weak : node->reasons) {
         if (auto reason = reason_weak.lock()) {
             if (!visited.count(reason)) {
-                proof += GenerateProof(reason, visited);
+                proof += GenerateProof(reason, visited, format);
             }
         }
     }
     for (const auto& pre_weak : node->pre_conditions) {
         if (auto pre_condition = pre_weak.lock()) {
-            if (!visited.count(pre_condition) && !pre_condition->statement.empty()) {
-                proof += "\n" + pre_condition->statement;
+            if (!visited.count(pre_condition) && !pre_condition->statement.Get(format).empty()) {
+                proof += "\n" + pre_condition->statement.Get(format);
                 visited.emplace(pre_condition);
             }
         }
@@ -34,7 +42,7 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
     do {
         if (node->reasons.size() == 1) {
             if (auto reason = node->reasons[0].lock()) {
-                if (reason->statement == node->statement) {
+                if (reason->statement.Get(format) == node->statement.Get(format)) {
                     // Ignore meaningless algebra transforms
                     break;
                 }
@@ -42,28 +50,28 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
         }
 
         if (!node->reasons.empty()) {
-            proof += "\nSince     ";
+            proof += "\n" + StrSince.Get(format);
             for (const auto& reason_weak : node->reasons) {
                 if (auto reason = reason_weak.lock()) {
-                    proof += reason->statement + ", ";
+                    proof += reason->statement.Get(format) + ", ";
                 }
             }
-            proof += "\nTherefore " + node->statement;
+            proof += "\n" + StrTherefore.Get(format) + node->statement.Get(format);
         } else {
-            proof += "\nWe have   " + node->statement;
+            proof += "\n" + StrWeHave.Get(format) + node->statement.Get(format);
         }
 
-        if (!node->transform.empty()) {
-            proof += " (" + node->transform + ")";
+        if (!node->transform.Get(format).empty()) {
+            proof += " (" + node->transform.Get(format) + ")";
         }
     } while (0);
 
     return proof;
 }
 
-std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node) {
+std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node, PrintFormat format) {
     std::unordered_set<std::shared_ptr<ProofChainNode>> visited;
-    return GenerateProof(node, visited);
+    return GenerateProof(node, visited, format);
 }
 
 } // namespace Common
