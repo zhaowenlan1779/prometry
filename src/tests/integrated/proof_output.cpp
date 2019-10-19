@@ -5,7 +5,7 @@
 #include "core/system.h"
 #include "geometry/conclusion/line_parallel.h"
 #include "geometry/element/line/line.h"
-#include "geometry/transform/parallel/line_parallel_transitivity.h"
+#include "geometry/transform/all_transforms.h"
 
 #include <iostream>
 
@@ -13,7 +13,7 @@ namespace Core {
 
 TEST_CASE("ProofOutput[LineParallelTransitivity]", "[integrated]") {
     System system;
-    system.RegisterTransform<LineParallelTransitivity>();
+    RegisterAllTransforms(system);
 
     auto l1 = system.CreateElement<Line>("", "l1");
     auto l2 = system.CreateElement<Line>("", "l2");

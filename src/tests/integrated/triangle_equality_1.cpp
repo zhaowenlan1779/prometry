@@ -3,24 +3,18 @@
 
 #include <catch2/catch.hpp>
 #include "core/system.h"
-#include "geometry/construction/triangle_make.h"
+#include "geometry/construction/all_constructions.h"
 #include "geometry/element/line/line.h"
 #include "geometry/element/line/line_segment.h"
 #include "geometry/element/point.h"
-#include "geometry/transform/triangle/aa_similar.h"
-#include "geometry/transform/triangle/isosceles_to_angles.h"
-#include "geometry/transform/triangle/similar_to_line_segment_ratio.h"
-#include "geometry/transform/triangle/triangle_internal_angles.h"
+#include "geometry/transform/all_transforms.h"
 
 namespace Core {
 
 TEST_CASE("TriangleEquality_1", "[integrated]") {
     System system;
-    system.RegisterTransform<AASimilar>();
-    system.RegisterTransform<IsoscelesToAngles>();
-    system.RegisterTransform<SimilarToLineSegmentRatio>();
-    system.RegisterTransform<TriangleInternalAngles>();
-    system.RegisterConstruction<TriangleMake>();
+    RegisterAllTransforms(system);
+    RegisterAllConstructions(system);
 
     auto a = system.CreateElement<Point>("", "A");
     auto b = system.CreateElement<Point>("", "B");
