@@ -33,7 +33,10 @@ struct Printer {
 class StringPack {
 public:
     // Intentional non-explicit
+    StringPack();
+    StringPack(const char* c_str);
     StringPack(const std::string& str);
+    StringPack(const std::initializer_list<std::string>& list);
     StringPack(std::array<std::string, PrintFormatCount> data);
 
     StringPack& operator+=(const StringPack& other);

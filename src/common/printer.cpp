@@ -1,12 +1,27 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include "common/assert.h"
 #include "common/printer.h"
 
 namespace Common {
 
+StringPack::StringPack() = default;
+
+StringPack::StringPack(const char* c_str) {
+    std::string str = c_str;
+    std::fill(data.begin(), data.end(), str);
+}
+
 StringPack::StringPack(const std::string& str) {
     std::fill(data.begin(), data.end(), str);
+}
+
+StringPack::StringPack(const std::initializer_list<std::string>& list) {
+    ASSERT(list.size() == PrintFormatCount);
+    for (std::size_t i = 0; i < list.size(); ++i) {
+        data[i] = *(list.begin() + i);
+    }
 }
 
 StringPack::StringPack(std::array<std::string, PrintFormatCount> data_) : data(std::move(data_)) {}

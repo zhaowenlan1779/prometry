@@ -5,6 +5,7 @@ add_executable(tests
     algebra/util_equation_to_string.cpp
     algebra/util_simplify_equation.cpp
     common/dynamic_bitset.cpp
+    common/string_pack.cpp
     construction/line_connect.cpp
     construction/triangle_make.cpp
     core/element_common_parent.cpp
