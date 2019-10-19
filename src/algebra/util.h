@@ -34,4 +34,10 @@ SymEngine::Expression SimplifyEquation(const SymEngine::Expression& expr);
  */
 Common::StringPack EquationToString(const SymEngine::Expression& expr);
 
+/**
+ * Registers the pretty name alias of a certain symbol.
+ */
+void RegisterSymbolPrettyName(const SymEngine::RCP<const SymEngine::Basic>& symbol,
+                              const std::string& name);
+
 } // namespace Algebra

@@ -1,6 +1,7 @@
 // Copyright 2019 Zhupengfei and others
 // All rights reserved.
 
+#include <map>
 #include <regex>
 #include <symengine/expression.h>
 #include <symengine/visitor.h>
@@ -296,24 +297,55 @@ public:
     }
 };
 
+// TODO: eliminate global state
+std::map<SymEngine::RCP<const SymEngine::Basic>, std::string, SymEngine::RCPBasicKeyLess>
+    g_symbol_pretty_name_map;
+
+void RegisterSymbolPrettyName(const SymEngine::RCP<const SymEngine::Basic>& symbol,
+                              const std::string& name) {
+
+    g_symbol_pretty_name_map.insert_or_assign(symbol, name);
+}
+
+std::string StringReplace(std::string str, const std::string& src, const std::string& dest) {
+    std::size_t pos = 0;
+    if (src == dest)
+        return str;
+
+    while ((pos = str.find(src, pos)) != std::string::npos) {
+        str.replace(pos, src.size(), dest);
+        pos += dest.length();
+    }
+
+    return str;
+}
+
 Common::StringPack Print(const SymEngine::RCP<const SymEngine::Basic>& expr) {
     return {SymEngine::str(*expr), SymEngine::latex(*expr)};
 }
 
 Common::StringPack AfterProcess(const Common::StringPack& str) {
-    const std::string plain = str.Get(Common::PrintFormat::Plain);
-
-    // For Latex, there are some additional processing
+    std::string plain = str.Get(Common::PrintFormat::Plain);
     std::string latex = str.Get(Common::PrintFormat::Latex);
 
-    // Symbol name replacements
-    static const std::regex LineLengthRegex{"([^- ]+)_length"};
+    // Symbol pretty name replacements
+    for (const auto& [symbol, name] : g_symbol_pretty_name_map) {
+        plain = StringReplace(plain, symbol->__str__(), name);
+        latex = StringReplace(latex, symbol->__str__(), name);
+    }
+
+    // For Latex, there are some additional processing
+    // TODO: More graceful handling of these symbols
+    static const std::regex LineLengthRegex{"([0-9A-Za-z]+)_length"};
     latex = std::regex_replace(latex, LineLengthRegex, "\\overline{$1}");
 
-    static const std::regex LineAngleRegex{"([^- ]+)_([^- ]+)_angle"};
+    static const std::regex AngleRegex{"angle_([0-9A-Za-z]+)"};
+    latex = std::regex_replace(latex, AngleRegex, "\\angle $1");
+
+    static const std::regex LineAngleRegex{"([0-9A-Za-z]+)_([0-9A-Za-z]+)_angle"};
     latex = std::regex_replace(latex, LineAngleRegex, "angle_{$1, $2}");
 
-    static const std::regex SimilarRatioRegex{"([^- ]+)_([^- ]+)_similar_k"};
+    static const std::regex SimilarRatioRegex{"([0-9A-Za-z]+)_([0-9A-Za-z]+)_similar_k"};
     latex = std::regex_replace(latex, SimilarRatioRegex,
                                "k_{\\bigtriangleup $1 \\sim \\bigtriangleup $2}");
 
