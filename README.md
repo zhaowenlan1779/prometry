@@ -1,6 +1,6 @@
 Prometry
 =========
-Geometry machine proof
+Geometry mechanical proving using plain search algorithms. This is more or less some sort of school project that is very slow and unfinished
 
 ## Building
 
