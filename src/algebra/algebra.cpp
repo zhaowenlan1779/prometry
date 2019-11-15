@@ -294,9 +294,45 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
             impl->primary_symbols.emplace(new_symbols[0]);
         }
     } else {
-        // Perform a check to avoid duplicate equations.
-        if (CheckEquation(expr).first)
+        const auto& symbols = SymEngine::free_symbols(*substituted.get_basic());
+        if (symbols.empty()) { // Ignore this equation
             return;
+        }
+        // Attempt to use this equation to substitute one previous primary symbol
+        auto& primary_symbol = *symbols.begin();
+        const auto& solns = SolveSingle(
+            substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(primary_symbol));
+        if (solns.size() == 1) {
+            impl->primary_symbols.erase(primary_symbol);
+            // Update previous substitution maps
+            for (const auto& [symbol, substitution] : impl->symbol_subst_map) {
+                if (!SymEngine::has_symbol(*substitution, *primary_symbol)) {
+                    continue;
+                }
+                const auto& new_substitution =
+                    SymEngine::expand(substitution->subs({{primary_symbol, solns[0]}}));
+                auto new_proof_node = std::make_shared<Common::ProofChainNode>();
+                new_proof_node->transform = "algebra";
+                new_proof_node->statement =
+                    EquationToString(SymEngine::sub(new_substitution, primary_symbol));
+                new_proof_node->reasons.emplace_back(impl->symbol_subst_proof_nodes.at(symbol));
+                new_proof_node->reasons.emplace_back(subst_proof_node);
+
+                // The node now needs holding.
+                impl->proof_node_holder.emplace_back(subst_proof_node);
+
+                impl->symbol_subst_map[symbol] = new_substitution;
+                impl->symbol_subst_proof_nodes[symbol] = new_proof_node;
+            }
+            // Add to substitute map
+            impl->symbol_subst_map.emplace(primary_symbol, solns[0].get_basic());
+            impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
+            return;
+        } else {
+            // Perform a check to avoid duplicate equations.
+            if (CheckEquation(expr).first)
+                return;
+        }
     }
 
     impl->equations.push_back(Impl::Equation{substituted, subst_proof_node});
