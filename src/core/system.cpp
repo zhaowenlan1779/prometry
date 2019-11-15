@@ -60,6 +60,9 @@ std::string System::Execute(
         new_conclusion = false;
         for (auto& iter : transforms) {
             iter->Execute(*this);
+            if ((target = reached_goal_predicate(*this)) != nullptr) {
+                goto completed;
+            }
         }
         if (!new_conclusion && !algebra->HasNewEquations()) {
             new_element = false;
@@ -73,11 +76,10 @@ std::string System::Execute(
             if (!new_element) { // Failed to construct
                 break;
             }
-        } else if ((target = reached_goal_predicate(*this)) != nullptr) {
-            break;
         }
     }
 
+completed:
     if (target) {
         // Generate proof content
         return Common::GenerateProof(target);
