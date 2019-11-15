@@ -295,27 +295,31 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
         for (std::size_t i = 1; i < new_symbols.size(); ++i) {
             impl->primary_symbols.emplace(new_symbols[i]);
         }
-        const auto& solns = SolveSingle(
-            substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(new_symbols[0]));
-        if (solns.size() == 1) {
-            // Add to substitute map
-            impl->symbol_subst_map.emplace(new_symbols[0], solns[0].get_basic());
-            impl->symbol_subst_proof_nodes.emplace(new_symbols[0], subst_proof_node);
-            return;
-        } else {
-            // Use as a primary symbol
-            impl->primary_symbols.emplace(new_symbols[0]);
+        // Substitute one primary symbol.
+        for (const auto& primary_symbol : new_symbols) {
+            const auto& solns = SolveSingle(
+                substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(primary_symbol));
+            if (solns.size() == 1) {
+                // Add to substitute map
+                impl->symbol_subst_map.emplace(primary_symbol, solns[0].get_basic());
+                impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
+                return;
+            }
         }
+        // This equation cannot be used to substitute
+        impl->primary_symbols.emplace(new_symbols[0]);
     } else {
         const auto& symbols = SymEngine::free_symbols(*substituted.get_basic());
         if (symbols.empty()) { // Ignore this equation
             return;
         }
         // Attempt to use this equation to substitute one previous primary symbol
-        auto& primary_symbol = *symbols.begin();
-        const auto& solns = SolveSingle(
-            substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(primary_symbol));
-        if (solns.size() == 1) {
+        for (const auto& primary_symbol : symbols) {
+            const auto& solns = SolveSingle(
+                substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(primary_symbol));
+            if (solns.size() != 1) {
+                continue;
+            }
             impl->primary_symbols.erase(primary_symbol);
             // Update previous substitution maps
             for (const auto& [symbol, substitution] : impl->symbol_subst_map) {
@@ -339,11 +343,11 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
             impl->symbol_subst_map.emplace(primary_symbol, solns[0].get_basic());
             impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
             return;
-        } else {
-            // Perform a check to avoid duplicate equations.
-            if (CheckEquation(expr).first)
-                return;
         }
+
+        // This equation can't be used to substitute; perform a check to avoid duplicate equations.
+        if (CheckEquation(expr).first)
+            return;
     }
 
     impl->equations.push_back(Impl::Equation{substituted, subst_proof_node});
