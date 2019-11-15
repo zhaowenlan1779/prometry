@@ -28,32 +28,50 @@ std::string PrettyLineAngleName(const std::shared_ptr<Line>& l1_,
 
     const auto& point = points[0];
 
-    std::string p1_name;
-    for (std::size_t i = 0; i < l1->children[Elements::Point].size(); ++i) {
-        if (auto iter = l1->children[Elements::Point][i].lock()) {
-            if (iter == point) {
-                if (i == l1->children[Elements::Point].size() - 1) {
-                    return "";
+    for (auto dir : {LineDirection::Normal, LineDirection::Reversed}) {
+        std::string p1_name;
+        std::string p2_name;
+
+        for (std::size_t i = 0; i < l1->children[Elements::Point].size(); ++i) {
+            const std::size_t cur =
+                (dir == LineDirection::Normal ? i : l1->children[Elements::Point].size() - 1 - i);
+            const std::size_t nxt = (dir == LineDirection::Normal ? cur + 1 : cur - 1);
+            if (auto iter = l1->children[Elements::Point][cur].lock()) {
+                if (iter == point) {
+                    if (i == l1->children[Elements::Point].size() - 1) {
+                        break;
+                    }
+                    p1_name = l1->children[Elements::Point][nxt].lock()->Print();
+                    break;
                 }
-                p1_name = l1->children[Elements::Point][i + 1].lock()->Print();
-                break;
             }
         }
+        if (p1_name.empty()) {
+            continue;
+        }
+
+        for (std::size_t i = 0; i < l2->children[Elements::Point].size(); ++i) {
+            const std::size_t cur =
+                (dir == LineDirection::Normal ? i : l2->children[Elements::Point].size() - 1 - i);
+            const std::size_t nxt = (dir == LineDirection::Normal ? cur + 1 : cur - 1);
+            if (auto iter = l2->children[Elements::Point][cur].lock()) {
+                if (iter == point) {
+                    if (i == l2->children[Elements::Point].size() - 1) {
+                        break;
+                    }
+                    p2_name = l2->children[Elements::Point][nxt].lock()->Print();
+                    break;
+                }
+            }
+        }
+        if (p2_name.empty()) {
+            continue;
+        }
+
+        return "angle_" + p1_name + point->Print() + p2_name;
     }
 
-    std::string p2_name;
-    for (std::size_t i = 0; i < l2->children[Elements::Point].size(); ++i) {
-        if (auto iter = l2->children[Elements::Point][i].lock()) {
-            if (iter == point) {
-                if (i == l2->children[Elements::Point].size() - 1) {
-                    return "";
-                }
-                p2_name = l2->children[Elements::Point][i + 1].lock()->Print();
-                break;
-            }
-        }
-    }
-    return "angle_" + p1_name + point->Print() + p2_name;
+    return "";
 }
 
 std::array<Algebra::Expression, 2> LineAngle(const std::shared_ptr<Line>& l1,
