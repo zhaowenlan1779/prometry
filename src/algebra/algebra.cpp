@@ -104,8 +104,11 @@ struct System::Impl {
     std::map<SymEngine::RCP<const SymEngine::Basic>, std::shared_ptr<Common::ProofChainNode>,
              SymEngine::RCPBasicKeyLess>
         symbol_subst_proof_nodes;
-    // std::unordered_map<Symbol, Expression> symbol_subst_map;
+
     bool new_equations = false;
+
+    /// Mainly used to remove redunant algebra steps. Map of equations added to their proof node.
+    std::unordered_map<Expression, std::shared_ptr<Common::ProofChainNode>> added_equations_map;
 
     /// Holder of ProofChainNodes, so they do not get destructed
     std::vector<std::shared_ptr<Common::ProofChainNode>> proof_node_holder;
@@ -268,6 +271,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
         original_proof_node->reasons.emplace_back(iter);
     }
     impl->proof_node_holder.emplace_back(original_proof_node);
+    impl->added_equations_map.insert_or_assign(SymEngine::expand(expr), original_proof_node);
 
     // Substituted equation proof node
     auto subst_proof_node = std::make_shared<Common::ProofChainNode>();
@@ -276,6 +280,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
     subst_proof_node->reasons.emplace_back(original_proof_node);
     subst_proof_node->reasons.insert(subst_proof_node->reasons.end(), subst_reasons.begin(),
                                      subst_reasons.end());
+    impl->proof_node_holder.emplace_back(subst_proof_node);
 
     SymEngine::vec_basic new_symbols;
     for (const auto& symbol : SymEngine::free_symbols(*substituted.get_basic())) {
@@ -325,9 +330,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                     EquationToString(SymEngine::sub(new_substitution, primary_symbol));
                 new_proof_node->reasons.emplace_back(impl->symbol_subst_proof_nodes.at(symbol));
                 new_proof_node->reasons.emplace_back(subst_proof_node);
-
-                // The node now needs holding.
-                impl->proof_node_holder.emplace_back(subst_proof_node);
+                impl->proof_node_holder.emplace_back(new_proof_node);
 
                 impl->symbol_subst_map[symbol] = new_substitution;
                 impl->symbol_subst_proof_nodes[symbol] = new_proof_node;
@@ -350,6 +353,13 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
 
 std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
     const Expression& expr) {
+
+    const auto& expanded = SymEngine::expand(expr);
+    if (impl->added_equations_map.count(expanded)) {
+        return {true, impl->added_equations_map.at(expanded)};
+    } else if (impl->added_equations_map.count(-expanded)) {
+        return {true, impl->added_equations_map.at(-expanded)};
+    }
 
     const auto& [substituted, subst_reasons] = impl->SubstituteEquation(expr);
 
