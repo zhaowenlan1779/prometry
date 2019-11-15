@@ -20,6 +20,10 @@ AnglesToParallel::~AnglesToParallel() = default;
         return;
     }
 
+    if (!Intersection<Point>(l1, l2).empty()) {
+        return;
+    }
+
     const auto& [ret, proof_node] = system.Algebra().CheckEquation(
         LineAngle(l, LineDirection::Normal, l1, LineDirection::Normal) -
         LineAngle(l, LineDirection::Normal, l2, LineDirection::Normal));
