@@ -105,6 +105,8 @@ s8 CheckSign(const SymEngine::RCP<const SymEngine::Basic>& expr) {
 }
 
 bool IsAcceptable(const SymEngine::Expression& expr) {
+    if (expr == 0)
+        return false;
     return CheckSign(SymEngine::expand(expr).get_basic()) >= 0;
 }
 

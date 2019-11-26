@@ -246,7 +246,7 @@ System::Impl::SubstituteEquation(const Expression& expr) {
         // This free_symbols is recalculated on every iteration to make sure
         // no unnecessary substitutions are made.
         if (SymEngine::free_symbols(*expanded.get_basic()).count(subst.first)) {
-            expanded = expanded.subs({subst});
+            expanded = SymEngine::expand(expanded.subs({subst}));
             proof_nodes.emplace_back(symbol_subst_proof_nodes.at(subst.first));
         }
     }
@@ -260,6 +260,9 @@ System::~System() = default;
 
 void System::AddEquation(const Expression& expr, const std::string& transform,
                          const std::vector<std::shared_ptr<Common::ProofChainNode>>& parents) {
+
+    if (CheckEquation(expr).first)
+        return;
 
     const auto& [substituted, subst_reasons] = impl->SubstituteEquation(expr);
 
@@ -292,22 +295,42 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
     if (new_symbols.size() >= 1) {
         // This equation surely can't have existed.
         impl->new_equations = true;
-        for (std::size_t i = 1; i < new_symbols.size(); ++i) {
-            impl->primary_symbols.emplace(new_symbols[i]);
-        }
         // Substitute one primary symbol.
         for (const auto& primary_symbol : new_symbols) {
             const auto& solns = SolveSingle(
                 substituted, SymEngine::rcp_static_cast<const SymEngine::Symbol>(primary_symbol));
-            if (solns.size() == 1) {
-                // Add to substitute map
-                impl->symbol_subst_map.emplace(primary_symbol, solns[0].get_basic());
-                impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
-                return;
+            if (solns.size() != 1) {
+                continue;
             }
+
+            // Fix size of substitution getting too big.
+            // We are only exercising the substitution on condition that the den has 0/1 symbols.
+            SymEngine::RCP<const SymEngine::Basic> num, den;
+            SymEngine::as_numer_denom(solns[0].get_basic(), outArg(num), outArg(den));
+            if (SymEngine::free_symbols(*den).size() >= 2 ||
+                SymEngine::is_a<SymEngine::Add>(*den)) {
+                continue;
+            }
+
+            // Add to substitute map
+            impl->symbol_subst_map.emplace(primary_symbol, solns[0].get_basic());
+            impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
+
+            // Add symbols as primary
+            for (const auto& symbol : new_symbols) {
+                if (!symbol->__eq__(*primary_symbol)) {
+                    impl->primary_symbols.emplace(symbol);
+                }
+            }
+
+            impl->memory.clear();
+            impl->new_equations = true;
+            return;
         }
         // This equation cannot be used to substitute
-        impl->primary_symbols.emplace(new_symbols[0]);
+        for (const auto& symbol : new_symbols) {
+            impl->primary_symbols.emplace(symbol);
+        }
     } else {
         const auto& symbols = SymEngine::free_symbols(*substituted.get_basic());
         if (symbols.empty()) { // Ignore this equation
@@ -320,6 +343,16 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
             if (solns.size() != 1) {
                 continue;
             }
+
+            // Fix size of substitution getting too big.
+            // We are only exercising the substitution on condition that the den has 0/1 symbols.
+            SymEngine::RCP<const SymEngine::Basic> num, den;
+            SymEngine::as_numer_denom(solns[0].get_basic(), outArg(num), outArg(den));
+            if (SymEngine::free_symbols(*den).size() >= 2 ||
+                SymEngine::is_a<SymEngine::Add>(*den)) {
+                continue;
+            }
+
             impl->primary_symbols.erase(primary_symbol);
             // Update previous substitution maps
             for (const auto& [symbol, substitution] : impl->symbol_subst_map) {
@@ -331,7 +364,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                 auto new_proof_node = std::make_shared<Common::ProofChainNode>();
                 new_proof_node->transform = "algebra";
                 new_proof_node->statement =
-                    EquationToString(SymEngine::sub(new_substitution, primary_symbol));
+                    EquationToString(SymEngine::sub(new_substitution, symbol));
                 new_proof_node->reasons.emplace_back(impl->symbol_subst_proof_nodes.at(symbol));
                 new_proof_node->reasons.emplace_back(subst_proof_node);
                 impl->proof_node_holder.emplace_back(new_proof_node);
@@ -339,15 +372,32 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                 impl->symbol_subst_map[symbol] = new_substitution;
                 impl->symbol_subst_proof_nodes[symbol] = new_proof_node;
             }
+            for (auto& equation : impl->equations) {
+                if (!SymEngine::has_symbol(*equation.expr.get_basic(), *primary_symbol)) {
+                    continue;
+                }
+                const auto& new_equation =
+                    SymEngine::expand(equation.expr.subs({{primary_symbol, solns[0]}}));
+                auto new_proof_node = std::make_shared<Common::ProofChainNode>();
+                new_proof_node->transform = "algebra";
+                new_proof_node->statement = EquationToString(new_equation);
+                new_proof_node->reasons.emplace_back(equation.proof_node);
+                new_proof_node->reasons.emplace_back(subst_proof_node);
+                impl->proof_node_holder.emplace_back(new_proof_node);
+
+                equation.expr = new_equation;
+                equation.proof_node = new_proof_node;
+            }
             // Add to substitute map
             impl->symbol_subst_map.emplace(primary_symbol, solns[0].get_basic());
             impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
+
+            impl->memory.clear();
+            impl->new_equations = true;
             return;
         }
 
-        // This equation can't be used to substitute; perform a check to avoid duplicate equations.
-        if (CheckEquation(expr).first)
-            return;
+        // This equation can't be used to substitute
     }
 
     impl->equations.push_back(Impl::Equation{substituted, subst_proof_node});
