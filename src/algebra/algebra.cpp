@@ -230,7 +230,7 @@ std::vector<std::weak_ptr<Common::ProofChainNode>> System::Impl::GetParents(
     std::vector<std::weak_ptr<Common::ProofChainNode>> parents;
     u64 capacity = std::min(proof_list.Size(), equations.size());
     for (std::size_t i = 0; i < capacity; ++i) {
-        if (proof_list.At(i)) {
+        if (proof_list.At(i) && equations[i].expr != 0) {
             parents.emplace_back(equations[i].proof_node);
         }
     }
@@ -384,6 +384,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                 new_proof_node->reasons.emplace_back(equation.proof_node);
                 new_proof_node->reasons.emplace_back(subst_proof_node);
                 impl->proof_node_holder.emplace_back(new_proof_node);
+                impl->memory.clear();
 
                 equation.expr = new_equation;
                 equation.proof_node = new_proof_node;
@@ -446,11 +447,11 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
     // Original equation proof node
     auto original_proof_node = std::make_shared<Common::ProofChainNode>();
     original_proof_node->transform = "algebra";
-    original_proof_node->statement = EquationToString(expr);
+    original_proof_node->statement = EquationToString(expanded);
     if (substituted != 0) {
         original_proof_node->reasons.emplace_back(subst_proof_node);
     }
-    if (substituted == 0 && subst_reasons.size() == 1) {
+    if ((substituted == 0 && subst_reasons.size() == 1) || expanded == 0) {
         original_proof_node->hidden = true;
     }
     original_proof_node->reasons.insert(original_proof_node->reasons.end(), subst_reasons.begin(),

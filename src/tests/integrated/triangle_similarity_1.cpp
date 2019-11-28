@@ -78,8 +78,6 @@ TEST_CASE("TriangleSimilarity_1", "[integrated]") {
             if (!ret1)
                 return nullptr;
 
-            std::cout << "Condition 1 satisfied" << std::endl;
-
             const auto& [ret2, proof_node2] = system.Algebra().CheckEquation(
                 LineSegmentLength(f, g) / LineSegmentLength(g, m) - SymEngine::rational(3, 2));
             if (!ret2)
