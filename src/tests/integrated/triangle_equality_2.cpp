@@ -10,45 +10,26 @@
 // SOFTWARE.
 
 #include <catch2/catch.hpp>
-#include "core/system.h"
-#include "geometry/construction/all_constructions.h"
-#include "geometry/element/line/line.h"
-#include "geometry/element/line/line_angle.h"
-#include "geometry/element/line/line_segment.h"
-#include "geometry/element/point.h"
-#include "geometry/transform/all_transforms.h"
+#include "geometry/prospec.h"
 
 namespace Core {
 
 TEST_CASE("TriangleEquality_2", "[integrated]") {
-    System system;
-    RegisterAllTransforms(system);
-    RegisterAllConstructions(system);
+    prospec_begin;
 
-    auto a = system.CreateElement<Point>("", "A");
-    auto b = system.CreateElement<Point>("", "B");
-    auto c = system.CreateElement<Point>("", "C");
-    auto d = system.CreateElement<Point>("", "D");
-    auto e = system.CreateElement<Point>("", "E");
+    point(A, B, C, D, E);
+    line(AB, A, B);
+    line(AD, A, D);
+    line(AC, A, C);
+    line(AE, A, E);
 
-    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, c), "hypothesis");
-    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, d), "hypothesis");
-    system.Algebra().AddEquation(LineSegmentLength(a, c) - LineSegmentLength(a, e), "hypothesis");
-    system.Algebra().AddEquation(
-        LineAngle(Line::Connect(system, a, b).first, Line::Connect(system, a, d).first).at(0) -
-            SymEngine::Expression(SymEngine::pi) / 2,
-        "hypothesis");
-    system.Algebra().AddEquation(
-        LineAngle(Line::Connect(system, a, c).first, Line::Connect(system, a, e).first).at(0) -
-            SymEngine::Expression(SymEngine::pi) / 2,
-        "hypothesis");
+    equation(len(A, B) - len(A, C));
+    equation(len(A, B) - len(A, D));
+    equation(len(A, C) - len(A, E));
+    equation(angle(AB, AD).at(0) - pi / 2);
+    equation(angle(AC, AE).at(0) - pi / 2);
 
-    const auto proof1 = system.Execute([&b, &c, &d, &e](System& system) {
-        const auto& [ret, proof_node] =
-            system.Algebra().CheckEquation(LineSegmentLength(b, d) - LineSegmentLength(c, e));
-        return ret ? proof_node : nullptr;
-    });
-
+    const auto proof1 = execute_single(len(B, D) - len(C, E));
     std::cout << "Proof: " << proof1 << std::endl;
     REQUIRE(!proof1.empty());
 
@@ -62,6 +43,7 @@ TEST_CASE("TriangleEquality_2", "[integrated]") {
 
     // std::cout << "Proof: " << proof2 << std::endl;
     // REQUIRE(!proof2.empty());
+    prospec_end;
 }
 
 } // namespace Core

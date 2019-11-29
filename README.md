@@ -32,45 +32,25 @@ A `tests` project is available, which consists of multiple unit and integrated t
 
 Currently, prometry does not have a frontend, but you can already use it in the code.
 
-Refer to the tests for examples on using this (not-really-a)library. Basically:
-
-* Always create a `System` and pass it around before doing anything. It'll manage (own) all the elements, conclusions as well as sub-procedures called transforms or constructions.
-* Add in the transforms and constructions you need, or just import everything with the all_transforms and all_constructions helper.
-* Create the elements.
-* Add in parent-children relationship of the elements with the `AddParent` method.
-* Create conclusions, and add in algebra relations if any.
-* Execute the system with `system.Execute(callback)`.
-    * The `callback` should be a function that takes a `System&` and returns a pointer to `Common::ProofChainNode` when the target is already reached and `nullptr` otherwise.
-    * If you want to execute the system until it stops, just say `system.Execute([](System&) {return nullptr;})`.
+prometry uses a DSL made by C macros and C++ template metaprogramming called ProSpec. Include the file `geometry/prospec.h` to use it. You can refer to the tests on how to use the DSL.
 
 Example (taken from `tests/integrated/pythagorean.cpp`):
 ```cpp
-    System system;
-    RegisterAllTransforms(system);
-    RegisterAllConstructions(system);
-    auto a = system.CreateElement<Point>("", "A");
-    auto b = system.CreateElement<Point>("", "B");
-    auto c = system.CreateElement<Point>("", "C");
-    auto d = system.CreateElement<Point>("", "D");
-    auto l1 = system.CreateElement<Line>("", "l1");
-    auto l2 = system.CreateElement<Line>("", "l2");
-    system.CreateConclusion<LinePerpendicular>("", {}, l1, l2);
+    prospec_begin;
 
-    a->AddParent(l1);
-    b->AddParent(l2);
-    c->AddParent(l1);
-    c->AddParent(l2);
-    d->AddParent(l2);
+    point(A, B, C, D);
+    line(l1, A, C);
+    line(l2, B, C, D);
 
-    system.Algebra().AddEquation(LineSegmentLength(a, c) - 1);
-    system.Algebra().AddEquation(LineSegmentLength(b, c) - 3);
-    system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(d, b));
+    line_perpendicular(l1, l2);
 
-    const auto proof = system.Execute([&a, &d](System& system) {
-        const auto& [ret, proof_node] = system.Algebra().CheckEquation(
-            LineSegmentLength(a, d) - Algebra::Expression(5) / Algebra::Expression(3));
-        return ret ? proof_node : nullptr;
-    });
+    equation(len(A, C) - 1);
+    equation(len(B, C) - 3);
+    equation(len(A, D) - len(D, B));
 
+    const auto proof = execute_single(len(A, D) - frac(5, 3));
     std::cout << "Proof: " << proof << std::endl;
+    REQUIRE(!proof.empty());
+
+    prospec_end;
 ```

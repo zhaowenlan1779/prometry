@@ -23,6 +23,7 @@ add_library(geometry STATIC
     element/point.h
     element/triangle.cpp
     element/triangle.h
+    prospec.h
     transform/algebra/line_segment_concat.cpp
     transform/algebra/line_segment_concat.h
     transform/all_transforms.cpp

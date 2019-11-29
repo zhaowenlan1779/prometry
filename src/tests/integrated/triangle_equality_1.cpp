@@ -10,43 +10,24 @@
 // SOFTWARE.
 
 #include <catch2/catch.hpp>
-#include "core/system.h"
-#include "geometry/construction/all_constructions.h"
-#include "geometry/element/line/line.h"
-#include "geometry/element/line/line_segment.h"
-#include "geometry/element/point.h"
-#include "geometry/transform/all_transforms.h"
+#include "geometry/prospec.h"
 
 namespace Core {
 
 TEST_CASE("TriangleEquality_1", "[integrated]") {
-    System system;
-    RegisterAllTransforms(system);
-    RegisterAllConstructions(system);
+    prospec_begin;
 
-    auto a = system.CreateElement<Point>("", "A");
-    auto b = system.CreateElement<Point>("", "B");
-    auto c = system.CreateElement<Point>("", "C");
-    auto d = system.CreateElement<Point>("", "D");
-    auto e = system.CreateElement<Point>("", "E");
-    auto l = system.CreateElement<Line>("", "l");
+    point(A, B, C, D, E);
+    line(l, D, B, C, E);
 
-    d->AddParent(l);
-    b->AddParent(l);
-    c->AddParent(l);
-    e->AddParent(l);
+    equation(len(A, B) - len(A, C));
+    equation(len(A, D) - len(A, E));
 
-    system.Algebra().AddEquation(LineSegmentLength(a, b) - LineSegmentLength(a, c), "hypothesis");
-    system.Algebra().AddEquation(LineSegmentLength(a, d) - LineSegmentLength(a, e), "hypothesis");
-
-    const auto proof = system.Execute([&b, &c, &d, &e](System& system) {
-        const auto& [ret, proof_node] =
-            system.Algebra().CheckEquation(LineSegmentLength(b, d) - LineSegmentLength(c, e));
-        return ret ? proof_node : nullptr;
-    });
-
+    const auto proof = execute_single(len(B, D) - len(C, E));
     std::cout << "Proof: " << proof << std::endl;
     REQUIRE(!proof.empty());
+
+    prospec_end;
 }
 
 } // namespace Core
