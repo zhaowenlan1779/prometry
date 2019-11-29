@@ -62,7 +62,7 @@ std::string GenerateProof(const std::shared_ptr<ProofChainNode>& node,
             proof += LineBreak.Get(format) + StrSince.Get(format);
             for (const auto& reason_weak : node->reasons) {
                 if (auto reason = reason_weak.lock()) {
-                    if (!reason->hidden && !reason->statement.Get(format).empty()) {
+                    if (!reason->statement.Get(format).empty()) {
                         proof += reason->statement.Get(format) + ", ";
                     }
                 }

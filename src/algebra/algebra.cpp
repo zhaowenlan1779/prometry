@@ -451,8 +451,13 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
     if (substituted != 0) {
         original_proof_node->reasons.emplace_back(subst_proof_node);
     }
-    if ((substituted == 0 && subst_reasons.size() == 1) || expanded == 0) {
+    if (substituted == 0 && subst_reasons.size() == 1) {
         original_proof_node->hidden = true;
+    }
+    if (expanded == 0) {
+        original_proof_node->hidden = true;
+        // Clear the statement in this case; it is not needed.
+        original_proof_node->statement = {};
     }
     original_proof_node->reasons.insert(original_proof_node->reasons.end(), subst_reasons.begin(),
                                         subst_reasons.end());
