@@ -12,9 +12,17 @@ Clone with `--recursive`, or call `git submodule update --init --recursive` afte
 
 ### Dependencies
 
-This project uses CMake, and employs C++17 features. (Though it shouldn't be hard to move to C++14 or C++11)
+This project uses CMake and C++17, use a conforming compiler. This project relies on the [SymEngine](https://github.com/symengine/symengine) algebra library. 
 
-This project relies on the [SymEngine](https://github.com/symengine/symengine) algebra library. You must build and install the SymEngine library before building this project. Attached is a simple command snippet for building and installing SymEngine on MSYS2 Mingw64 (ensure that a good toolchain and ninja-build is present. you'll also need libgmp).
+#### MSVC
+
+Only Visual Studio 2017/2019 is supported as we need experimental preprocessor.
+
+You can install SymEngine with conda. You will probably need to configure CMake to point to your install.
+
+#### Mingw / UNIX-Like
+
+You must build and install the SymEngine library before building this project. Attached is a simple command snippet for building and installing SymEngine on MSYS2 Mingw64 (ensure that a good toolchain and ninja-build is present. you'll also need libgmp).
 
 ```bash
 git clone https://github.com/symengine/symengine.git
