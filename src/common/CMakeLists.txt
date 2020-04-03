@@ -8,5 +8,6 @@ add_library(common STATIC
   proof_chain_node.cpp
   proof_chain_node.h
 )
+create_target_directory_groups(common)
 
 target_compile_options(common PRIVATE ${PROMETRY_CXX_FLAGS})

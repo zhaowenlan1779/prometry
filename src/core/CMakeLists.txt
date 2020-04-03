@@ -7,6 +7,7 @@ add_library(core STATIC
     system.h
     transform.h
 )
+create_target_directory_groups(core)
 
 target_link_libraries(core PUBLIC common)
 target_link_libraries(core PRIVATE algebra)

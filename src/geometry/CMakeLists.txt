@@ -59,6 +59,7 @@ add_library(geometry STATIC
     transform/triangle/triangle_internal_angles.cpp
     transform/triangle/triangle_internal_angles.h
 )
+create_target_directory_groups(geometry)
 
 target_link_libraries(geometry PRIVATE common core ${SYMENGINE_LIBRARIES})
 target_compile_options(geometry PRIVATE ${PROMETRY_CXX_FLAGS})

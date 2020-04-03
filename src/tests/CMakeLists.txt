@@ -36,6 +36,7 @@ add_executable(tests
     transform/triangle/triangle_internal_angles.cpp
     tests.cpp
 )
+create_target_directory_groups(tests)
 
 target_link_libraries(tests PRIVATE common core geometry algebra)
 target_link_libraries(tests PRIVATE catch-single-include)
