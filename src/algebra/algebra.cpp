@@ -110,6 +110,12 @@ struct System::Impl {
     /// Mainly used to remove redunant algebra steps. Map of equations added to their proof node.
     std::unordered_map<Expression, std::shared_ptr<Common::ProofChainNode>> added_equations_map;
 
+    /// Memorization optimization (high level).
+
+    std::unordered_map<Expression, std::shared_ptr<Common::ProofChainNode>> correct_equations;
+    /// Gets wiped out when new equations are added.
+    std::unordered_set<Expression> incorrect_equations;
+
     /// Holder of ProofChainNodes, so they do not get destructed
     std::vector<std::shared_ptr<Common::ProofChainNode>> proof_node_holder;
 
@@ -242,12 +248,16 @@ System::Impl::SubstituteEquation(const Expression& expr) {
     auto expanded = SymEngine::expand(expr);
     std::vector<std::shared_ptr<Common::ProofChainNode>> proof_nodes;
 
-    for (const auto& subst : symbol_subst_map) {
-        // This free_symbols is recalculated on every iteration to make sure
-        // no unnecessary substitutions are made.
-        if (SymEngine::free_symbols(*expanded.get_basic()).count(subst.first)) {
-            expanded = SymEngine::expand(expanded.subs({subst}));
-            proof_nodes.emplace_back(symbol_subst_proof_nodes.at(subst.first));
+    auto symbols = SymEngine::free_symbols(expanded);
+    for (const auto& symbol : symbols) {
+        if (!symbol_subst_map.count(symbol)) {
+            continue;
+        }
+        const auto& subst = symbol_subst_map.at(symbol);
+        // Has to check again to avoid any unnecessary substitutions
+        if (SymEngine::has_symbol(expanded, *symbol)) {
+            expanded = SymEngine::expand(expanded.subs({{symbol, subst}}));
+            proof_nodes.emplace_back(symbol_subst_proof_nodes.at(symbol));
         }
     }
 
@@ -324,6 +334,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
             }
 
             impl->memory.clear();
+            impl->incorrect_equations.clear();
             impl->new_equations = true;
             return;
         }
@@ -384,7 +395,6 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                 new_proof_node->reasons.emplace_back(equation.proof_node);
                 new_proof_node->reasons.emplace_back(subst_proof_node);
                 impl->proof_node_holder.emplace_back(new_proof_node);
-                impl->memory.clear();
 
                 equation.expr = new_equation;
                 equation.proof_node = new_proof_node;
@@ -394,6 +404,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
             impl->symbol_subst_proof_nodes.emplace(primary_symbol, subst_proof_node);
 
             impl->memory.clear();
+            impl->incorrect_equations.clear();
             impl->new_equations = true;
             return;
         }
@@ -403,6 +414,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
 
     impl->equations.push_back(Impl::Equation{substituted, subst_proof_node});
     impl->memory.clear();
+    impl->incorrect_equations.clear();
     impl->new_equations = true;
 }
 
@@ -414,6 +426,12 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
         return {true, impl->added_equations_map.at(expanded)};
     } else if (impl->added_equations_map.count(-expanded)) {
         return {true, impl->added_equations_map.at(-expanded)};
+    }
+    if (impl->correct_equations.count(expanded)) {
+        return {true, impl->correct_equations.at(expanded)};
+    }
+    if (impl->incorrect_equations.count(expanded)) {
+        return {false, {}};
     }
 
     const auto& [substituted, subst_reasons] = impl->SubstituteEquation(expr);
@@ -431,6 +449,7 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
         });
 
     if (!ret) {
+        impl->incorrect_equations.emplace(expanded);
         return {ret, {}};
     }
 
@@ -462,6 +481,8 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
     original_proof_node->reasons.insert(original_proof_node->reasons.end(), subst_reasons.begin(),
                                         subst_reasons.end());
     impl->proof_node_holder.emplace_back(original_proof_node);
+
+    impl->correct_equations.emplace(expanded, original_proof_node);
 
     return {ret, original_proof_node};
 }
