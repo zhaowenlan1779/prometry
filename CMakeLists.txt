@@ -36,6 +36,7 @@ endif()
 # System imported libraries
 # ======================
 find_package(SymEngine REQUIRED)
+target_include_directories(symengine INTERFACE ${SYMENGINE_INCLUDE_DIRS})
 
 enable_testing()
 add_subdirectory(externals)

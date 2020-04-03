@@ -19,7 +19,7 @@
 #include "common/dynamic_bitset.h"
 
 namespace Common {
-class ProofChainNode;
+struct ProofChainNode;
 }
 
 namespace Algebra {
