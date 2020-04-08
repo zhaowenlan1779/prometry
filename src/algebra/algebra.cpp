@@ -376,7 +376,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                 new_proof_node->transform = "algebra";
                 new_proof_node->statement =
                     EquationToString(SymEngine::sub(new_substitution, symbol));
-                new_proof_node->reasons.emplace_back(impl->symbol_subst_proof_nodes.at(symbol));
+                new_proof_node->reasons = impl->symbol_subst_proof_nodes.at(symbol)->reasons;
                 new_proof_node->reasons.emplace_back(subst_proof_node);
                 impl->proof_node_holder.emplace_back(new_proof_node);
 
@@ -392,7 +392,7 @@ void System::AddEquation(const Expression& expr, const std::string& transform,
                 auto new_proof_node = std::make_shared<Common::ProofChainNode>();
                 new_proof_node->transform = "algebra";
                 new_proof_node->statement = EquationToString(new_equation);
-                new_proof_node->reasons.emplace_back(equation.proof_node);
+                new_proof_node->reasons = equation.proof_node->reasons;
                 new_proof_node->reasons.emplace_back(subst_proof_node);
                 impl->proof_node_holder.emplace_back(new_proof_node);
 
@@ -452,6 +452,20 @@ std::pair<bool, std::shared_ptr<Common::ProofChainNode>> System::CheckEquation(
         impl->incorrect_equations.emplace(expanded);
         return {ret, {}};
     }
+
+    /* auto proof_node = std::make_shared<Common::ProofChainNode>();
+    proof_node->transform = "algebra";
+    proof_node->statement = EquationToString(expanded);
+    if (expanded == 0) {
+        proof_node->hidden = true;
+        // Clear the statement in this case; it is not needed.
+        proof_node->statement = {};
+    }
+    // TODO: Pick a best one instead of a random one
+    proof_node->reasons = impl->GetParents(soln[0].second);
+    proof_node->reasons.insert(proof_node->reasons.end(), subst_reasons.begin(),
+                               subst_reasons.end());
+    impl->proof_node_holder.emplace_back(proof_node);*/
 
     // Substituted equation proof node
     auto subst_proof_node = std::make_shared<Common::ProofChainNode>();
